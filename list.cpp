@@ -1,120 +1,110 @@
 #ifndef _LIST_
 #define _LIST_
 
-#include <cstddef>
-#include "record.hpp"
+#include <iostream>
 
 template <typename Type> 
-class Node {
-private:
-    Type* item;
+struct Node {
+    Type data;
     Node* next;
-
-public:
-    Node<Type>(Type* i, Node* n=NULL){
-        item = i;
-        next = n;
-    }
-
-    ~Node<Type>() {
-        // delete item;
-        // std::cout << "Node deleted!" << std::endl;
-    }
-
-    Type* getItem() {
-        return item;
-    }
-
-    void setNext(Node* n) {
-        next = n;
-    }
-
-    Node* getNext() {
-        return next;
-    }
 };
 
-template <typename Type>
-class List {
+template <typename Type> 
+class List{
 private:
-    int size;
-    Node<Type> *head;
-    Node<Type> *tail;
-    Node<Type> *toPop;
-
+    Node<Type>* head;
 public:
-    List<Type>() {
-        size = 0;
-        head = tail = toPop = NULL;
-    }
+    List();                 //constructor                     
+    ~List();                //destructor
+    void insert(Type);      //inserts at head
+    void insert(Type, int); //inserts at given position
+    Type remove();          //removes at head of list
+    Type remove(int);       //removes at given position
+    int search(Type);       //returns position of given element, returns -1 if not found
+    void print();           //prints list
+    int size();             //returns size
+};
 
-    ~List<Type>() {
-        Node<Type>* n = head;
-        for(int i=0 ; i<size ; i++) {
-            head = head->getNext();
-            delete n;
-            n = head;
-        }
-        // std::cout << "List deleted!" << std::endl;
-    }
+template<typename Type> 
+List<Type>::List(){
+    head = null;
+}
 
-    List<Type>(Type* i){
-        head = tail = toPop = new Node<Type>(i);
-        size = 1;
+template<typename Type> 
+List<Type>::~List(){
+    Node<Type> *temp;
+    while(head->next){
+        temp = head;
+        head = head->next;
+        delete temp;
     }
+}
 
-    void push(Type *value) {
-        Node<Type> *p = new Node<Type>(value);
-        if(head == NULL) {
-            head = p;
-            toPop = head;
-        } else {
-            tail->setNext(p);
+template<typename Type> 
+void List<Type>::insert(Type value){
+    Node<Type> *n = new Node<Type>();   
+    n->data = value;             
+    n->next = head;        
+    head = n;              
+}
+
+template<typename Type> 
+void List<Type>::insert(Type value, int position){
+    //TODO:
+}
+
+template<typename Type> 
+Type List<Type>::remove(){
+    if(head != null){
+        Type t = head->data;
+        Node<Type>* temp = head;
+        head = head->next;
+        delete temp;
+        return t;
+    }
+}
+
+template<typename Type> 
+Type List<Type>::remove(int position){
+    //TODO
+}
+
+template<typename Type> 
+int List<Type>::search(Type value){
+    Node<Type> *temp = head;
+    int position = 0;
+    bool found = false;
+
+    while(temp->next){
+        if(temp->data == value){
+            found - true;
+            break;
         }
-        tail = p;
-        if(toPop == NULL) {
-            toPop = tail;
+        else{ 
+            temp = temp->next;
         }
+        position++;
+    }
+    delete temp;
+    if found == true return position;
+    else return -1;
+}
+
+template<typename Type> 
+void List<Type>::print(){
+    Node<Type> *temp = head;
+    while(temp->next){
+        std::cout << temp->data << " " << std::endl;
+    }
+}
+
+template<typename Type> 
+int List<Type>::size(){
+    Node<Type> *temp = head;
+    int size = 0;
+    while(temp->next){
         size++;
     }
-
-    // doesnt actually remove nodes from the list, just returns pointer to them
-    // toPop pointer is used to mark till which point we have poped
-    Type* pop() {
-        if(toPop != NULL) {
-            Type *p = toPop->getItem();
-            toPop = toPop->getNext();
-            return p;
-        }
-        return NULL;
-    }
-
-    void resetPop() {
-        toPop = head;
-    }
-
-    record* searchRecord(std::string t) {
-        Node<record> *n = head;
-        while(n != NULL) {
-            if(n->getItem()->getId()->compare(t) == 0) {
-                return n->getItem();
-            }
-            n = n->getNext();
-        }
-        return NULL;
-    }
-
-    int getSize() {
-        return size;
-    }
-
-    bool isEmpty() {
-        if(getSize()) {
-            return false;
-        }
-        return true;
-    }
-    
-};
-
+    return size;
+}
 #endif
