@@ -1,0 +1,139 @@
+#include "avl.hpp"
+
+//----------------------------------Treenode----------------------------------
+Treenode::Treenode(Entry* new_entry){
+    entry = new_entry;
+
+    left = right = NULL;
+    height = 1;
+}
+
+Treenode::~Treenode(){
+    // std::cout << "Treenode deleted!" << std::endl;
+}
+
+void Treenode::set_height(int h){
+    height = h;
+}
+
+int Treenode::get_height(){
+    return height;
+}
+
+int Treenode::get_entry_hashvalue(){
+    return entry->get_hashvalue();
+}
+
+void Treenode::update_height(){
+    int left_height = 0;
+    int right_height = 0;
+
+    if(left != NULL) {
+        left_height = left->height;
+    }
+    if(right != NULL) {
+        right_height = right->height;
+    }
+    height = std::max(left_height, right_height) +1;
+}
+
+//------------------------------------AVL------------------------------------
+AVL::AVL():root(NULL), size(0){
+}
+
+AVL::~AVL() {
+    // destructSelf(root);
+    // std::cout << "Tree deleted!" << std::endl;
+}
+
+// void AVL::destructSelf(Treenode* n) {
+//     if(n != NULL) {
+//         destructSelf(n->left);
+//         destructSelf(n->right);
+//         delete n;
+//     }
+// }
+
+int AVL::get_size(){
+    return size;
+}
+
+int AVL::get_balance(Treenode* n) { // return positive if left has more weight, negative if left has less wight and zero if balanced or null
+    if(n == NULL) {
+        return 0;
+    }
+    int left_height = 0;
+    int right_height = 0;
+    
+    if(n->left != NULL) {
+        left_height = n->left->get_height();
+    }
+
+    if(n->right != NULL) {
+        right_height = n->right->get_height();
+    }
+
+    return left_height - right_height;
+}
+
+Treenode* AVL::right_rotate(Treenode* root) {
+    Treenode* pivot = root->left;
+    Treenode* x = pivot->right;
+
+    pivot->right = root;
+    root->left = x;
+
+    root->update_height();
+    pivot->update_height();
+
+    return pivot;
+}
+
+Treenode* AVL::left_rotate(Treenode* root) {
+    Treenode* pivot = root->right;
+    Treenode* x = pivot->left;
+
+    pivot->left = root;
+    root->right = x;
+
+    root->update_height();
+    pivot->update_height();
+
+    return pivot;
+}
+
+Treenode* AVL::insert(Treenode* n, Entry* r) {
+    if(n == NULL) {
+        size++;
+        return new Treenode(r);
+    } 
+    else if(r->get_hashvalue() > n->get_entry_hashvalue()) { // if Entry date later insert to the right
+        n->right = insert(n->right, r);
+    } 
+    else if(r->get_hashvalue() <= n->get_entry_hashvalue() ) { // if Entry date earlier insert to the left
+        n->left = insert(n->left, r);
+    }
+    n->update_height();
+    
+    int b = get_balance(n);
+
+    if(b > 1) { // if left has more weight than 1
+        if(r->get_hashvalue() < n->get_entry_hashvalue()){
+            return right_rotate(n); 
+        } 
+        else{
+            n->left = left_rotate(n->left);
+            return right_rotate(n);
+        }
+    } 
+    else if(b < -1) { //if right has more weight than 1
+        if(r->get_hashvalue() > n->get_entry_hashvalue()) {
+            return left_rotate(n);
+        } 
+        else{
+            n->right = right_rotate(n->right);
+            return left_rotate(n);
+        }
+    }
+    return n;
+}

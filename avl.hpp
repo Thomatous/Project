@@ -7,17 +7,18 @@
 class Treenode{
     private:
         int height;
-        Entry entry;
+        Entry *entry;
     public:
         Treenode* left;
         Treenode* right;
 
         Treenode();
-        Treenode(Entry);
+        Treenode(Entry*);
         ~Treenode();
         void set_height(int);
         int get_height();
-        void updateHeight();
+        int get_entry_hashvalue();
+        void update_height();
 };
 
 class AVL{
