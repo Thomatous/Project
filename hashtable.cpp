@@ -37,7 +37,7 @@ AVL* Bucket::getTree() {
 
 /////////////////////////////////////////////////////////////////////////
 
-HashTable::HashTable(const int tSize, const int bSize): head(NULL) {
+HashTable::HashTable(const int tSize): tableSize(tSize), head(NULL) {
 }
 
 HashTable::~HashTable() {
@@ -53,8 +53,18 @@ HashTable::~HashTable() {
 int HashTable::hashFunction(Entry* e) {
     std::string site = e->get_page_title();
     std::string id = e->get_id();
-    int hashvalue = 0;
-    // function
+    unsigned long long hashValue = 5381;
+
+    int c;
+    const char* site_c = site.c_str();
+    const char* id_c = id.c_str();
+
+    while (c = *site_c++)
+        hashValue = ((hashValue << 5) + hashValue) + c; /* hash * 33 + c */
+
+    while (c = *id_c++)
+        hashValue = ((hashValue << 5) + hashValue) + c; /* hash * 33 + c */
+
     return hashValue%tableSize;
 }
 

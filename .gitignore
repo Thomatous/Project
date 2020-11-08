@@ -29789,3 +29789,4 @@ Datasets/2013_camera_specs/www.wexphotographic.com/624.json
 Datasets/2013_camera_specs/www.wexphotographic.com/626.json
 *.o
 main
+.vscode/settings.json

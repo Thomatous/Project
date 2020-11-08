@@ -31,10 +31,11 @@ public:
 
 class HashTable {
 private:
+    const int tableSize;
     Bucket* head;
 
 public:
-    HashTable(const int, const int);
+    HashTable(const int);
     ~HashTable();
     int hashFunction(Entry*);
     bool isEmpty();
