@@ -5,15 +5,22 @@ Entry::Entry(){
     page_title = "None";    //dedefault value for not initialized page_tiyle
 }
 
-Entry::Entry(std::string new_id, std::string new_page_title){
+Entry::Entry(std::string new_page_title, std::string new_id){
     id = new_id;           
     page_title = new_page_title;
-    
-    int ascii_sum = 0;
-    for (int i = 0; i < page_title.size(); i++) { 
-        ascii_sum += (int)(page_title[i]); 
-    }
-    hashvalue = ascii_sum + std::stoi(id);
+
+    //generating hashvalue for entry
+    hashvalue = 5381;
+
+    int c;
+    const char* site_c = page_title.c_str();
+    const char* id_c = id.c_str();
+
+    while (c = *site_c++)
+        hashvalue = ((hashvalue << 5) + hashvalue) + c; /* hash * 33 + c */
+
+    while (c = *id_c++)
+        hashvalue = ((hashvalue << 5) + hashvalue) + c; /* hash * 33 + c */
 }
 
 Entry::~Entry(){
@@ -28,7 +35,7 @@ std::string Entry::get_page_title(){
     return page_title;
 }
 
-int Entry::get_hashvalue(){
+unsigned long long Entry::get_hashvalue(){
     return hashvalue;
 }
 
