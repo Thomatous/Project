@@ -17,7 +17,7 @@ class Treenode{
         ~Treenode();
         void set_height(int);
         int get_height();
-        int get_entry_hashvalue();
+        unsigned long long get_entry_hashvalue();
         void update_height();
 };
 
@@ -35,6 +35,7 @@ class AVL{
         Treenode* right_rotate(Treenode*);
         Treenode* left_rotate(Treenode*);
         Treenode* insert(Treenode*, Entry*);
+        void print_preorder(Treenode*);
 };
 
 #endif

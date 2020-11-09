@@ -20,7 +20,7 @@ int Treenode::get_height(){
     return height;
 }
 
-int Treenode::get_entry_hashvalue(){
+unsigned long long Treenode::get_entry_hashvalue(){
     return entry->get_hashvalue();
 }
 
@@ -103,11 +103,12 @@ Treenode* AVL::left_rotate(Treenode* root) {
 }
 
 Treenode* AVL::insert(Treenode* n, Entry* r) {
+    // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
     if(n == NULL) {
         size++;
         return new Treenode(r);
     } 
-    else if(r->get_hashvalue() > n->get_entry_hashvalue()) { // if Entry date later insert to the right
+    else if(r->get_hashvalue() > n->get_entry_hashvalue()) { // if Entry date later insert to the right      
         n->right = insert(n->right, r);
     } 
     else if(r->get_hashvalue() <= n->get_entry_hashvalue() ) { // if Entry date earlier insert to the left
@@ -136,4 +137,12 @@ Treenode* AVL::insert(Treenode* n, Entry* r) {
         }
     }
     return n;
+}
+
+void AVL::print_preorder(Treenode* n){
+    if (n == NULL) 
+        return; 
+    std::cout << n->get_entry_hashvalue() << " ";
+    print_preorder(n->left); 
+    print_preorder(n->right);
 }

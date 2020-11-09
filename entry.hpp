@@ -9,7 +9,7 @@ class Entry{
     private:
         std::string id;
         std::string page_title;
-        int hashvalue;
+        unsigned long long hashvalue;
         // STRING LIST OF PRODUCTS;       
     public:
         Entry();                            //constructors
@@ -17,7 +17,7 @@ class Entry{
         ~Entry();                           //destructor
         std::string get_id();               //getters
         std::string get_page_title();
-        int get_hashvalue();
+        unsigned long long get_hashvalue();
         void print();                       //misc   
 };
 
