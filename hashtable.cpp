@@ -7,7 +7,7 @@ Bucket::Bucket(const int val, Entry* e) {
     next = NULL;
     value = val;
     tree_p = new AVL();
-    tree_p->insert(tree_p->root, e); //
+    tree_p->root = tree_p->insert(tree_p->root, e); //
     // std::cout << "Bucket " << value << " created!" << std::endl;
 }
 
@@ -82,7 +82,7 @@ void HashTable::insert(Entry* e) {
         // get bucket if exists else null
         Bucket* b = findBucket(hashValue);
         if (b != NULL) { // insert entry in its avl tree
-            b->getTree()->insert(b->getTree()->root, e);
+            b->getTree()->root = b->getTree()->insert(b->getTree()->root, e);
         } else { // create new bucket
             Bucket* temp;
             temp = head;

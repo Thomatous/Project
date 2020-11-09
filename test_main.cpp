@@ -39,6 +39,5 @@ int main() {
     // std::cout << "Left " <<avl.root->left->get_entry_hashvalue() << std::endl;
     // std::cout << "Right " <<avl.root->right->get_entry_hashvalue() << std::endl;
 
-
     return 0;
 }
