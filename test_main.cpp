@@ -31,6 +31,10 @@ int main() {
 
     avl.print_preorder(avl.root);
     std::cout << std::endl;
+    std::cout << avl.search(avl.root, e1->get_hashvalue()) << std::endl;
+    std::cout << avl.search(avl.root, 0) << std::endl;
+    // std::cout << avl.search(avl.root, 0);
+
     // std::cout << "Root " <<avl.root->get_entry_hashvalue() << std::endl;
     // std::cout << "Left " <<avl.root->left->get_entry_hashvalue() << std::endl;
     // std::cout << "Right " <<avl.root->right->get_entry_hashvalue() << std::endl;
