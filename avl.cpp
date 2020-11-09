@@ -9,7 +9,8 @@ Treenode::Treenode(Entry* new_entry){
 }
 
 Treenode::~Treenode(){
-    // std::cout << "Treenode deleted!" << std::endl;
+    delete entry;
+    std::cout << "Treenode deleted succesfully!" << std::endl;
 }
 
 void Treenode::set_height(int h){
@@ -42,17 +43,17 @@ AVL::AVL():root(NULL), size(0){
 }
 
 AVL::~AVL() {
-    // destructSelf(root);
-    // std::cout << "Tree deleted!" << std::endl;
+    clear(root);
+    std::cout << "Tree deleted succesfully!" << std::endl;
 }
 
-// void AVL::destructSelf(Treenode* n) {
-//     if(n != NULL) {
-//         destructSelf(n->left);
-//         destructSelf(n->right);
-//         delete n;
-//     }
-// }
+void AVL::clear(Treenode* n) {
+    if(n != NULL) {
+        clear(n->left);
+        clear(n->right);
+        delete n;
+    }
+}
 
 int AVL::get_size(){
     return size;

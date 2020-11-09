@@ -23,13 +23,13 @@ class Treenode{
 
 class AVL{
     private:
-
+        int size;
     public:
         Treenode* root;
-        int size;
-
+        
         AVL();
         ~AVL();
+        void clear(Treenode*);
         int get_size();
         int get_balance(Treenode*);
         Treenode* right_rotate(Treenode*);
