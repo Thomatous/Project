@@ -7,7 +7,7 @@ Bucket::Bucket(const int val, Entry* e) {
     next = NULL;
     value = val;
     tree_p = new AVL();
-    tree_p->insert(e); //
+    tree_p->insert(tree_p->root, e); //
     // std::cout << "Bucket " << value << " created!" << std::endl;
 }
 
@@ -51,21 +51,7 @@ HashTable::~HashTable() {
 }
 
 int HashTable::hashFunction(Entry* e) {
-    std::string site = e->get_page_title();
-    std::string id = e->get_id();
-    unsigned long long hashValue = 5381;
-
-    int c;
-    const char* site_c = site.c_str();
-    const char* id_c = id.c_str();
-
-    while (c = *site_c++)
-        hashValue = ((hashValue << 5) + hashValue) + c; /* hash * 33 + c */
-
-    while (c = *id_c++)
-        hashValue = ((hashValue << 5) + hashValue) + c; /* hash * 33 + c */
-
-    return hashValue%tableSize;
+    return e->get_hashvalue()%tableSize;
 }
 
 bool HashTable::isEmpty() {
@@ -96,7 +82,7 @@ void HashTable::insert(Entry* e) {
         // get bucket if exists else null
         Bucket* b = findBucket(hashValue);
         if (b != NULL) { // insert entry in its avl tree
-            b->getTree()->insert(e);
+            b->getTree()->insert(b->getTree()->root, e);
         } else { // create new bucket
             Bucket* temp;
             temp = head;
