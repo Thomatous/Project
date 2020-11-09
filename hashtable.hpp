@@ -32,14 +32,12 @@ public:
 class HashTable {
 private:
     const int tableSize;
-    Bucket* head;
+    AVL* map;
 
 public:
     HashTable(const int);
     ~HashTable();
     int hashFunction(Entry*);
-    bool isEmpty();
-    Bucket* findBucket(const int);
     void insert(Entry*);
 };
 

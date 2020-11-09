@@ -2,6 +2,7 @@
 #include <string>
 #include "entry.hpp"
 #include "avl.hpp"
+#include "hashtable.hpp"
 
 int main() {
     std::cout << "Started." << std::endl;
@@ -38,6 +39,17 @@ int main() {
     // std::cout << "Root " <<avl.root->get_entry_hashvalue() << std::endl;
     // std::cout << "Left " <<avl.root->left->get_entry_hashvalue() << std::endl;
     // std::cout << "Right " <<avl.root->right->get_entry_hashvalue() << std::endl;
+
+    HashTable ht(5);
+    ht.insert(new Entry("a", "0"));
+    ht.insert(new Entry("b", "1"));
+    ht.insert(new Entry("c", "3"));
+    ht.insert(new Entry("d", "5"));
+    ht.insert(new Entry("e", "2"));
+    ht.insert(new Entry("f", "6"));
+    ht.insert(new Entry("g", "2"));
+    ht.insert(new Entry("h", "6"));
+    
 
     return 0;
 }
