@@ -125,7 +125,7 @@ Treenode* AVL::insert(Treenode* n, Entry* r) {
     int b = get_balance(n);
 
     if(b > 1) { // if left has more weight than 1
-        if(r->get_hashvalue() < n->get_entry_hashvalue()){
+        if(r->get_hashvalue() < n->left->get_entry_hashvalue()){
             return right_rotate(n); 
         } 
         else{
@@ -134,7 +134,7 @@ Treenode* AVL::insert(Treenode* n, Entry* r) {
         }
     } 
     else if(b < -1) { //if right has more weight than 1
-        if(r->get_hashvalue() > n->get_entry_hashvalue()) {
+        if(r->get_hashvalue() > n->right->get_entry_hashvalue()) {
             return left_rotate(n);
         } 
         else{

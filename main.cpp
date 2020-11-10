@@ -29,16 +29,18 @@ int main() {
                     exit(2);
                 } else {
                     while (file = readdir(dir_f)) {
-                        // std::cout << "folder = " << folder->d_name << "file = " << file->d_name << std::endl;
-                        std::string id_str = file->d_name;
-                        size_t lastdot = id_str.find_last_of(".");
-                        if (lastdot == std::string::npos) {
-                            // call entry constructor and insert to hashtable
-                        } else {
-                            id_str = id_str.substr(0, lastdot);
-                            std::cout << "folder = " << folder->d_name << "file = " << id_str << std::endl;
-                            // call entry constructor and insert to hashtable
-                            ht.insert(new Entry(std::string(folder->d_name), id_str));
+                        if (file->d_name != std::string(".") && file->d_name != std::string("..")) {
+                            // std::cout << "folder = " << folder->d_name << "file = " << file->d_name << std::endl;
+                            std::string id_str = file->d_name;
+                            size_t lastdot = id_str.find_last_of(".");
+                            if (lastdot == std::string::npos) {
+                                // call entry constructor and insert to hashtable
+                            } else {
+                                id_str = id_str.substr(0, lastdot);
+                                // std::cout << "folder = " << folder->d_name << "file = " << id_str << std::endl;
+                                // call entry constructor and insert to hashtable
+                                ht.insert(new Entry(std::string(folder->d_name), id_str));
+                            }
                         }
                     }
                 }
