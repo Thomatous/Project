@@ -45,11 +45,13 @@ HashTable::~HashTable() {
     delete[] map;
 }
 
-int HashTable::hashFunction(Entry* e) {
+unsigned long long HashTable::hashFunction(Entry* e) {
     return e->get_hashvalue()%tableSize;
 }
 
 void HashTable::insert(Entry* e) {
-    int hashValue = hashFunction(e);
+    unsigned long long hashValue = hashFunction(e);
+    // map[hashValue].print_preorder(map[hashValue].root);
+    std::cout << map[hashValue].get_size() << "\n";
     map[hashValue].root = map[hashValue].insert(map[hashValue].root, e);
 }

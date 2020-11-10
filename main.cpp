@@ -2,12 +2,14 @@
 #include <string>
 #include <dirent.h>
 #include "entry.hpp"
+#include "hashtable.hpp"
 
 int main() {
     DIR *dir_p;
     DIR *dir_f;
     struct dirent *folder;
     int sites_counter = 0;
+    HashTable ht(5);
     std::string* sites;
     std::string input_dir = "./Datasets/2013_camera_specs/";
     if ( (dir_p = opendir(input_dir.c_str())) == NULL ) {
@@ -36,6 +38,7 @@ int main() {
                             id_str = id_str.substr(0, lastdot);
                             std::cout << "folder = " << folder->d_name << "file = " << id_str << std::endl;
                             // call entry constructor and insert to hashtable
+                            ht.insert(new Entry(std::string(folder->d_name), id_str));
                         }
                     }
                 }
