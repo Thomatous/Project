@@ -8,7 +8,8 @@ Entry::Entry(){
 Entry::Entry(std::string new_page_title, std::string new_id){
     id = new_id;           
     page_title = new_page_title;
-
+    clique = new Clique();
+    clique->push(this);
     //generating hashvalue for entry
     hashvalue = hash_value_calculator(new_page_title, new_id);
 }

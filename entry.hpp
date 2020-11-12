@@ -4,13 +4,15 @@
 #include <iostream>
 #include <string>
 #include "utility.hpp"
+#include "entry.hpp"
+#include "clique.hpp"
 
 class Entry{
     private:
         std::string id;
         std::string page_title;
         unsigned long long hashvalue;
-        // STRING LIST OF PRODUCTS;       
+        Clique* clique;       
     public:
         Entry();                            //constructors
         Entry(std::string, std::string);
