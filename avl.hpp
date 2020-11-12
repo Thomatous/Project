@@ -6,7 +6,7 @@
 
 class Treenode{
     private:
-        int height;
+        unsigned int height;
         Entry *entry;
     public:
         Treenode* left;
@@ -16,7 +16,7 @@ class Treenode{
         Treenode(Entry*);
         ~Treenode();
         void set_height(int);
-        int get_height();
+        unsigned int get_height();
         unsigned long long get_entry_hashvalue();
         std::string get_entry_full_name();
         void update_height();
@@ -24,15 +24,15 @@ class Treenode{
 
 class AVL{
     private:
-        int size;
+        unsigned int size;
     public:
         Treenode* root;
         
         AVL();
         ~AVL();
         void clear(Treenode*);
-        int get_size();
-        int get_balance(Treenode*);
+        unsigned int get_size();
+        unsigned int get_balance(Treenode*);
         Treenode* right_rotate(Treenode*);
         Treenode* left_rotate(Treenode*);
         Treenode* insert(Treenode*, Entry*);

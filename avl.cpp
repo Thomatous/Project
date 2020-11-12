@@ -10,14 +10,14 @@ Treenode::Treenode(Entry* new_entry){
 
 Treenode::~Treenode(){
     delete entry;
-    std::cout << "Treenode deleted succesfully!" << std::endl;
+    // std::cout << "Treenode deleted succesfully!" << std::endl;
 }
 
 void Treenode::set_height(int h){
     height = h;
 }
 
-int Treenode::get_height(){
+unsigned int Treenode::get_height(){
     return height;
 }
 
@@ -59,11 +59,11 @@ void AVL::clear(Treenode* n) {
     }
 }
 
-int AVL::get_size(){
+unsigned int AVL::get_size(){
     return size;
 }
 
-int AVL::get_balance(Treenode* n) { // return positive if left has more weight, negative if left has less wight and zero if balanced or null
+unsigned int AVL::get_balance(Treenode* n) { // return positive if left has more weight, negative if left has less wight and zero if balanced or null
     if(n == NULL) {
         return 0;
     }
@@ -111,6 +111,7 @@ Treenode* AVL::insert(Treenode* n, Entry* r) {
     // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
     if(n == NULL) {
         size++;
+        std::cout << r->get_hashvalue() << "\n";
         return new Treenode(r);
     } 
     else if(r->get_hashvalue() > n->get_entry_hashvalue()) { // if Entry date later insert to the right      
@@ -124,7 +125,7 @@ Treenode* AVL::insert(Treenode* n, Entry* r) {
     int b = get_balance(n);
 
     if(b > 1) { // if left has more weight than 1
-        if(r->get_hashvalue() < n->get_entry_hashvalue()){
+        if(r->get_hashvalue() < n->left->get_entry_hashvalue()){
             return right_rotate(n); 
         } 
         else{
@@ -133,7 +134,7 @@ Treenode* AVL::insert(Treenode* n, Entry* r) {
         }
     } 
     else if(b < -1) { //if right has more weight than 1
-        if(r->get_hashvalue() > n->get_entry_hashvalue()) {
+        if(r->get_hashvalue() > n->right->get_entry_hashvalue()) {
             return left_rotate(n);
         } 
         else{
