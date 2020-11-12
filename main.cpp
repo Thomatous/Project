@@ -57,10 +57,18 @@ int main() {
     std::string line, word = "";
 
     while( getline(file, line) ) {
-        std::stringstream input_stringstream(line);
-        while( getline(input_stringstream, word, ',') ) {
-            std::cout << word << "\n";
-            
+        std::stringstream line_stringstream(line);
+        while( getline( line_stringstream, word, ',') ) {
+            // std::cout << word << "\n";
+            size_t first_slash = word.find_first_of('/');
+            if ( first_slash == std::string::npos) { // then it's 0 || 1 for similarities
+                // do stuff
+            } else { // then it's a products url
+                std::string site = word.substr(0,first_slash);
+                std::string id = word.substr(first_slash+2);
+                // std::cout << site << " " << id << "\n";
+                
+            }
         }
     }
     return 0;
