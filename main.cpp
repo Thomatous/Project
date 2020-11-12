@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <dirent.h>
 #include "entry.hpp"
 #include "hashtable.hpp"
@@ -50,5 +51,11 @@ int main() {
         (void) closedir (dir_p);
     } 
 
+    // parse csv
+    std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
+    std::string line="";
+    while( getline(file,line) ) {
+        std::cout << line << "\n";
+    }
     return 0;
 }
