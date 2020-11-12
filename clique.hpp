@@ -13,15 +13,16 @@ struct Cliquenode{
 
 class Clique{
     private:
-        Cliquenode* head;
         int size;
     public:
+        Cliquenode* head;
         Clique();
         ~Clique();
         int get_size();
         bool is_empty();
         void push(Entry*);
-        Cliquenode* merge(Cliquenode*);
+        void merge(Clique*);
         bool find(Entry*);
+        void print();
 };
 #endif

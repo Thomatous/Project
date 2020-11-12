@@ -8,7 +8,7 @@ Cliquenode::Cliquenode(Entry* e){
 }
 
 Cliquenode::~Cliquenode(){
-    delete data;
+    std::cout << "Cliquenode deleted!" << std::endl;
 }
 
 //-------------------Clique-------------------
@@ -18,11 +18,14 @@ Clique::Clique(){
 }
 
 Clique::~Clique(){
-    while(head->next != NULL){
-        Cliquenode* temp = head;
-        head = head->next;
-        delete temp;   
-    }
+
+        while(head->next != NULL){
+            Cliquenode* temp = head;
+            head = head->next;
+            delete temp;   
+        }
+        delete head;
+        std::cout << "Clique deleted!" << std::endl;
 }
 
 int Clique::get_size(){
@@ -40,13 +43,14 @@ void Clique::push(Entry* e){
     size++;   
 }
 
-Cliquenode* Clique::merge(Cliquenode* other_head){
+void Clique::merge(Clique* c){
     Cliquenode* temp = head;
     while(temp->next != NULL){
         temp = temp->next;
     }
-    temp->next = other_head;
-    return head;
+    temp->next = c->head;
+    size += c->get_size();
+    c->head = head;
 }
 
 bool Clique::find(Entry* e){
@@ -58,5 +62,16 @@ bool Clique::find(Entry* e){
         temp = temp->next;
     }
     return false;
+}
+
+void Clique::print(){
+    std::cout << "Clique: " << std::endl;
+    Cliquenode* temp = head;
+    while(temp->next != NULL){
+        temp->data->print();
+        temp = temp->next;
+    }
+    temp->data->print();
+    std::cout << std::endl;
 }
 
