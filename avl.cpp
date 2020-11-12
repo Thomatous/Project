@@ -155,7 +155,7 @@ void AVL::print_preorder(Treenode* n){
 
 Entry* AVL::search(Treenode* n, unsigned long long hashvalue){
     if(n == NULL){
-        return "Entry not in tree!";
+        return NULL;
     }
     if(hashvalue < n->get_entry_hashvalue()){
         return search(n->left, hashvalue);
