@@ -157,11 +157,13 @@ Entry* AVL::search(Treenode* n, unsigned long long hashvalue){
     if(n == NULL){
         return NULL;
     }
-    if(hashvalue < n->get_entry_hashvalue()){
+    else if(hashvalue < n->get_entry_hashvalue()){
         return search(n->left, hashvalue);
     }
-    if(hashvalue > n->get_entry_hashvalue()){
+    else if(hashvalue > n->get_entry_hashvalue()){
         return search(n->right, hashvalue);
     }
-    return n->get_entry(); // We found the value.
+    else {
+        return n->get_entry(); // We found the value.
+    }
 }

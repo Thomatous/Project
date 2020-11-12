@@ -20,11 +20,11 @@ int main() {
     } else {
         while (folder = readdir(dir_p)) {
             if (folder->d_name != std::string(".") && folder->d_name != std::string("..")) {
-                std::cout << "folder = " << folder->d_name << std::endl;
+                // std::cout << "folder = " << folder->d_name << std::endl;
                 // for each json use name for constructor
                 std::string file_dir = "./Datasets/2013_camera_specs/";
                 file_dir.append(folder->d_name);
-                std::cout << file_dir << "\n";
+                // std::cout << file_dir << "\n";
                 struct dirent *file;
                 if ( (dir_f = opendir(file_dir.c_str())) == NULL ) {
                     perror("can't open the given directory");
@@ -67,9 +67,11 @@ int main() {
                 std::string site = word.substr(0,first_slash);
                 std::string id = word.substr(first_slash+2);
                 // std::cout << site << " " << id << "\n";
-                unsigned long long hash_value = hash_value_calculator(site, site);
+                unsigned long long hash_value = hash_value_calculator(site, id);
                 Entry* a;
                 a = ht.search(hash_value);
+                if (a)
+                    a->print();
             }
         }
     }
