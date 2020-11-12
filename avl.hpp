@@ -18,7 +18,7 @@ class Treenode{
         void set_height(int);
         unsigned int get_height();
         unsigned long long get_entry_hashvalue();
-        std::string get_entry_full_name();
+        Entry* get_entry();
         void update_height();
 };
 
@@ -37,7 +37,7 @@ class AVL{
         Treenode* left_rotate(Treenode*);
         Treenode* insert(Treenode*, Entry*);
         void print_preorder(Treenode*);
-        std::string search(Treenode*, unsigned long long);
+        Entry* search(Treenode*, unsigned long long);
 };
 
 #endif

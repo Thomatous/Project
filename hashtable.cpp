@@ -55,3 +55,8 @@ void HashTable::insert(Entry* e) {
     // std::cout << map[hashValue].get_size() << "\n";
     map[hashValue].root = map[hashValue].insert(map[hashValue].root, e);
 }
+
+Entry* HashTable::search(unsigned long long hash_value) {
+    int bucket = hash_value%tableSize;
+    return map[bucket].search(map[bucket].root, hash_value);
+}

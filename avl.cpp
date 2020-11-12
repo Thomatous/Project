@@ -25,8 +25,8 @@ unsigned long long Treenode::get_entry_hashvalue(){
     return entry->get_hashvalue();
 }
 
-std::string Treenode::get_entry_full_name(){
-    return entry->get_page_title() + "//" + entry->get_id();
+Entry* Treenode::get_entry(){
+    return entry;
 }
 
 void Treenode::update_height(){
@@ -153,15 +153,17 @@ void AVL::print_preorder(Treenode* n){
     print_preorder(n->right);
 }
 
-std::string AVL::search(Treenode* n, unsigned long long hashvalue){
+Entry* AVL::search(Treenode* n, unsigned long long hashvalue){
     if(n == NULL){
-        return "Entry not in tree!";
+        return NULL;
     }
-    if(hashvalue < n->get_entry_hashvalue()){
+    else if(hashvalue < n->get_entry_hashvalue()){
         return search(n->left, hashvalue);
     }
-   if(hashvalue > n->get_entry_hashvalue()){
+    else if(hashvalue > n->get_entry_hashvalue()){
         return search(n->right, hashvalue);
     }
-    return n->get_entry_full_name(); // We found the value.
+    else {
+        return n->get_entry(); // We found the value.
+    }
 }

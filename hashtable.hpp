@@ -39,6 +39,7 @@ public:
     ~HashTable();
     unsigned long long hashFunction(Entry*);
     void insert(Entry*);
+    Entry* search(unsigned long long);
 };
 
 #endif
