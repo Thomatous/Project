@@ -11,7 +11,7 @@ int main() {
     DIR *dir_f;
     struct dirent *folder;
     int sites_counter = 0;
-    HashTable ht(5);
+    HashTable ht(50);
     std::string* sites;
     std::string input_dir = "./Datasets/2013_camera_specs/";
     if ( (dir_p = opendir(input_dir.c_str())) == NULL ) {
@@ -60,21 +60,37 @@ int main() {
 
     while( getline(file, line) ) {
         std::stringstream line_stringstream(line);
+        Entry* a = NULL;
+        Entry* b = NULL;
         while( getline( line_stringstream, word, ',') ) {
             // std::cout << word << "\n";
             size_t first_slash = word.find_first_of('/');
             if ( first_slash == std::string::npos) { // then it's 0 || 1 for similarities
-                // do stuff
+                if(std::strcmp(word.c_str(), "1") == 0){
+                    if(a != NULL && b != NULL){ //if both specs have iterated
+                        if(a->clique->find(b) == false){
+                            a->clique->merge(b->clique);
+                        }
+                    }    
+                } 
             } else { // then it's a products url
                 std::string site = word.substr(0,first_slash);
                 std::string id = word.substr(first_slash+2);
                 // std::cout << site << " " << id << "\n";
                 unsigned long long hash_value = hash_value_calculator(site, id);
-                Entry* a;
-                a = ht.search(hash_value);
-                if (a)
-                    a->print();
+                if(a == NULL) {
+                    a = ht.search(hash_value);
+                    // std::cout<<"a: ";
+                    // a->print();
+                    // std::cout<<std::endl;
+                }
+                else{
+                    b = ht.search(hash_value);
+                    // b->print();
+                    // std::cout<<std::endl;
+                } 
             }
+
         }
     }
     return 0;

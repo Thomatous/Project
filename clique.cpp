@@ -8,7 +8,7 @@ Cliquenode::Cliquenode(Entry* e){
 }
 
 Cliquenode::~Cliquenode(){
-    std::cout << "Cliquenode deleted!" << std::endl;
+    // std::cout << "Cliquenode deleted!" << std::endl;
 }
 
 //-------------------Clique-------------------
@@ -25,7 +25,7 @@ Clique::~Clique(){
             delete temp;   
         }
         delete head;
-        std::cout << "Clique deleted!" << std::endl;
+        // std::cout << "Clique deleted!" << std::endl;
 }
 
 int Clique::get_size(){

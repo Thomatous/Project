@@ -12,8 +12,8 @@ class Entry{
         std::string id;
         std::string page_title;
         unsigned long long hashvalue;
-        Clique* clique;       
     public:
+        Clique* clique;       
         Entry();                            //constructors
         Entry(std::string, std::string);
         ~Entry();                           //destructor
