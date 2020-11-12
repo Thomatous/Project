@@ -59,7 +59,7 @@ int main() {
     while( getline(file, line) ) {
         std::stringstream input_stringstream(line);
         while( getline(input_stringstream, word, ',') ) {
-            // std::cout << word << "\n";
+            std::cout << word << "\n";
             
         }
     }

@@ -111,7 +111,7 @@ Treenode* AVL::insert(Treenode* n, Entry* r) {
     // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
     if(n == NULL) {
         size++;
-        std::cout << r->get_hashvalue() << "\n";
+        // std::cout << r->get_hashvalue() << "\n";
         return new Treenode(r);
     } 
     else if(r->get_hashvalue() > n->get_entry_hashvalue()) { // if Entry date later insert to the right      

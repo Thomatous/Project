@@ -10,17 +10,7 @@ Entry::Entry(std::string new_page_title, std::string new_id){
     page_title = new_page_title;
 
     //generating hashvalue for entry
-    hashvalue = 5381;
-
-    int c;
-    const char* site_c = page_title.c_str();
-    const char* id_c = id.c_str();
-
-    while (c = *site_c++)
-        hashvalue = ((hashvalue << 5) + hashvalue) + c; /* hash * 33 + c */
-
-    while (c = *id_c++)
-        hashvalue = ((hashvalue << 5) + hashvalue) + c; /* hash * 33 + c */
+    hashvalue = hash_value_calculator(new_page_title, new_id);
 }
 
 Entry::~Entry(){

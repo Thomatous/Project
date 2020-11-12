@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-
+#include "utility.hpp"
 
 class Entry{
     private:
