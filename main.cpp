@@ -45,6 +45,8 @@ int main() {
                             }
                         }
                     }
+
+                    (void) closedir (dir_f);
                 }
             } 
         }

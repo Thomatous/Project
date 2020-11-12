@@ -4,6 +4,7 @@
 #include <iostream>
 #include "entry.hpp"
 
+class Entry;
 struct Cliquenode{
     Entry* data;
     Cliquenode* next;

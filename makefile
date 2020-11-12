@@ -1,5 +1,5 @@
-project1:main.o avl.o entry.o hashtable.o
-	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o -g3
+project1:main.o avl.o entry.o hashtable.o clique.o utility.o
+	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o -g3
 
 avl_test:test_main.o avl.o entry.o clique.o
 	g++ -o avl_test -std=c++11 test_main.o avl.o entry.o clique.o -g3
@@ -22,5 +22,8 @@ hashtable.o:hashtable.cpp hashtable.hpp
 clique.o:clique.cpp clique.hpp
 	g++ -c -std=c++11 clique.cpp -g3
 
+utility.o:utility.cpp utility.hpp
+	g++ -c -std=c++11 utility.cpp -g3
+
 clean:
-	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o clique.o avl_test
+	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o avl_test

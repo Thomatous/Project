@@ -4,9 +4,9 @@
 #include <iostream>
 #include <string>
 #include "utility.hpp"
-#include "entry.hpp"
 #include "clique.hpp"
 
+class Clique;
 class Entry{
     private:
         std::string id;
