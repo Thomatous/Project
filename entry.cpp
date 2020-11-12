@@ -34,3 +34,8 @@ unsigned long long Entry::get_hashvalue(){
 void Entry::print(){
     std::cout << page_title << "//" << id << std::endl;
 }
+
+void Entry::merge(Entry *e){
+    clique->merge(e->clique);
+    e->clique = clique;
+}

@@ -56,7 +56,7 @@ void Clique::merge(Clique* c){
 bool Clique::find(Entry* e){
     Cliquenode* temp = head;
     while(temp->next != NULL){
-        if(e->get_hashvalue() == temp->data->get_hashvalue()){
+        if(e == temp->data){
             return true;
         }
         temp = temp->next;

@@ -20,7 +20,8 @@ class Entry{
         std::string get_id();               //getters
         std::string get_page_title();
         unsigned long long get_hashvalue();
-        void print();                       //misc   
+        void print();                       //misc
+        void merge(Entry*);  
 };
 
 #endif
