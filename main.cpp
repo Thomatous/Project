@@ -67,7 +67,9 @@ int main() {
                 std::string site = word.substr(0,first_slash);
                 std::string id = word.substr(first_slash+2);
                 // std::cout << site << " " << id << "\n";
-                
+                unsigned long long hash_value = hash_value_calculator(site, site);
+                Entry* a;
+                a = ht.search(hash_value);
             }
         }
     }
