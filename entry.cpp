@@ -37,5 +37,5 @@ void Entry::print(){
 
 void Entry::merge(Entry *e){
     clique->merge(e->clique);
-    e->clique = clique;
+    // e->clique = clique;
 }

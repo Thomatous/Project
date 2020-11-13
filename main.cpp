@@ -69,6 +69,9 @@ int main() {
                 if(std::strcmp(word.c_str(), "1") == 0){
                     if(a != NULL && b != NULL){ //if both specs have iterated
                         if(a->clique->find(b) == false){
+                            std::cout << "Merging:" << std::endl;
+                            a->clique->print();
+                            b->clique->print();
                             a->merge(b);
                         }
                     }    
@@ -80,17 +83,17 @@ int main() {
                 unsigned long long hash_value = hash_value_calculator(site, id);
                 if(a == NULL) {
                     a = ht.search(hash_value);
-                    std::cout<<"a: ";
+                    // std::cout<<"a: ";
                     // a->print();
                     // std::cout<<std::endl;
-                    a->clique->print();
+                    // a->clique->print();
                 }
                 else{
                     b = ht.search(hash_value);
-                    std::cout<<"b: ";
+                    // std::cout<<"b: ";
                     // b->print();
                     // std::cout<<std::endl;
-                    b->clique->print();
+                    // b->clique->print();
                 } 
             }
 
