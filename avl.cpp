@@ -9,7 +9,8 @@ Treenode::Treenode(Entry* new_entry){
 }
 
 Treenode::~Treenode(){
-    delete entry;
+    if(entry != NULL)
+        delete entry;
     // std::cout << "Treenode deleted succesfully!" << std::endl;
 }
 
@@ -48,7 +49,7 @@ AVL::AVL():root(NULL), size(0){
 
 AVL::~AVL() {
     clear(root);
-    std::cout << "Tree deleted succesfully!" << std::endl;
+    // std::cout << "Tree deleted succesfully!" << std::endl;
 }
 
 void AVL::clear(Treenode* n) {

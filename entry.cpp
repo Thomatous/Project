@@ -15,8 +15,8 @@ Entry::Entry(std::string new_page_title, std::string new_id){
 }
 
 Entry::~Entry(){
-    delete clique;
-    //call destructor for product list
+    if(clique != NULL)
+        delete clique;
 }
 
 std::string Entry::get_id(){

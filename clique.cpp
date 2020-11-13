@@ -8,6 +8,8 @@ Cliquenode::Cliquenode(Entry* e){
 }
 
 Cliquenode::~Cliquenode(){
+    data = NULL;
+    next = NULL;
     // std::cout << "Cliquenode deleted!" << std::endl;
 }
 
@@ -18,14 +20,15 @@ Clique::Clique(){
 }
 
 Clique::~Clique(){
-
-        while(head->next != NULL){
-            Cliquenode* temp = head;
-            head = head->next;
-            delete temp;   
-        }
-        delete head;
-        // std::cout << "Clique deleted!" << std::endl;
+    update_clique_ptrs(NULL);
+    
+    Cliquenode* temp = head;
+    while(temp != NULL){
+        delete temp;
+        temp = temp->next;
+    }
+    head = NULL;   
+    // std::cout << "Clique deleted!" << std::endl;
 }
 
 int Clique::get_size(){
