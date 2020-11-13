@@ -68,14 +68,13 @@ int main() {
             if ( first_slash == std::string::npos) { // then it's 0 || 1 for similarities
                 if(std::strcmp(word.c_str(), "1") == 0){
                     if(a != NULL && b != NULL){ //if both specs have iterated
-                        if(a->clique->find(b) == false){
-                            std::cout << "Merging:" << std::endl;
-                            a->clique->print();
-                            b->clique->print();
-                            a->merge(b);
-                        }
-                    }    
-                } 
+                        // std::cout << "Merging:" << std::endl;
+                        // a->clique->print();
+                        // b->clique->print();
+                        a->merge(b);
+                    }
+                }    
+                
             } else { // then it's a products url
                 std::string site = word.substr(0,first_slash);
                 std::string id = word.substr(first_slash+2);
@@ -98,6 +97,7 @@ int main() {
             }
 
         }
+
     }
     return 0;
 }

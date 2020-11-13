@@ -44,22 +44,20 @@ void Clique::push(Entry* e){
 }
 
 void Clique::merge(Clique* c){
-    if(head->data->get_hashvalue() != c->head->data->get_hashvalue()){            //can't combine a list with itself
-        Cliquenode* temp = head;
-        while(temp != NULL){
-            temp = temp->next;
-        }
-        temp = c->head;
-        size += c->get_size();
-        c->size = size;
-        c->head = head;
+    Cliquenode* temp = head;
+    while(temp->next != NULL){
+        temp = temp->next;
     }
+    temp->next = c->head;
+    size += c->get_size();
+    c->size = size;
+    c->head = head;
 }
 
 bool Clique::find(Entry* e){
     Cliquenode* temp = head;
     while(temp != NULL){
-        if(e == temp->data){
+        if(e->get_hashvalue() == temp->data->get_hashvalue()){
             return true;
         }
         temp = temp->next;
@@ -78,3 +76,10 @@ void Clique::print(){
     std::cout << std::endl;
 }
 
+void Clique::update_clique_ptrs(Clique* address){
+    Cliquenode* temp = head;
+    while(temp != NULL){
+        temp->data->clique = address;
+        temp = temp->next;
+    }
+}

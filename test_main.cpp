@@ -19,27 +19,33 @@ int main() {
     e3->print();
     // std::cout << e3->get_hashvalue() << std::endl;
 
-    Clique cl;
-    std::cout<< cl.get_size() << std::endl;
+    // e1->clique->print();
+    e1->merge(e2);
+    e2->merge(e1);
+    e1->merge(e3);
+    
+    // e2->clique->print();
+    // e1->clique->print();
+    // e3->clique->print();
+    // std::cout << e1->clique->get_size() << std::endl;
 
-    cl.push(e1);
-    cl.push(e2);
-    cl.print();
-    // std::cout<< cl.get_size() << std::endl;
+    
+    Entry *e4 = new Entry("e", "4");
+    Entry *e5 = new Entry("e", "5");
+    Entry *e6 = new Entry("e", "6");
 
-    Clique cl2;
-    cl2.push(e3);
-    cl2.print();
-
-    cl.merge(&cl2);
-    cl.print();
-    // std::cout<< cl.get_size() << std::endl;
-    cl2.print();
-
-
-    // Entry *e4 = new Entry("e", "4");
-    // Entry *e5 = new Entry("e", "5");
-    // Entry *e6 = new Entry("e", "6");
+    e4->merge(e5);
+    e4->merge(e6);
+    e4->merge(e4);
+    e1->merge(e4);
+    e1->merge(e2);
+    e1->clique->print();
+    std::cout << "e1 " << e1->clique << std::endl;
+    std::cout << "e2 " << e2->clique << std::endl;
+    std::cout << "e3 " << e3->clique << std::endl;
+    std::cout << "e4 " << e4->clique << std::endl;
+    std::cout << "e5 " << e5->clique << std::endl;
+    std::cout << "e6 " << e6->clique << std::endl;
 
     // AVL avl;
     // avl.root = avl.insert(avl.root, e1);

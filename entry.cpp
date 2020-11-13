@@ -36,6 +36,8 @@ void Entry::print(){
 }
 
 void Entry::merge(Entry *e){
-    clique->merge(e->clique);
-    // e->clique = clique;
+    if(e->clique != clique){
+        clique->merge(e->clique);
+        clique->update_clique_ptrs(e->clique);
+    }
 }

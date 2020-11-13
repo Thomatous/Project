@@ -25,5 +25,6 @@ class Clique{
         void merge(Clique*);
         bool find(Entry*);
         void print();
+        void update_clique_ptrs(Clique*);
 };
 #endif
