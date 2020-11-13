@@ -12,6 +12,8 @@ int main() {
     struct dirent *folder;
     int sites_counter = 0;
     HashTable ht(50);
+    Clique list_of_entries;
+    Entry* e;
     std::string* sites;
     std::string input_dir = "./Datasets/2013_camera_specs/";
     if ( (dir_p = opendir(input_dir.c_str())) == NULL ) {
@@ -41,7 +43,9 @@ int main() {
                                 id_str = id_str.substr(0, lastdot);
                                 // std::cout << "folder = " << folder->d_name << "file = " << id_str << std::endl;
                                 // call entry constructor and insert to hashtable
-                                ht.insert(new Entry(std::string(folder->d_name), id_str));
+                                e = new Entry(std::string(folder->d_name), id_str);
+                                list_of_entries.push(e);
+                                ht.insert(e);
                             }
                         }
                     }
@@ -99,5 +103,14 @@ int main() {
         }
 
     }
+
+    std::ofstream output;
+    output.open("output.csv");
+    output << "left_spec_id,right_spec_id\n";
+    
+
+
+    output.close();
+    
     return 0;
 }
