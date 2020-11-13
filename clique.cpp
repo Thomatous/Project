@@ -22,12 +22,11 @@ Clique::Clique(){
 Clique::~Clique(){
     update_clique_ptrs(NULL);
     
-    Cliquenode* temp = head;
-    while(temp != NULL){
+    while(head != NULL){
+        Cliquenode* temp = head;
+        head = head->next;
         delete temp;
-        temp = temp->next;
     }
-    head = NULL;   
     // std::cout << "Clique deleted!" << std::endl;
 }
 
@@ -46,15 +45,21 @@ void Clique::push(Entry* e){
     size++;   
 }
 
+Cliquenode* Clique::pop() {
+    Cliquenode* temp;
+    temp = head;
+    head = head->next;
+    size--;
+    return temp;
+}
+
 void Clique::merge(Clique* c){
-    Cliquenode* temp = head;
-    while(temp->next != NULL){
-        temp = temp->next;
+    while( !(c->is_empty()) ) {
+        Cliquenode* new_node = c->pop();
+        this->push(new_node->data);
+        delete new_node;
     }
-    temp->next = c->head;
-    size += c->get_size();
-    c->size = size;
-    c->head = head;
+    delete c;
 }
 
 bool Clique::find(Entry* e){

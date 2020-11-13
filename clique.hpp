@@ -22,6 +22,7 @@ class Clique{
         int get_size();
         bool is_empty();
         void push(Entry*);
+        Cliquenode* pop();
         void merge(Clique*);
         bool find(Entry*);
         void print();
