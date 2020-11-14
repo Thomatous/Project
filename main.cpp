@@ -126,13 +126,15 @@ int main() {
                 }
                 table[i]->data->clique = NULL;
             }
-            c->update_clique_ptrs(NULL);
+            // c->update_clique_ptrs(NULL);
+            for(int i=0 ; i<size ; i++) {
+                delete table[i];
+            }
 
         }
         delete c;
         delete c_n;
     }
-
 
     output.close();
     
