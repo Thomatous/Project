@@ -7,6 +7,9 @@ avl_test:test_main.o avl.o entry.o clique.o utility.o
 hashtable_test: hashtable_test.o hashtable.o avl.o entry.o clique.o utility.o
 	g++ -o hashtable_test -std=c++11 hashtable_test.o avl.o entry.o hashtable.o clique.o utility.o -g3
 
+entry_test: entry_test.o entry.o clique.o utility.o
+	g++ -o entry_test -std=c++11 entry_test.o entry.o clique.o utility.o -g3
+
 main.o:main.cpp
 	g++ -c -std=c++11 main.cpp -g3
 
@@ -31,5 +34,8 @@ utility.o:utility.cpp utility.hpp
 hashtable_test.o:hashtable_test.cpp
 	g++ -c -std=c++11 hashtable_test.cpp -g3
 
+entry_test.o:entry_test.cpp
+	g++ -c -std=c++11 entry_test.cpp -g3
+
 clean:
-	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o avl_test
+	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o avl_test hashtable_test entry_test hashtable_test.o entry_test.o
