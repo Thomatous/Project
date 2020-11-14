@@ -37,6 +37,7 @@ private:
 public:
     HashTable(const int);
     ~HashTable();
+    int get_size();
     unsigned long long hashFunction(Entry*);
     void insert(Entry*);
     Entry* search(unsigned long long);
