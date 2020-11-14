@@ -64,7 +64,7 @@ unsigned int AVL::get_size(){
     return size;
 }
 
-unsigned int AVL::get_balance(Treenode* n) { // return positive if left has more weight, negative if left has less wight and zero if balanced or null
+int AVL::get_balance(Treenode* n) { // return positive if left has more weight, negative if left has less wight and zero if balanced or null
     if(n == NULL) {
         return 0;
     }

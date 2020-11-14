@@ -32,7 +32,7 @@ class AVL{
         ~AVL();
         void clear(Treenode*);
         unsigned int get_size();
-        unsigned int get_balance(Treenode*);
+        int get_balance(Treenode*);
         Treenode* right_rotate(Treenode*);
         Treenode* left_rotate(Treenode*);
         Treenode* insert(Treenode*, Entry*);
