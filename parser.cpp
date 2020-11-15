@@ -1,12 +1,11 @@
-#include <iostream>
-#include <fstream> 
-#include <string.h>
+#include "parser.hpp"
 
-int main() {
+Parserlist* Parser::parse(std::string path){
+    
+    list = new Parserlist();
+
     std::string line;
-
-    std::ifstream file("Datasets/2013_camera_specs/cammarkt.com/0.json");
-
+    std::ifstream file(path);
     size_t pos, temp_pos;
     std::string var, content, temp;
 
@@ -41,11 +40,12 @@ int main() {
                 temp_pos = temp.find_first_of("\"");
                 content = temp.substr(0, temp_pos);
             }
-            std::cout << var + ": " << content << std::endl;
+            // std::cout << var + ": " << content << std::endl;
+            list->push(var, content);
         }
     }
     // Close the file
-    file.close(); 
-
-    return 0;
+    file.close();
+    return list;
 }
+
