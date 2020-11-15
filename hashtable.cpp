@@ -2,41 +2,6 @@
 
 using namespace std;
 
-// creating bucket based on its first entry
-Bucket::Bucket(const int val, Entry* e) {
-    next = NULL;
-    value = val;
-    tree_p = new AVL();
-    tree_p->root = tree_p->insert(tree_p->root, e); //
-    // std::cout << "Bucket " << value << " created!" << std::endl;
-}
-
-Bucket::~Bucket() {
-    // std::cout << "Bucket Destroyed!" << std::endl;
-}
-
-int Bucket::getValue() {
-    return value;
-}
-
-Bucket* Bucket::getNext() {
-    return next;
-}
-
-void Bucket::setValue(int val) {
-    value = val;
-}
-
-void Bucket::setNext(Bucket* hnp) {
-    next = hnp;
-}
-
-AVL* Bucket::getTree() {
-    return tree_p;
-}
-
-/////////////////////////////////////////////////////////////////////////
-
 HashTable::HashTable(const int tSize): tableSize(tSize) {
     map = new AVL[tSize];
 }
