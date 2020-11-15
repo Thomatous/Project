@@ -7,28 +7,6 @@
 #include <cstring>
 #include "avl.hpp"
 
-////////////////////////////////////////////////////////////////
-
-class Bucket {
-private:
-    int value;
-    AVL* tree_p;
-    Bucket* next;
-
-public:
-    Bucket(const int, Entry*);
-    ~Bucket();
-    int getValue();
-    Bucket* getNext();
-    void setValue(int);
-    void setNext(Bucket*);
-    AVL* getTree();
-    int getNumPairs();
-    void increaseNumPairs();
-};
-
-////////////////////////////////////////////////////////////////
-
 class HashTable {
 private:
     const int tableSize;
@@ -40,7 +18,7 @@ public:
     int get_size();
     unsigned long long hashFunction(Entry*);
     void insert(Entry*);
-    Entry* search(unsigned long long);
+    Entry* search(unsigned long long); // search the right tree based on entry hashvalue
 };
 
 #endif
