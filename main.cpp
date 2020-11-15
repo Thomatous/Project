@@ -107,8 +107,34 @@ int main() {
     std::ofstream output;
     output.open("output.csv");
     output << "left_spec_id,right_spec_id\n";
-    
+    Cliquenode* c_n = NULL;
+    Clique* c = NULL;
+    while( !(list_of_entries.is_empty()) ) {
+        c_n = list_of_entries.pop();
+        c = c_n->data->clique;
+        if( c!= NULL) {
+            int size = c->get_size();
+            Cliquenode* table[size];
+            for(int i=0 ; i<size ; i++) {
+                table[i] = c->pop();
+            }
+            for(int i=0 ; i<size ; i++) {
+                std::string url1 = table[i]->data->get_page_title() + "//" + table[i]->data->get_id();
+                for(int j=i+1 ; j<size ; j++) {
+                    std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
+                    output << url1 << "," << url2 << "\n";
+                }
+                table[i]->data->clique = NULL;
+            }
+            // c->update_clique_ptrs(NULL);
+            for(int i=0 ; i<size ; i++) {
+                delete table[i];
+            }
 
+        }
+        delete c;
+        delete c_n;
+    }
 
     output.close();
     

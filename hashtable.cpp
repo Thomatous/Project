@@ -45,6 +45,10 @@ HashTable::~HashTable() {
     delete[] map;
 }
 
+int  HashTable::get_size() {
+    return tableSize;
+}
+
 unsigned long long HashTable::hashFunction(Entry* e) {
     return e->get_hashvalue()%tableSize;
 }
