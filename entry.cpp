@@ -12,15 +12,27 @@ Entry::Entry(std::string new_page_title, std::string new_id){
     page_title = new_page_title;
     clique = new Clique();
     clique->push(this);
+    specs = NULL;
     //generating hashvalue for entry
     hashvalue = hash_value_calculator(new_page_title, new_id);
 }
 
+Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
+    id = new_id;           
+    page_title = new_page_title;
+    clique = new Clique();
+    clique->push(this);
+    specs = list;
+    //generating hashvalue for entry
+    hashvalue = hash_value_calculator(new_page_title, new_id);
+}
 
 //entry destructor
 Entry::~Entry(){
     if(clique != NULL)
         delete clique;
+    if(specs != NULL)
+        delete specs;
 }
 
 //id getter

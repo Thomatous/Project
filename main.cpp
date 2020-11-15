@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include "entry.hpp"
 #include "hashtable.hpp"
+#include "parser.hpp"
 
 int main() {
     DIR *dir_p;
@@ -14,6 +15,7 @@ int main() {
     Clique list_of_entries;
     Entry* e;
     std::string input_dir = "./Datasets/2013_camera_specs/";
+    Parser p;
     if ( (dir_p = opendir(input_dir.c_str())) == NULL ) {
         perror("can't open the given directory");
         exit(2);
@@ -41,10 +43,10 @@ int main() {
                                 list_of_entries.push(e);
                                 ht.insert(e);
                             } else {
-                                id_str = id_str.substr(0, lastdot);
+                                std::string id = id_str.substr(0, lastdot);
                                 // std::cout << "folder = " << folder->d_name << "file = " << id_str << std::endl;
                                 // call entry constructor and insert to entry_list and hashtable
-                                e = new Entry(std::string(folder->d_name), id_str);
+                                e = new Entry(std::string(folder->d_name), id, p.parse(id_str));
                                 list_of_entries.push(e);
                                 ht.insert(e);
                             }

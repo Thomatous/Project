@@ -1,5 +1,5 @@
-project1:main.o avl.o entry.o hashtable.o clique.o utility.o
-	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o -g3
+project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o
+	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o -g3
 
 avl_test:avl_test.o avl.o entry.o clique.o utility.o
 	g++ -o avl_test -std=c++11 avl_test.o avl.o entry.o clique.o utility.o -g3
@@ -42,6 +42,12 @@ entry_test.o:entry_test.cpp
 
 hashtable_test.o:hashtable_test.cpp
 	g++ -c -std=c++11 hashtable_test.cpp -g3
+
+parser.o:parser.cpp parser.hpp
+	g++ -c -std=c++11 parser.cpp -g3
+
+parserlist.o:parserlist.cpp parserlist.hpp
+	g++ -c -std=c++11 parserlist.cpp -g3
 
 clean:
 	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o clique_test.o avl_test.o avl_test clique_test entry_test entry_test.o hashtable_test.o hashtable_test

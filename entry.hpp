@@ -5,6 +5,7 @@
 #include <string>
 #include "utility.hpp"
 #include "clique.hpp"
+#include "parserlist.hpp"
 
 class Clique;
 class Entry{
@@ -12,10 +13,12 @@ class Entry{
         std::string id;
         std::string page_title;
         unsigned long long hashvalue;
+        Parserlist* specs;
     public:
-        Clique* clique;       
+        Clique* clique;
         Entry();                            //constructors
         Entry(std::string, std::string);
+        Entry(std::string, std::string, Parserlist*);
         ~Entry();                           //destructor
         std::string get_id();               //getters
         std::string get_page_title();
