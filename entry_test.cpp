@@ -1,5 +1,6 @@
 #include "acutest.hpp"
 #include "entry.hpp"
+#include "parser.hpp"
 
 void test_create(void) {
     Entry* e = new Entry("abcd", "1234");
@@ -58,9 +59,18 @@ void test_complicated_merge(void) {
     delete e1,e2,e3,e4,e5,e6;
 }
 
+void test_parser(void) {
+    Parser p;
+    Entry* e = new Entry("abcd", "1234", p.parse("./Datasets/2013_camera_specs/www.ebay.com/24376.json"));
+
+    TEST_ASSERT(e->get_specs()->get_size() == 12);
+    delete e;
+}
+
 TEST_LIST = {
 	{ "entry_create", test_create },
 	{ "entry_merge", test_merge },
 	{ "entry_complicated_merge", test_complicated_merge },
+    { "test_parser", test_parser },
 	{ NULL, NULL }
 };
