@@ -44,9 +44,11 @@ int main() {
                                 ht.insert(e);
                             } else {
                                 std::string id = id_str.substr(0, lastdot);
-                                // std::cout << "folder = " << folder->d_name << "file = " << id_str << std::endl;
+                                // std::cout << "folder = " << folder->d_name << " file = " << id_str << std::endl;
                                 // call entry constructor and insert to entry_list and hashtable
-                                e = new Entry(std::string(folder->d_name), id, p.parse(id_str));
+                                std::string path = file_dir+"/"+id_str;
+                                e = new Entry(std::string(folder->d_name), id, p.parse(path));
+                                // e->get_specs()->print();
                                 list_of_entries.push(e);
                                 ht.insert(e);
                             }
