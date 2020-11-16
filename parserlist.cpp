@@ -33,7 +33,7 @@ void Parserlist::push(std::string name, std::string content){
 void Parserlist::print(){
     Parserlistnode* temp = head;
     while(temp != NULL){
-        std::cout << "/t" << temp->var_name << ": " << temp->var_content << "," << std::endl;
+        std::cout << "\t" << temp->var_name << ": " << temp->var_content << "," << std::endl;
         temp=temp->next;
     }
 }

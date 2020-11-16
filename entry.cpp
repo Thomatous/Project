@@ -45,6 +45,10 @@ std::string Entry::get_page_title(){
     return page_title;
 }
 
+Parserlist* Entry::get_specs() {
+    return specs;
+}
+
 //hashvalue getter
 unsigned long long Entry::get_hashvalue(){
     return hashvalue;

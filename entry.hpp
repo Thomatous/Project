@@ -22,6 +22,7 @@ class Entry{
         ~Entry();                           //destructor
         std::string get_id();               //getters
         std::string get_page_title();
+        Parserlist* get_specs();
         unsigned long long get_hashvalue();
         void print();                       //misc
         void merge(Entry*);  
