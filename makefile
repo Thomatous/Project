@@ -50,4 +50,4 @@ parserlist.o:parserlist.cpp parserlist.hpp
 	g++ -c -std=c++11 parserlist.cpp -g3
 
 clean:
-	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o clique_test.o avl_test.o avl_test clique_test entry_test entry_test.o hashtable_test.o hashtable_test
+	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o clique_test.o avl_test.o avl_test clique_test entry_test entry_test.o hashtable_test.o hashtable_test parserlist.o parser.o output.csv
