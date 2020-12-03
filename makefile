@@ -1,11 +1,11 @@
 project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o
 	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o -g3
 
-avl_test:avl_test.o avl.o entry.o clique.o utility.o
-	g++ -o avl_test -std=c++11 avl_test.o avl.o entry.o clique.o utility.o -g3
+avl_test:avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o
+	g++ -o avl_test -std=c++11 avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o -g3
 
-clique_test:entry.o clique.o clique_test.o utility.o
-	g++ -o clique_test -std=c++11 entry.o clique.o clique_test.o utility.o -g3
+clique_test:entry.o clique.o clique_test.o utility.o parser.o parserlist.o
+	g++ -o clique_test -std=c++11 entry.o clique.o clique_test.o utility.o parser.o parserlist.o -g3
 
 entry_test: entry_test.o entry.o clique.o utility.o parser.o parserlist.o
 	g++ -o entry_test -std=c++11 entry_test.o entry.o clique.o utility.o parser.o parserlist.o -g3

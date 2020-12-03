@@ -11,7 +11,7 @@ int main() {
     DIR *dir_p;
     DIR *dir_f;
     struct dirent *folder;
-    HashTable ht(50);
+    HashTable ht(100);
     Clique list_of_entries;
     Entry* e;
     std::string input_dir = "./Datasets/2013_camera_specs/";
