@@ -29,10 +29,11 @@ void test_clique_push(void) {
     TEST_ASSERT(clique.get_size() == n);
     TEST_ASSERT(clique.is_empty() == false);
     
-    Cliquenode* temp = clique.head;
-    while(temp != NULL){
+    while(clique.head != NULL){
+        Cliquenode* temp = clique.head;
+        clique.head = clique.head->next;
         delete temp->data;
-        temp = temp->next;
+        delete temp;
     }
 }
 
@@ -50,10 +51,11 @@ void test_clique_pop(void) {
     TEST_ASSERT(clique.get_size() == n-1);
 
 
-    Cliquenode* temp = clique.head;
-    while(temp != NULL){
+    while(clique.head != NULL){
+        Cliquenode* temp = clique.head;
+        clique.head = clique.head->next;
         delete temp->data;
-        temp = temp->next;
+        delete temp;
     }
     delete cliquenode->data;
     delete cliquenode;
@@ -76,10 +78,11 @@ void test_clique_merge(void) {
 
     TEST_ASSERT(clique1->get_size() == merged_size);
     
-    Cliquenode* temp = clique1->head;
-    while(temp != NULL){
+    while(clique1->head != NULL){
+        Cliquenode* temp = clique1->head;
+        clique1->head = clique1->head->next;
         delete temp->data;
-        temp = temp->next;
+        delete temp;
     }
     delete clique1;
 }
@@ -99,10 +102,11 @@ void test_clique_find(void) {
     popped = clique.pop();
     TEST_ASSERT(clique.find(popped->data) == false);
     
-    Cliquenode* temp = clique.head;
-    while(temp != NULL){
+    while(clique.head != NULL){
+        Cliquenode* temp = clique.head;
+        clique.head = clique.head->next;
         delete temp->data;
-        temp = temp->next;
+        delete temp;
     }
     delete popped->data;
     delete popped;
