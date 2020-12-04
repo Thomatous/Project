@@ -82,7 +82,11 @@ int main() {
                         // b->clique->print();
                         a->merge(b);    //merge their cliques
                     }
-                }    
+                } else {                                    // products have negative similarity
+                    if(a != NULL && b != NULL) {
+                        a->differs_from(b);
+                    }
+                }
                 
             } else { // then it's a products url
                 std::string site = word.substr(0,first_slash);

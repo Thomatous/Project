@@ -24,8 +24,10 @@ class Clique{
         void push(Entry*);
         Cliquenode* pop();
         void merge(Clique*);
+        void merge_different(Clique* c);
         bool find(Entry*);
         void print();
         void update_clique_ptrs(Clique*);
+        void update_different_ptrs(Clique*);
 };
 #endif

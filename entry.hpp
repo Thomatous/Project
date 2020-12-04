@@ -16,6 +16,7 @@ class Entry{
         Parserlist* specs;
     public:
         Clique* clique;
+        Clique* different;
         Entry();                            //constructors
         Entry(std::string, std::string);
         Entry(std::string, std::string, Parserlist*);
@@ -25,7 +26,8 @@ class Entry{
         Parserlist* get_specs();
         unsigned long long get_hashvalue();
         void print();                       //misc
-        void merge(Entry*);  
+        void merge(Entry*);
+        void differs_from(Entry *e);
 };
 
 #endif
