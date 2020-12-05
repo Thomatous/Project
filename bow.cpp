@@ -33,16 +33,16 @@ void Bow::push_if_not_exists(std::string str){
         Bownode *n = new Bownode();   
         n->data = str;             
         n->next = head;        
-        head = n;  
+        head = n;
+        size++;  
     }
 }
 
 void Bow::print(){
-    std::cout << "Bag of words: ";
+    std::cout << "Bag of words:" << std::endl;
     Bownode* temp = head;
     while(temp != NULL){
-        std::cout << temp->data << " ";
+        std::cout << temp->data << std::endl;
         temp = temp->next;
     }
-    std::cout << std::endl;   
 }
