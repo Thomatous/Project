@@ -5,8 +5,10 @@
 #include <dirent.h>
 #include "entry.hpp"
 #include "parser.hpp"
+#include "bow.hpp"
 
 int main(void){
+    Bow bow;
     Parser p;
     Entry* e = new Entry("abcd", "1234", p.parse("./Datasets/2013_camera_specs/www.ebay.com/24376.json"));
     std::cout << e->get_specs()->clean_up() << std::endl;

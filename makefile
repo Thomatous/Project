@@ -13,8 +13,8 @@ entry_test: entry_test.o entry.o clique.o utility.o parser.o parserlist.o
 hashtable_test: hashtable_test.o hashtable.o avl.o entry.o clique.o utility.o
 	g++ -Wall -o hashtable_test -std=c++11 hashtable_test.o avl.o entry.o hashtable.o clique.o utility.o -g3
 
-bow:bow_main.o entry.o parser.o parserlist.o clique.o utility.o
-	g++ -Wall -o bow -std=c++11 bow_main.o entry.o parser.o parserlist.o clique.o utility.o -g3
+bow:bow_main.o entry.o parser.o parserlist.o clique.o utility.o bow.o
+	g++ -Wall -o bow -std=c++11 bow_main.o entry.o parser.o parserlist.o clique.o utility.o bow.o -g3
 
 main.o:main.cpp
 	g++ -Wall -c -std=c++11 main.cpp -g3
@@ -55,5 +55,8 @@ parser.o:parser.cpp parser.hpp
 parserlist.o:parserlist.cpp parserlist.hpp
 	g++ -Wall -c -std=c++11 parserlist.cpp -g3
 
+bow.o:bow.cpp bow.hpp
+	g++ -Wall -c -std=c++11 bow.cpp -g3
+
 clean:
-	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o clique_test.o avl_test.o avl_test clique_test entry_test entry_test.o hashtable_test.o hashtable_test parserlist.o parser.o output.csv
+	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o clique_test.o avl_test.o avl_test clique_test entry_test entry_test.o hashtable_test.o hashtable_test parserlist.o parser.o bow bow_main.o bow.o output.csv
