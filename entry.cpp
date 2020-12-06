@@ -22,7 +22,7 @@ Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
     page_title = new_page_title;
     clique = new Clique();
     clique->push(this);
-    specs = list;z
+    specs = list;
     //generating hashvalue for entry
     hashvalue = hash_value_calculator(new_page_title, new_id);
 }

@@ -48,6 +48,7 @@ int main() {
                                 // call entry constructor and insert to entry_list and hashtable
                                 std::string path = file_dir+"/"+id_str;
                                 e = new Entry(std::string(folder->d_name), id, p.parse(path));
+                                e->specs_words = e->get_specs()->clean_up();
                                 // e->get_specs()->print();
                                 list_of_entries.push(e);
                                 ht.insert(e);
@@ -64,7 +65,7 @@ int main() {
     } 
 
     // parse csv
-    std::ifstream file("./Datasets/sigmod_large_labelled_dataset.csv");
+    std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
     std::string line, word = "";
 
     while( getline(file, line) ) { // read every line of the csv
