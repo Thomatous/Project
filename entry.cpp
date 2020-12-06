@@ -12,7 +12,6 @@ Entry::Entry(std::string new_page_title, std::string new_id){
     page_title = new_page_title;
     clique = new Clique();
     clique->push(this);
-    different = new Clique();
     specs = NULL;
     //generating hashvalue for entry
     hashvalue = hash_value_calculator(new_page_title, new_id);
@@ -23,7 +22,6 @@ Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
     page_title = new_page_title;
     clique = new Clique();
     clique->push(this);
-    different = new Clique();
     specs = list;
     //generating hashvalue for entry
     hashvalue = hash_value_calculator(new_page_title, new_id);
@@ -31,10 +29,12 @@ Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
 
 //entry destructor
 Entry::~Entry(){
-    if(clique != NULL)
-        delete clique;
-    if(different != NULL)
-        delete different;
+    Clique* cp;
+    if(clique != NULL) {
+        clique->update_clique_ptrs(NULL);
+        cp = clique;
+        delete cp;
+    }
     if(specs != NULL)
         delete specs;
 }
@@ -69,18 +69,16 @@ void Entry::merge(Entry *e){
         clique->merge(e->clique);           //call clique merrge
         clique->update_clique_ptrs(clique); //make all entries in the clique point to this new merged one
 
-        different->merge(e->different);
-        clique->update_different_ptrs(different);
+        clique->different->merge(e->clique->different);
     }
 }
 
 //pushes given entry in different clique or merges the different clique of this entry with the given entry's different clique
 void Entry::differs_from(Entry *e) {
-    if( e->different != different ) {
-        different->merge_different(e->clique);
-        // different->update_different_ptrs(different);
-
-        e->different->merge_different(clique);
-        // e->different->update_different_ptrs(e->different);
+    if( !e->clique->different->find(clique) ) {
+        e->clique->different->push(clique);
+    }
+    if( !clique->different->find(e->clique) ) {
+        clique->different->push(e->clique);
     }
 }

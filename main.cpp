@@ -64,54 +64,65 @@ int main() {
     } 
 
     // parse csv
-    std::ifstream file("./Datasets/sigmod_large_labelled_dataset.csv");
+    std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
     std::string line, word = "";
 
-    while( getline(file, line) ) { // read every line of the csv
-        std::stringstream line_stringstream(line);
-        Entry* a = NULL;
-        Entry* b = NULL;
-        while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
-            // std::cout << word << "\n";
-            size_t first_slash = word.find_first_of('/'); //find '/' and strip them
-            if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
-                if(std::strcmp(word.c_str(), "1") == 0){    //if products are similar
-                    if(a != NULL && b != NULL){ //if both specs have been iterated
-                        // std::cout << "Merging:" << std::endl;
+    int first, second = 0;
+    for(int i=1 ; i>-1 ; i--) {
+        while( getline(file, line) ) { // read every line of the csv
+            std::stringstream line_stringstream(line);
+            Entry* a = NULL;
+            Entry* b = NULL;
+            while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
+                // std::cout << word << "\n";
+                size_t first_slash = word.find_first_of('/'); //find '/' and strip them
+                if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
+                    if(std::strcmp(word.c_str(), std::to_string(i).c_str()) == 0){    //if products are similar
+                        if(a != NULL && b != NULL){ //if both specs have been iterated
+                            // std::cout << "Merging:" << std::endl;
+                            // a->clique->print();
+                            // b->clique->print();
+                            if(i == 1) {
+                                a->merge(b);    //merge their cliques
+                                first++;
+                            }
+                            if(i == 0) {
+                                a->differs_from(b);
+                                second++;
+                            }
+                        }
+                    } 
+                    
+                } else { // then it's a products url
+                    std::string site = word.substr(0,first_slash);
+                    std::string id = word.substr(first_slash+2);
+                    // std::cout << site << " " << id << "\n";
+                    unsigned long long hash_value = hash_value_calculator(site, id);
+                    if(a == NULL) {
+                        a = ht.search(hash_value);  //find this entry in hashtable 
+                        // std::cout<<"a: ";
+                        // a->print();
+                        // std::cout<<std::endl;
                         // a->clique->print();
+                    }
+                    else{
+                        b = ht.search(hash_value);  //find this entry in hashtable 
+                        // std::cout<<"b: ";
+                        // b->print();
+                        // std::cout<<std::endl;
                         // b->clique->print();
-                        a->merge(b);    //merge their cliques
-                    }
-                } else {                                    // products have negative similarity
-                    if(a != NULL && b != NULL) {
-                        a->differs_from(b);
-                    }
+                    } 
                 }
-                
-            } else { // then it's a products url
-                std::string site = word.substr(0,first_slash);
-                std::string id = word.substr(first_slash+2);
-                // std::cout << site << " " << id << "\n";
-                unsigned long long hash_value = hash_value_calculator(site, id);
-                if(a == NULL) {
-                    a = ht.search(hash_value);  //find this entry in hashtable 
-                    // std::cout<<"a: ";
-                    // a->print();
-                    // std::cout<<std::endl;
-                    // a->clique->print();
-                }
-                else{
-                    b = ht.search(hash_value);  //find this entry in hashtable 
-                    // std::cout<<"b: ";
-                    // b->print();
-                    // std::cout<<std::endl;
-                    // b->clique->print();
-                } 
+
             }
 
         }
 
+        file.clear();
+        file.seekg(0);
     }
+    std::cout << first << std::endl;
+    std::cout << second << std::endl;
 
     // output printing
     std::ofstream output;

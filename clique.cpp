@@ -19,19 +19,23 @@ Cliquenode::~Cliquenode(){
 
 //clique constructor
 Clique::Clique(){
+    different = new AntiClique();
     head = NULL;
     size = 0;
 }
 
 //clique destructor
 Clique::~Clique(){
-    update_clique_ptrs(NULL);
+    // update_clique_ptrs(NULL);
+    // update_different_ptrs(NULL);
     
     while(head != NULL){
         Cliquenode* temp = head;
         head = head->next;
         delete temp;
     }
+    
+    delete different;
     // std::cout << "Clique deleted!" << std::endl;
 }
 
@@ -75,15 +79,6 @@ void Clique::merge(Clique* c){
     delete c;
 }
 
-//adds all entries of given clique to this different list
-void Clique::merge_different(Clique* c) {
-    Cliquenode* cn = c->head;
-    while( cn != NULL ) {
-        this->push(cn->data);
-        cn = cn->next;
-    }
-}
-
 //returns true if the entry exists somewhere in the clique
 //false otherwise
 bool Clique::find(Entry* e){
@@ -117,17 +112,6 @@ void Clique::update_clique_ptrs(Clique* address){
     Cliquenode* temp = head;
     while(temp != NULL){
         temp->data->clique = address;
-        temp = temp->next;
-    }
-}
-
-//function that goes over every entry in the different list
-//and updates their different pointer to the given value
-//used for unlinking in the clique destructor to avoid freeing smth twice
-void Clique::update_different_ptrs(Clique* address){
-    Cliquenode* temp = head;
-    while(temp != NULL){
-        temp->data->different = address;
         temp = temp->next;
     }
 }

@@ -3,8 +3,10 @@
 
 #include <iostream>
 #include "entry.hpp"
+#include "anticlique.hpp"
 
 class Entry;
+class AntiClique;
 struct Cliquenode{
     Entry* data;
     Cliquenode* next;
@@ -17,6 +19,7 @@ class Clique{
         int size;
     public:
         Cliquenode* head;
+        AntiClique* different;
         Clique();
         ~Clique();
         int get_size();
@@ -28,6 +31,6 @@ class Clique{
         bool find(Entry*);
         void print();
         void update_clique_ptrs(Clique*);
-        void update_different_ptrs(Clique*);
 };
+
 #endif

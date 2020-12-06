@@ -16,7 +16,6 @@ class Entry{
         Parserlist* specs;
     public:
         Clique* clique;
-        Clique* different;
         Entry();                            //constructors
         Entry(std::string, std::string);
         Entry(std::string, std::string, Parserlist*);
