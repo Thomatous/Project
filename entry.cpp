@@ -66,14 +66,13 @@ void Entry::print(){
 //merges the clique of this entry with the given entry's clique
 void Entry::merge(Entry *e){
     if(e->clique != clique){
+        // clique->different->merge(e->clique->different);
         clique->merge(e->clique);           //call clique merrge
         clique->update_clique_ptrs(clique); //make all entries in the clique point to this new merged one
-
-        clique->different->merge(e->clique->different);
     }
 }
 
-//pushes given entry in different clique or merges the different clique of this entry with the given entry's different clique
+//pushes given entry's clique to different list and vice versa
 void Entry::differs_from(Entry *e) {
     if( !e->clique->different->find(clique) ) {
         e->clique->different->push(clique);

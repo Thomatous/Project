@@ -67,7 +67,8 @@ int main() {
     std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
     std::string line, word = "";
 
-    int first, second = 0;
+    int first = 0;
+    int second = 0;
     for(int i=1 ; i>-1 ; i--) {
         while( getline(file, line) ) { // read every line of the csv
             std::stringstream line_stringstream(line);
