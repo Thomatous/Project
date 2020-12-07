@@ -86,3 +86,24 @@ bool AntiClique::find(Clique* c){
     }
     return false;
 }
+
+void AntiClique::remove(Clique* c) {
+    AntiCliquenode* temp = head;
+    AntiCliquenode* to_delete;
+    if(c == head->data) {
+        head = head->next;
+        size--;
+        delete temp;
+    } else {
+        while(temp->next != NULL){
+            if(c == temp->next->data){
+                to_delete = temp->next;
+                temp->next = to_delete->next;
+                delete to_delete;
+                size--;
+                break;
+            }
+            temp = temp->next;
+        }
+    }
+} 

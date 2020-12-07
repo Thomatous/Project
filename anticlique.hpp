@@ -26,6 +26,7 @@ class AntiClique{
         AntiCliquenode* pop();
         void merge(AntiClique*);
         bool find(Clique*);
+        void remove(Clique*);
 };
 
 #endif

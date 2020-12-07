@@ -128,25 +128,54 @@ int main() {
     // output printing
     std::ofstream output;
     output.open("output.csv");
-    output << "left_spec_id,right_spec_id\n";
+    output << "left_spec_id,right_spec_id,label\n";
     Cliquenode* c_n = NULL;
     Clique* c = NULL;
+    AntiClique* d = NULL; 
     while( !(list_of_entries.is_empty()) ) {    //parse list of entries
         c_n = list_of_entries.pop();            //pop
         c = c_n->data->clique;                  //get entry's clique
-        if( c!= NULL) {                         //if not NULL
+        if( c != NULL) {                         //if not NULL
             int size = c->get_size();
             Cliquenode* table[size];            //create table of clique's members
             for(int i=0 ; i<size ; i++) {
                 table[i] = c->pop();
             }
+
             for(int i=0 ; i<size ; i++) {       //print every possible pair from that clique
                 std::string url1 = table[i]->data->get_page_title() + "//" + table[i]->data->get_id();
                 for(int j=i+1 ; j<size ; j++) {
                     std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
-                    output << url1 << "," << url2 << "\n";
+                    output << url1 << "," << url2 << ",1" <<  "\n";
                 }
                 table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
+            }
+
+            d = c->different;
+            if ( !d->is_empty() ) {
+                int d_size = d->get_size();
+                AntiCliquenode* d_table[d_size];
+                for(int i=0 ; i<d_size ; i++) {
+                    d_table[i] = d->pop();
+                }
+
+                for(int i=0 ; i<d_size ; i++) {
+                    Clique* d_c = d_table[i]->data;
+                    Cliquenode* d_e = d_c->head;
+                    for(int j=0 ; j<size ; j++) {
+                        std::string url1 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
+                        while( d_e != NULL ) {
+                            std::string url2 = d_e->data->get_page_title() + "//" + d_e->data->get_id();
+                            output << url1 << "," << url2 << ",0" <<  "\n";
+                            d_e = d_e->next;
+                        }
+                    }
+                    d_c->different->remove(c);
+                }
+
+                for(int i=0 ; i<d_size ; i++) {
+                    delete d_table[i];
+                }
             }
             // c->update_clique_ptrs(NULL);
             for(int i=0 ; i<size ; i++) {
