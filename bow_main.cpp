@@ -13,15 +13,17 @@ int main(void){
     Parser p;
     Entry* e = new Entry("abcd", "1234", p.parse("./Datasets/2013_camera_specs/www.walmart.com/158.json"));
     std::cout << e->get_specs()->clean_up() << std::endl << std::endl;
-    std::stringstream sw(e->get_specs()->clean_up());
-    std::string w;
-
-    while(std::getline(sw, w, ' ')){
-        if(w.size() > 0){
-            bow.push_if_not_exists(w);
-        }
-    }
+    e->specs_words = e->get_specs()->clean_up();
+    // std::stringstream sw(e->get_specs()->clean_up());
+    // std::string w;
+    // bow.add(e->specs_words);
+    // while(std::getline(sw, w, ' ')){
+    //     if(w.size() > 0){
+    //         bow.push_if_not_exists(w);
+    //     }
+    // }
+    bow.root = bow.add(bow.root, e->specs_words);
     std::cout << bow.get_size() << std::endl;
-    bow.print();
+    bow.print_preorder(bow.root);
     delete e;
 }

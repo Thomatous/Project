@@ -1,5 +1,5 @@
-project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o
-	g++ -Wall -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o -g3
+project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o bow.o
+	g++ -Wall -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o bow.o parserlist.o -g3
 
 avl_test:avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o
 	g++ -Wall -o avl_test -std=c++11 avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o -g3

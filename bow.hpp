@@ -3,22 +3,41 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
-struct Bownode {
-    std::string data;
-    Bownode* next;
+class Bownode{
+    private:
+        unsigned int height;
+        std::string data;
+    public:
+        Bownode* left;
+        Bownode* right;
+
+        Bownode();
+        Bownode(std::string);
+        ~Bownode();
+        void set_height(int);
+        unsigned int get_height();
+        std::string get_data();
+        void update_height();
 };
 
 class Bow{
     private:
-        Bownode* head;
         unsigned int size;
     public:
+        Bownode* root;
+        
         Bow();
         ~Bow();
+        void clear(Bownode*);
         unsigned int get_size();
-        bool exists(std::string);
-        void push_if_not_exists(std::string);
-        void print();
+        int get_balance(Bownode*);
+        Bownode* right_rotate(Bownode*);
+        Bownode* left_rotate(Bownode*);
+        Bownode* insert(Bownode*, std::string);
+        void print_preorder(Bownode*);
+        bool find(Bownode*, std::string);
+        Bownode* add(Bownode*, std::string);
 };
 #endif
