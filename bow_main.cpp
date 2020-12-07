@@ -24,6 +24,13 @@ int main(void){
     // }
     bow.root = bow.add(bow.root, e->specs_words);
     std::cout << bow.get_size() << std::endl;
-    bow.print_preorder(bow.root);
+    // bow.print_preorder(bow.root);
+    std::string v[bow.get_size()];
+    unsigned int i = 0;
+    bow.vectorify(bow.root, v, &i);
+
+    std::cout << bow.find_loc(bow.root, "frame") << std::endl;
+    std::cout << bow.find_loc(bow.root, "curtain") << std::endl;
+    std::cout << bow.find_loc(bow.root, "aberration") << std::endl;
     delete e;
 }

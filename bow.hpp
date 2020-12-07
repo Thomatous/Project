@@ -9,6 +9,7 @@ class Bownode{
     private:
         unsigned int height;
         std::string data;
+        unsigned int vector_loc;
     public:
         Bownode* left;
         Bownode* right;
@@ -17,9 +18,11 @@ class Bownode{
         Bownode(std::string);
         ~Bownode();
         void set_height(int);
+        void set_vector_loc(unsigned int);
         unsigned int get_height();
         std::string get_data();
         void update_height();
+        unsigned int get_vector_loc();
 };
 
 class Bow{
@@ -39,5 +42,7 @@ class Bow{
         void print_preorder(Bownode*);
         bool find(Bownode*, std::string);
         Bownode* add(Bownode*, std::string);
+        void vectorify(Bownode*, std::string*, unsigned int*);
+        int find_loc(Bownode*, std::string);
 };
 #endif

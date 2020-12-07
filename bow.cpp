@@ -45,6 +45,14 @@ void Bownode::update_height(){
     height = std::max(left_height, right_height) +1;
 }
 
+unsigned int Bownode::get_vector_loc(){
+    return vector_loc;
+}
+
+void Bownode::set_vector_loc(unsigned int l){
+    vector_loc = l;
+}
+
 //------------------------------------Bow------------------------------------
 
 //Bow constructor
@@ -201,10 +209,33 @@ Bownode* Bow::add(Bownode* n, std::string r){
     std::string w;
     while(std::getline(sw, w, ' ')){
         if(w.size() > 0){
-            // if(find(n, w) == false){
             n = insert(n, w);
-            // }
         }
     }
     return n;
+}
+
+void Bow::vectorify(Bownode* n, std::string* v, unsigned int* loc){
+    if (n == NULL) 
+        return; 
+    v[*loc] = n->get_data();
+    n->set_vector_loc(*loc);
+    *loc = *loc + 1;
+    vectorify(n->left, v, loc);
+    vectorify(n->right, v, loc);    
+}
+
+int Bow::find_loc(Bownode* n, std::string r){
+    if(n == NULL){
+        return -1;
+    }
+    else if(r < n->get_data()){
+        return find_loc(n->left, r);
+    }
+    else if(r > n->get_data()){
+        return find_loc(n->right, r);
+    }
+    else {
+        return n->get_vector_loc(); // We found the value.
+    }
 }

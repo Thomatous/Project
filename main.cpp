@@ -150,6 +150,10 @@ int main() {
     }
 
     output.close();
-    std::cout << bow.get_size() << std::endl;
+    std::cout << "BOW contains " << bow.get_size() << " unique words." << std::endl;
+    std::string bow_vector[bow.get_size()];
+    unsigned int i = 0;
+    bow.vectorify(bow.root, bow_vector, &i);
+    std::cout << "BOW vector has been created." << std::endl;
     return 0;
 }
