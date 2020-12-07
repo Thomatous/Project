@@ -141,9 +141,10 @@ Bownode* Bow::insert(Bownode* n, std::string r) {
     else if(r > n->get_data()) {    //if data date later insert to the right      
         n->right = insert(n->right, r);
     } 
-    else if(r <= n->get_data()) {  //if data date earlier insert to the left
+    else if(r < n->get_data()) {  //if data date earlier insert to the left
         n->left = insert(n->left, r);
     }
+
     n->update_height();     //updatee the height  of the Bownode
     
     int b = get_balance(n); //get the balance of hte subtree
@@ -200,9 +201,9 @@ Bownode* Bow::add(Bownode* n, std::string r){
     std::string w;
     while(std::getline(sw, w, ' ')){
         if(w.size() > 0){
-            if(find(n, w) == false){
-                n = insert(n, w);
-            }
+            // if(find(n, w) == false){
+            n = insert(n, w);
+            // }
         }
     }
     return n;
