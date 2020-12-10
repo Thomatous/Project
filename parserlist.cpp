@@ -59,8 +59,8 @@ std::string Parserlist::clean_up(){
     }
     for (unsigned int i=0; i < words.length(); i++){    //for every letter   
         words[i] = std::tolower(words[i]);              //turn string lowercase
-        if (ispunct(words[i])) {                        //remove punctuation
-            words.erase(i--, 1);
+        if (ispunct(words[i])) { 
+            words.replace(i--, 1, " ");                 //remove punctuation
         }              
     }
     std::stringstream sw(words);

@@ -24,7 +24,7 @@ int main(void){
     // }
     bow.root = bow.add(bow.root, e->specs_words);
     std::cout << bow.get_size() << std::endl;
-    // bow.print_preorder(bow.root);
+    bow.print_preorder(bow.root);
     std::string v[bow.get_size()];
     unsigned int i = 0;
     bow.vectorify(bow.root, v, &i);
