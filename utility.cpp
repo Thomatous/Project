@@ -20,23 +20,38 @@ unsigned long long hash_value_calculator(std::string page_title, std::string id)
     return hashvalue;
 }
 
-int** create_bow_and_tf(Clique* list_of_entries, Bow* dictionary, int dictionary_size) {
+// fills up bow anf tf_idf tables
+void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* dictionary, int dictionary_size) {
     Cliquenode* temp = list_of_entries->head;
     Entry* e;
     std::string word;
-    int bow[list_of_entries->get_size()][dictionary_size];
-    int tf_idf[list_of_entries->get_size()][dictionary_size];
+    // int bow[list_of_entries->get_size()][dictionary_size];
+    // int tf_idf[list_of_entries->get_size()][dictionary_size];
+    int word_loc;
+    int entry_counter = 0;
+    int word_counter = 0;                           // keeps total number of description's words 
+    // for each entry
     while(temp != NULL) {
         e = temp->data;
+        e->loc = entry_counter;                     // save its row number of arrays
         std::istringstream iss(e->specs_words);
+        // for each word in its description
         while(iss) {
+            word_counter++; 
             iss >> word;
-            if( dictionary->find(dictionary->root, word) ) {
-                // increase counter for bow
+            word_loc = dictionary->find_loc(dictionary->root, word);
+            if( word_loc != -1 ) {                  // if word exists in dictionary
+                bow[entry_counter][word_loc] += 1;  // increase its value in bow table
             }
+        }
+        // after finishing bow table
+        // run through it and create tf values 
+        for(int i=0 ; i<dictionary_size ; i++) {
+            tf_idf[entry_counter][i] = bow[entry_counter][i]/word_counter;
         }
 
         temp = temp->next;
+        entry_counter++;
     }
 }
 

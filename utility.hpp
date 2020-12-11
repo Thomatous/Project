@@ -5,4 +5,4 @@
 #include <string> 
 
 unsigned long long hash_value_calculator(std::string, std::string);
-int** create_bow_and_tf(Clique*, Bow*, int);
+void create_bow_and_tf(int**, float**, Clique*, Bow*, int);
