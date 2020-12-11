@@ -16,6 +16,7 @@ class Entry{
         Parserlist* specs;
     public:
         std::string specs_words;
+        int loc; 
         Clique* clique;
         Entry();                            //constructors
         Entry(std::string, std::string);

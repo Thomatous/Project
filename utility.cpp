@@ -20,4 +20,24 @@ unsigned long long hash_value_calculator(std::string page_title, std::string id)
     return hashvalue;
 }
 
+int** create_bow_and_tf(Clique* list_of_entries, Bow* dictionary, int dictionary_size) {
+    Cliquenode* temp = list_of_entries->head;
+    Entry* e;
+    std::string word;
+    int bow[list_of_entries->get_size()][dictionary_size];
+    int tf_idf[list_of_entries->get_size()][dictionary_size];
+    while(temp != NULL) {
+        e = temp->data;
+        std::istringstream iss(e->specs_words);
+        while(iss) {
+            iss >> word;
+            if( dictionary->find(dictionary->root, word) ) {
+                // increase counter for bow
+            }
+        }
+
+        temp = temp->next;
+    }
+}
+
 #endif

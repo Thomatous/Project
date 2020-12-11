@@ -10,6 +10,7 @@ Entry::Entry(){
 Entry::Entry(std::string new_page_title, std::string new_id){
     id = new_id;           
     page_title = new_page_title;
+    loc = -1;
     clique = new Clique();
     clique->push(this);
     specs = NULL;
@@ -20,6 +21,7 @@ Entry::Entry(std::string new_page_title, std::string new_id){
 Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
     id = new_id;           
     page_title = new_page_title;
+    loc = -1;
     clique = new Clique();
     clique->push(this);
     specs = list;
