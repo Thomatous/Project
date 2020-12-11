@@ -4,6 +4,9 @@
 #include <iostream>
 #include "entry.hpp"
 #include "anticlique.hpp"
+#include <sstream>
+#include <string>
+#include <math.h>  
 
 class Entry;
 class AntiClique;
@@ -31,6 +34,7 @@ class Clique{
         bool find(Entry*);
         void print();
         void update_clique_ptrs(Clique*);
+        void generate_idf_vector(float *, std::string *, unsigned int, unsigned int);
 };
 
 #endif

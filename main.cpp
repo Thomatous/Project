@@ -129,8 +129,19 @@ int main() {
         file.clear();
         file.seekg(0);
     }
-    std::cout << first << std::endl;
-    std::cout << second << std::endl;
+    // std::cout << first << std::endl;
+    // std::cout << second << std::endl;
+    std::cout << "Full dictionary contains " << bow.get_size() << " unique words." << std::endl;
+    std::string bow_vector[bow.get_size()];
+    unsigned int i = 0;
+    bow.vectorify(bow.root, bow_vector, &i);
+    std::cout << "Full disctionary vector has been created." << std::endl;
+    unsigned int files_count = list_of_entries.get_size();
+    std::cout << "There are " << files_count << " files." << std::endl;
+
+    float idf_vector[bow.get_size()];
+    list_of_entries.generate_idf_vector(idf_vector, bow_vector, bow.get_size(), list_of_entries.get_size());
+
 
     // output printing
     std::ofstream output;
@@ -195,10 +206,5 @@ int main() {
     }
 
     output.close();
-    std::cout << "BOW contains " << bow.get_size() << " unique words." << std::endl;
-    std::string bow_vector[bow.get_size()];
-    unsigned int i = 0;
-    bow.vectorify(bow.root, bow_vector, &i);
-    std::cout << "BOW vector has been created." << std::endl;
     return 0;
 }
