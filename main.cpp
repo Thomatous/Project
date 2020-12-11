@@ -6,6 +6,7 @@
 #include "entry.hpp"
 #include "hashtable.hpp"
 #include "parser.hpp"
+#include "bow.hpp"
 
 int main() {
     DIR *dir_p;
@@ -16,6 +17,8 @@ int main() {
     Entry* e;
     std::string input_dir = "./Datasets/2013_camera_specs/";
     Parser p;
+    Bow bow;
+    // int counter = 0;
     if ( (dir_p = opendir(input_dir.c_str())) == NULL ) {
         perror("can't open the given directory");
         exit(2);
@@ -48,6 +51,10 @@ int main() {
                                 // call entry constructor and insert to entry_list and hashtable
                                 std::string path = file_dir+"/"+id_str;
                                 e = new Entry(std::string(folder->d_name), id, p.parse(path));
+                                e->specs_words = e->get_specs()->clean_up();
+                                // std::cout << counter << std::endl;
+                                // counter++;
+                                bow.root = bow.add(bow.root, e->specs_words);
                                 // e->get_specs()->print();
                                 list_of_entries.push(e);
                                 ht.insert(e);
@@ -188,6 +195,10 @@ int main() {
     }
 
     output.close();
-    
+    std::cout << "BOW contains " << bow.get_size() << " unique words." << std::endl;
+    std::string bow_vector[bow.get_size()];
+    unsigned int i = 0;
+    bow.vectorify(bow.root, bow_vector, &i);
+    std::cout << "BOW vector has been created." << std::endl;
     return 0;
 }

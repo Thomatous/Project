@@ -15,6 +15,7 @@ class Entry{
         unsigned long long hashvalue;
         Parserlist* specs;
     public:
+        std::string specs_words;
         Clique* clique;
         Entry();                            //constructors
         Entry(std::string, std::string);

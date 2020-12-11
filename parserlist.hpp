@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 struct Parserlistnode{
     std::string var_name;
@@ -21,5 +22,6 @@ class Parserlist{
         int get_size();
         void push(std::string, std::string);
         void print();
+        std::string clean_up();
 };
 #endif

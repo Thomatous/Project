@@ -56,7 +56,7 @@ void test_complicated_merge(void) {
     
     // Clique* c = e1->clique;
     // Cliquenode *temp = e1->clique->pop();
-    // TEST_ASSERT( e1->clique->pop()->data->get_hashvalue() == e4->get_hashvalue());
+    // TEST_ASSERT( c->clique->pop()->data->get_hashvalue() == e4->get_hashvalue());
     // delete temp;
 
     // temp = c->pop();
@@ -86,7 +86,7 @@ void test_complicated_merge(void) {
     delete e4;
     delete e5;
     delete e6;
-    // delete e1,e2,e3,e4,e5,e6; THIS DOES NOT DELETE FOR SOME REASON
+    // delete e1,e2,e3,e4,e5,e6; //THIS DOES NOT DELETE FOR SOME REASON
 }
 
 void test_parser(void) {
