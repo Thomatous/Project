@@ -1,6 +1,3 @@
-#ifndef _HASHVALUE_CALCULATOR
-#define _HASHVALUE_CALCULATOR
-
 #include "utility.hpp"
 
 unsigned long long hash_value_calculator(std::string page_title, std::string id) {
@@ -116,4 +113,3 @@ void mergeSort(float* idf, std::string* words, int l, int r) {
     merge(idf, words, l, m, r);
 }
 
-#endif
