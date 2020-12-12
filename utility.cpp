@@ -57,36 +57,63 @@ void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* 
 
 // -----------------SORT-------------------------
 
-void swap(void* a, void* b) {
-    void* temp = a;
-    a = b;
-    b = temp;
-}
-
-int partition(float* idf, std::string* words, int low, int high) {
-    float pivot = idf[high];
-    int i = (low-1);
-
-    for(int j=low ; j <= high-1 ; j++) {
-        if(idf[j] <= pivot) {
+void merge(float* idf, std::string* words, int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+ 
+    float L[n1], R[n2];
+    std::string Ls[n1], Rs[n2];
+ 
+    for (int i = 0; i < n1; i++) {
+        L[i] = idf[l + i];
+        Ls[i] = words[l+i];
+    }
+    for (int j = 0; j < n2; j++) {
+        R[j] = idf[m + 1 + j];
+        Rs[j] = words[m + 1 + j];
+    }
+ 
+    int i = 0;
+    int j = 0;
+    int k = l;
+ 
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            idf[k] = L[i];
+            words[k] = Ls[i];
             i++;
-            swap(&idf[i], &idf[j]);
-            swap(&words[i], &words[j]);
         }
+        else {
+            idf[k] = R[j];
+            words[k] = Rs[j];
+            j++;
+        }
+        k++;
     }
-
-    swap(&idf[i+1], &idf[high]);
-    swap(&words[i+1], &words[high]);
-    return i+1;
+ 
+    while (i < n1) {
+        idf[k] = L[i];
+        words[k] = Ls[i];
+        i++;
+        k++;
+    }
+ 
+    while (j < n2) {
+        idf[k] = R[j];
+        words[k] = Rs[j];
+        j++;
+        k++;
+    }
 }
 
-void sort(float* idf, std::string* words, int low, int high) {
-    if(low < high) {
-        int pivot = partition(idf, words, low, high);
-
-        sort(idf, words, low, pivot-1);
-        sort(idf, words, pivot+1, high);
+void mergeSort(float* idf, std::string* words, int l, int r) {
+    if(l>=r) {
+        return;//returns recursively
     }
+    int m = (l+r-1)/2;
+    mergeSort(idf, words, l, m);
+    mergeSort(idf, words, m+1, r);
+    merge(idf, words, l, m, r);
 }
 
 #endif

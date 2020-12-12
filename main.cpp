@@ -139,6 +139,9 @@ int main() {
     bow.vectorify(bow.root, bow_vector, idf_vector, &i, list_of_entries.get_size());
     std::cout << "Full disctionary vector has been created." << std::endl;
 
+    mergeSort(idf_vector, bow_vector, 0, bow.get_size()-1);
+    
+
     // output printing
     std::ofstream output;
     output.open("output.csv");
