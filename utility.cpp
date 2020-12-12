@@ -55,4 +55,38 @@ void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* 
     }
 }
 
+// -----------------SORT-------------------------
+
+void swap(void* a, void* b) {
+    void* temp = a;
+    a = b;
+    b = temp;
+}
+
+int partition(float* idf, std::string* words, int low, int high) {
+    float pivot = idf[high];
+    int i = (low-1);
+
+    for(int j=low ; j <= high-1 ; j++) {
+        if(idf[j] <= pivot) {
+            i++;
+            swap(&idf[i], &idf[j]);
+            swap(&words[i], &words[j]);
+        }
+    }
+
+    swap(&idf[i+1], &idf[high]);
+    swap(&words[i+1], &words[high]);
+    return i+1;
+}
+
+void sort(float* idf, std::string* words, int low, int high) {
+    if(low < high) {
+        int pivot = partition(idf, words, low, high);
+
+        sort(idf, words, low, pivot-1);
+        sort(idf, words, pivot+1, high);
+    }
+}
+
 #endif
