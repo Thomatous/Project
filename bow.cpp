@@ -230,8 +230,8 @@ void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc, u
         return; 
     v[*loc] = n->get_data();
     idf[*loc] = log((float)(files_count/n->idf_count));;
-    n->set_vector_loc(-1);
-    *loc = *loc + 1;
+    n->set_vector_loc(*loc);
+    *loc = *loc +1;
     vectorify(n->left, v, idf, loc, files_count);
     vectorify(n->right, v, idf, loc, files_count);    
 }

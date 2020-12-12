@@ -130,17 +130,33 @@ int main() {
         file.clear();
         file.seekg(0);
     }
+    int num_entries = list_of_entries.get_size();
     // std::cout << first << std::endl;
     // std::cout << second << std::endl;
     std::cout << "Full dictionary contains " << bow.get_size() << " unique words." << std::endl;
     std::string bow_vector[bow.get_size()];
     float idf_vector[bow.get_size()];
-    unsigned int i = 0;
-    bow.vectorify(bow.root, bow_vector, idf_vector, &i, list_of_entries.get_size());
+    unsigned int loc = 0;
+    bow.vectorify(bow.root, bow_vector, idf_vector, &loc, num_entries);
     std::cout << "Full disctionary vector has been created." << std::endl;
 
-    mergeSort(idf_vector, bow_vector, 0, bow.get_size()-1);
-    
+    int num_words = bow.get_size();
+    mergeSort(idf_vector, bow_vector, 0, num_words-1);
+    Bow dictionary;
+    for(int i=0 ; i<DICTIONARY_SIZE ; i++) {
+        dictionary.insert(dictionary.root, bow_vector[num_words-1-i], &bow_vector[num_words-1-i]);
+    }
+    int **bow_matrix = new int*[num_entries];
+    float **tf_idf = new float*[num_entries];
+    for(int i=0 ; i<num_entries ; i++) {
+        bow_matrix[i] = new int[DICTIONARY_SIZE];
+        tf_idf[i] = new float[DICTIONARY_SIZE];
+        for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
+            bow_matrix[i][j] = 0;
+            tf_idf[i][j] = 0;
+        }
+    }
+    create_bow_and_tf(bow_matrix, tf_idf, &list_of_entries, &dictionary);
 
     // output printing
     std::ofstream output;
@@ -205,5 +221,12 @@ int main() {
     }
 
     output.close();
+    for(int i=0 ; i<num_entries ;i++) {
+        delete[] bow_matrix[i];
+        delete[] tf_idf[i];
+    }
+    delete[] bow_matrix;
+    delete[] tf_idf;
+
     return 0;
 }

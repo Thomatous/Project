@@ -18,7 +18,7 @@ unsigned long long hash_value_calculator(std::string page_title, std::string id)
 }
 
 // fills up bow anf tf_idf tables
-void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* dictionary, int dictionary_size) {
+void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* dictionary) {
     Cliquenode* temp = list_of_entries->head;
     Entry* e;
     std::string word;
@@ -43,7 +43,7 @@ void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* 
         }
         // after finishing bow table
         // run through it and create tf values 
-        for(int i=0 ; i<dictionary_size ; i++) {
+        for(int i=0 ; i<DICTIONARY_SIZE ; i++) {
             tf_idf[entry_counter][i] = bow[entry_counter][i]/word_counter;
         }
 

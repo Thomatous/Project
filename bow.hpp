@@ -6,6 +6,8 @@
 #include <sstream>
 #include <math.h>  
 
+#define DICTIONARY_SIZE 3000
+
 class Bownode{
     private:
         unsigned int height;
