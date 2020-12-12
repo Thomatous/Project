@@ -4,6 +4,8 @@
 #include <iostream>
 #include "entry.hpp"
 #include "anticlique.hpp"
+#include <sstream>
+#include <string>
 
 class Entry;
 class AntiClique;

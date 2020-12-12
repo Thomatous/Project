@@ -9,6 +9,7 @@
 #include "bow.hpp"
 
 int main() {
+    std::cout << "Starting..." << std::endl;
     DIR *dir_p;
     DIR *dir_f;
     struct dirent *folder;
@@ -54,7 +55,7 @@ int main() {
                                 e->specs_words = e->get_specs()->clean_up();
                                 // std::cout << counter << std::endl;
                                 // counter++;
-                                bow.root = bow.add(bow.root, e->specs_words);
+                                bow.root = bow.add(bow.root, e->specs_words, &(e->specs_words));
                                 // e->get_specs()->print();
                                 list_of_entries.push(e);
                                 ht.insert(e);
@@ -129,8 +130,14 @@ int main() {
         file.clear();
         file.seekg(0);
     }
-    std::cout << first << std::endl;
-    std::cout << second << std::endl;
+    // std::cout << first << std::endl;
+    // std::cout << second << std::endl;
+    std::cout << "Full dictionary contains " << bow.get_size() << " unique words." << std::endl;
+    std::string bow_vector[bow.get_size()];
+    float idf_vector[bow.get_size()];
+    unsigned int i = 0;
+    bow.vectorify(bow.root, bow_vector, idf_vector, &i, list_of_entries.get_size());
+    std::cout << "Full disctionary vector has been created." << std::endl;
 
     // output printing
     std::ofstream output;
@@ -195,10 +202,5 @@ int main() {
     }
 
     output.close();
-    std::cout << "BOW contains " << bow.get_size() << " unique words." << std::endl;
-    std::string bow_vector[bow.get_size()];
-    unsigned int i = 0;
-    bow.vectorify(bow.root, bow_vector, &i);
-    std::cout << "BOW vector has been created." << std::endl;
     return 0;
 }
