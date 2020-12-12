@@ -138,14 +138,15 @@ int main() {
     float idf_vector[bow.get_size()];
     unsigned int loc = 0;
     bow.vectorify(bow.root, bow_vector, idf_vector, &loc, num_entries);
-    std::cout << "Full disctionary vector has been created." << std::endl;
+    std::cout << "Full dictionary vector has been created." << std::endl;
 
     int num_words = bow.get_size();
     mergeSort(idf_vector, bow_vector, 0, num_words-1);
     Bow dictionary;
     for(int i=0 ; i<DICTIONARY_SIZE ; i++) {
-        dictionary.insert(dictionary.root, bow_vector[num_words-1-i], &bow_vector[num_words-1-i]);
+        dictionary.root = dictionary.insert(dictionary.root, bow_vector[num_words-1-i], &bow_vector[num_words-1-i]);
     }
+    // creating bow anf tf_idf arrays
     int **bow_matrix = new int*[num_entries];
     float **tf_idf = new float*[num_entries];
     for(int i=0 ; i<num_entries ; i++) {
@@ -156,7 +157,27 @@ int main() {
             tf_idf[i][j] = 0;
         }
     }
+    // delete[] bow_vector;
+    // delete[] idf_vector;
+    std::string bow_vector2[DICTIONARY_SIZE];
+    float idf_vector2[DICTIONARY_SIZE];
+    loc = 0;
+    dictionary.vectorify(dictionary.root, bow_vector2, idf_vector2, &loc, 1);
+    // seting values of bow anf tf arrays
     create_bow_and_tf(bow_matrix, tf_idf, &list_of_entries, &dictionary);
+    // multiplying tf*idf
+    for(int i=0 ; i<num_entries ; i++) {
+        for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
+            tf_idf[i][j] = tf_idf[i][j]*idf_vector[j]; //LA8OS
+        }
+    }
+    // these are for printing
+    for(int i=0 ; i<num_entries ; i++) {
+        for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
+            std::cout << tf_idf[i][j] << "\t";
+        }
+        std::cout << "\n";
+    }
 
     // output printing
     std::ofstream output;

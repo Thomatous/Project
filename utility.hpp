@@ -7,6 +7,8 @@
 #include <sstream> 
 #include <string> 
 
+class Clique;
+
 unsigned long long hash_value_calculator(std::string, std::string);
 void create_bow_and_tf(int**, float**, Clique*, Bow*);
 void merge(float*, std::string*, int, int, int);
