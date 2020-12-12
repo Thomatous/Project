@@ -29,8 +29,10 @@ int main(void){
     unsigned int i = 0;
     bow.vectorify(bow.root, v, &i);
 
-    std::cout << bow.find_loc(bow.root, "frame") << std::endl;
-    std::cout << bow.find_loc(bow.root, "curtain") << std::endl;
-    std::cout << bow.find_loc(bow.root, "aberration") << std::endl;
+    // unsigned int N_best = 10;
+
+    // std::cout << bow.find_loc(bow.root, "frame") << std::endl;
+    // std::cout << bow.find_loc(bow.root, "curtain") << std::endl;
+    // std::cout << bow.find_loc(bow.root, "aberration") << std::endl;
     delete e;
 }

@@ -45,7 +45,7 @@ void Bownode::update_height(){
     height = std::max(left_height, right_height) +1;
 }
 
-unsigned int Bownode::get_vector_loc(){
+int Bownode::get_vector_loc(){
     return vector_loc;
 }
 
@@ -219,7 +219,7 @@ void Bow::vectorify(Bownode* n, std::string* v, unsigned int* loc){
     if (n == NULL) 
         return; 
     v[*loc] = n->get_data();
-    n->set_vector_loc(*loc);
+    n->set_vector_loc(-1);
     *loc = *loc + 1;
     vectorify(n->left, v, loc);
     vectorify(n->right, v, loc);    
@@ -237,5 +237,42 @@ int Bow::find_loc(Bownode* n, std::string r){
     }
     else {
         return n->get_vector_loc(); // We found the value.
+    }
+}
+
+void Bow::set_word_loc(Bownode* n, std::string r, int loc){
+    if(r < n->get_data()){
+        set_word_loc(n->left, r, loc);
+    }
+    else if(r > n->get_data()){
+        set_word_loc(n->right, r, loc);
+    }
+    else if(r == n->get_data()){
+        n->set_vector_loc(loc);
+    }
+}
+
+void Bow::best_words_vectorify(std::string* dictionary, std::string* best_words, float* idf_vector, float* best_words_idf, unsigned int N, unsigned int N_best){
+    if(N_best > N){
+        std::cout << "Error! Too many best words, can't generate best words vector!" << std::endl;
+    }
+    else{
+        for(unsigned int i = 0 ; i < N_best ; i++){
+            float min = idf_vector[0];
+            unsigned min_pos = 0;
+            for(unsigned int j = 0 ; j < N ; j++){
+                if(idf_vector[j] < min){
+                    min = idf_vector[j];
+                    min_pos = j;
+                }
+            }
+            best_words[i] = dictionary[min_pos];        //save that word
+            best_words_idf[i] = idf_vector[min_pos];    //save it's idf
+            
+            std::cout << best_words[i] << ": " << best_words_idf[i];
+
+            idf_vector[min_pos] = 999;
+            set_word_loc(root,best_words[i], i);
+        }
     }
 }

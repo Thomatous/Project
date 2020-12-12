@@ -13,8 +13,8 @@ entry_test: entry_test.o entry.o clique.o utility.o parser.o parserlist.o
 hashtable_test: hashtable_test.o hashtable.o avl.o entry.o clique.o utility.o parserlist.o
 	g++ -Wall -o hashtable_test -std=c++11 hashtable_test.o avl.o entry.o hashtable.o clique.o utility.o parserlist.o -g3
 
-bow:bow_main.o entry.o parser.o parserlist.o clique.o utility.o bow.o
-	g++ -Wall -o bow -std=c++11 bow_main.o entry.o parser.o parserlist.o clique.o utility.o bow.o -g3
+bow:bow_main.o entry.o parser.o parserlist.o clique.o utility.o bow.o anticlique.o
+	g++ -Wall -o bow -std=c++11 bow_main.o entry.o parser.o parserlist.o clique.o utility.o bow.o anticlique.o -g3
 
 main.o:main.cpp
 	g++ -Wall -c -std=c++11 main.cpp -g3

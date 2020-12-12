@@ -9,6 +9,7 @@
 #include "bow.hpp"
 
 int main() {
+    std::cout << "Starting..." << std::endl;
     DIR *dir_p;
     DIR *dir_f;
     struct dirent *folder;
@@ -139,9 +140,15 @@ int main() {
     unsigned int files_count = list_of_entries.get_size();
     std::cout << "There are " << files_count << " files." << std::endl;
 
+    std::cout << "Generating idf values for dictionay. This may take a while..." << std::endl;
     float idf_vector[bow.get_size()];
     list_of_entries.generate_idf_vector(idf_vector, bow_vector, bow.get_size(), list_of_entries.get_size());
-
+    
+    std::cout << "Finished generating idf values for the dictionary. Picking the 3000 best words..." << std::endl;  
+    unsigned int N_best = 30;
+    float best_idf_vector[N_best];
+    std::string best_bow_vector[N_best];
+    bow.best_words_vectorify(bow_vector, best_bow_vector, idf_vector, best_idf_vector, bow.get_size(), N_best);
 
     // output printing
     std::ofstream output;

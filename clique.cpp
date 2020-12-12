@@ -131,6 +131,6 @@ void Clique::generate_idf_vector(float * idf_vector, std::string * dict, unsigne
             temp = temp->next;
         }
         idf_vector[i] = log((float)(files_count/idf_vector[i]));    //calculate idf
-        std::cout << dict[i] << ": " << idf_vector[i] <<  " " << i << std::endl;
+        // std::cout << dict[i] << ": " << idf_vector[i] <<  " " << i << std::endl;
     }
 }
