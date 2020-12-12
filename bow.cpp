@@ -139,18 +139,28 @@ Bownode* Bow::left_rotate(Bownode* root) {
 }
 
 //inserts data in the Bow tree and rebalances
-Bownode* Bow::insert(Bownode* n, std::string r) {
+Bownode* Bow::insert(Bownode* n, std::string r, std::string *file_string) {
     // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
     if(n == NULL) {                                             //found and aprrpprite spot                                  
         size++;
-        // std::cout << r->get_hashvalue() << "\n";
-        return new Bownode(r);
+        Bownode* t = new Bownode(r);
+        t->idf_count = 1;
+        t->last_string = file_string;
+        // std::cout << "New word:\t\t\t" << t->get_data() << "\t\t\tidf_count:\t\t\t" << t->idf_count << std::endl;
+        return t;
     } 
     else if(r > n->get_data()) {    //if data date later insert to the right      
-        n->right = insert(n->right, r);
+        n->right = insert(n->right, r, file_string);
     } 
     else if(r < n->get_data()) {  //if data date earlier insert to the left
-        n->left = insert(n->left, r);
+        n->left = insert(n->left, r, file_string);
+    }
+    else{
+        if(file_string != n->last_string){
+            n->idf_count++;
+            n->last_string = file_string;
+            // std::cout << "idf increased:\t\t\t" << n->get_data() << "\t\t\tidf_count:\t\t\t" << n->idf_count << std::endl;
+        }
     }
 
     n->update_height();     //updatee the height  of the Bownode
@@ -178,11 +188,22 @@ Bownode* Bow::insert(Bownode* n, std::string r) {
     return n;
 }
 
+Bownode* Bow::add(Bownode* n, std::string r, std::string* file_string){
+    std::stringstream sw(r);
+    std::string w;
+    while(std::getline(sw, w, ' ')){
+        if(w.size() > 0){
+            n = insert(n, w, file_string);
+        }
+    }
+    return n;
+}
+
 //debug function for printing Bow tree preorder
 void Bow::print_preorder(Bownode* n){
     if (n == NULL) 
         return; 
-    std::cout << n->get_data() << std::endl;
+    std::cout << n->get_data() << "idf_cout: " << n->idf_count << std::endl;
     print_preorder(n->left); 
     print_preorder(n->right);
 }
@@ -204,25 +225,15 @@ bool Bow::find(Bownode* n, std::string r){
     }
 }
 
-Bownode* Bow::add(Bownode* n, std::string r){
-    std::stringstream sw(r);
-    std::string w;
-    while(std::getline(sw, w, ' ')){
-        if(w.size() > 0){
-            n = insert(n, w);
-        }
-    }
-    return n;
-}
-
-void Bow::vectorify(Bownode* n, std::string* v, unsigned int* loc){
+void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc, unsigned int files_count){
     if (n == NULL) 
         return; 
     v[*loc] = n->get_data();
+    idf[*loc] = log((float)(files_count/n->idf_count));;
     n->set_vector_loc(-1);
     *loc = *loc + 1;
-    vectorify(n->left, v, loc);
-    vectorify(n->right, v, loc);    
+    vectorify(n->left, v, idf, loc, files_count);
+    vectorify(n->right, v, idf, loc, files_count);    
 }
 
 int Bow::find_loc(Bownode* n, std::string r){
@@ -252,27 +263,3 @@ void Bow::set_word_loc(Bownode* n, std::string r, int loc){
     }
 }
 
-void Bow::best_words_vectorify(std::string* dictionary, std::string* best_words, float* idf_vector, float* best_words_idf, unsigned int N, unsigned int N_best){
-    if(N_best > N){
-        std::cout << "Error! Too many best words, can't generate best words vector!" << std::endl;
-    }
-    else{
-        for(unsigned int i = 0 ; i < N_best ; i++){
-            float min = idf_vector[0];
-            unsigned min_pos = 0;
-            for(unsigned int j = 0 ; j < N ; j++){
-                if(idf_vector[j] < min){
-                    min = idf_vector[j];
-                    min_pos = j;
-                }
-            }
-            best_words[i] = dictionary[min_pos];        //save that word
-            best_words_idf[i] = idf_vector[min_pos];    //save it's idf
-            
-            std::cout << best_words[i] << ": " << best_words_idf[i];
-
-            idf_vector[min_pos] = 999;
-            set_word_loc(root,best_words[i], i);
-        }
-    }
-}

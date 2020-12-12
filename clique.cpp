@@ -115,22 +115,3 @@ void Clique::update_clique_ptrs(Clique* address){
         temp = temp->next;
     }
 }
-
-
-void Clique::generate_idf_vector(float * idf_vector, std::string * dict, unsigned int N, unsigned int files_count){
-    for(unsigned int i = 0 ; i < N ; i++){  //for every word in the dictionary
-        idf_vector[i] = 0;  //word instance counter
-        
-        Cliquenode* temp = head;
-        while(temp != NULL){                                //parsing all the files
-            std::string words = temp->data->specs_words;
-            std::size_t found = words.find(dict[i]);
-            if (found!=std::string::npos){
-                idf_vector[i]++;                    //increase the counter
-            }
-            temp = temp->next;
-        }
-        idf_vector[i] = log((float)(files_count/idf_vector[i]));    //calculate idf
-        // std::cout << dict[i] << ": " << idf_vector[i] <<  " " << i << std::endl;
-    }
-}
