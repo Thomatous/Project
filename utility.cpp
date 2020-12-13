@@ -38,7 +38,7 @@ void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* 
             iss >> word;
             word_loc = dictionary->find_loc(dictionary->root, word);
             if( word_loc != -1 ) {                  // if word exists in dictionary
-                bow[entry_counter][word_loc] += 1;  // increase its value in bow table
+                bow[entry_counter][word_loc] = bow[entry_counter][word_loc] + 1;  // increase its value in bow table
             }
         }
         // after finishing bow table

@@ -188,6 +188,49 @@ Bownode* Bow::insert(Bownode* n, std::string r, std::string *file_string) {
     return n;
 }
 
+//inserts data in the Bow tree and rebalances
+Bownode* Bow::insert(Bownode* n, std::string r, float idf) {
+    // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
+    if(n == NULL) {                                             //found and aprrpprite spot                                  
+        size++;
+        Bownode* t = new Bownode(r);
+        t->idf = idf;
+        // std::cout << "New word:\t\t\t" << t->get_data() << "\t\t\tidf_count:\t\t\t" << t->idf_count << std::endl;
+        return t;
+    } 
+    else if(r > n->get_data()) {    //if data date later insert to the right      
+        n->right = insert(n->right, r, idf);
+    } 
+    else if(r < n->get_data()) {  //if data date earlier insert to the left
+        n->left = insert(n->left, r, idf);
+    }
+
+    n->update_height();     //updatee the height  of the Bownode
+    
+    int b = get_balance(n); //get the balance of hte subtree
+
+    if(b > 1) {                                                     //if left has more weight than 1
+        if(r < n->left->get_data()){    //left left case
+            return right_rotate(n);                             
+        } 
+        else{                                                       //left right case
+            n->left = left_rotate(n->left);
+            return right_rotate(n);
+        }
+    } 
+    else if(b < -1) {                                               //if right has more weight than 1
+        if(r > n->right->get_data()) {  //right right case
+            return left_rotate(n);
+        } 
+        else{                                                       //right left case
+            n->right = right_rotate(n->right);
+            return left_rotate(n);
+        }
+    }
+    return n;
+}
+
+
 Bownode* Bow::add(Bownode* n, std::string r, std::string* file_string){
     std::stringstream sw(r);
     std::string w;
@@ -235,6 +278,18 @@ void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc, u
     vectorify(n->left, v, idf, loc, files_count);
     vectorify(n->right, v, idf, loc, files_count);    
 }
+
+void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc){
+    if (n == NULL) 
+        return; 
+    v[*loc] = n->get_data();
+    idf[*loc] = n->idf;
+    n->set_vector_loc(*loc);
+    *loc = *loc +1;
+    vectorify(n->left, v, idf, loc);
+    vectorify(n->right, v, idf, loc);    
+}
+
 
 int Bow::find_loc(Bownode* n, std::string r){
     if(n == NULL){

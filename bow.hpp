@@ -15,6 +15,7 @@ class Bownode{
         int vector_loc;
     public:
         int idf_count;
+        float idf;
         std::string* last_string;
 
         Bownode* left;
@@ -45,10 +46,12 @@ class Bow{
         Bownode* right_rotate(Bownode*);
         Bownode* left_rotate(Bownode*);
         Bownode* insert(Bownode*, std::string, std::string*);
+        Bownode* insert(Bownode*, std::string, float);
         Bownode* add(Bownode*, std::string, std::string*);
         void print_preorder(Bownode*);
         bool find(Bownode*, std::string);
         void vectorify(Bownode*, std::string*, float*, unsigned int*, unsigned int);
+        void vectorify(Bownode*, std::string*, float*, unsigned int*);
         int find_loc(Bownode*, std::string);
         void set_word_loc(Bownode*, std::string, int);
 };

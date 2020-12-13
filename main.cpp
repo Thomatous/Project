@@ -143,8 +143,8 @@ int main() {
     int num_words = bow.get_size();
     mergeSort(idf_vector, bow_vector, 0, num_words-1);
     Bow dictionary;
-    for(int i=0 ; i<DICTIONARY_SIZE ; i++) {
-        dictionary.root = dictionary.insert(dictionary.root, bow_vector[num_words-1-i], &bow_vector[num_words-1-i]);
+    for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
+        dictionary.root = dictionary.insert(dictionary.root, bow_vector[num_words-1-i], idf_vector[num_words-1-i]);
     }
     // creating bow anf tf_idf arrays
     int **bow_matrix = new int*[num_entries];
@@ -152,7 +152,7 @@ int main() {
     for(int i=0 ; i<num_entries ; i++) {
         bow_matrix[i] = new int[DICTIONARY_SIZE];
         tf_idf[i] = new float[DICTIONARY_SIZE];
-        for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
+        for(int j=0 ; j < DICTIONARY_SIZE ; j++) {
             bow_matrix[i][j] = 0;
             tf_idf[i][j] = 0;
         }
@@ -162,7 +162,7 @@ int main() {
     std::string bow_vector2[DICTIONARY_SIZE];
     float idf_vector2[DICTIONARY_SIZE];
     loc = 0;
-    dictionary.vectorify(dictionary.root, bow_vector2, idf_vector2, &loc, 1);
+    dictionary.vectorify(dictionary.root, bow_vector2, idf_vector2, &loc);
     // seting values of bow anf tf arrays
     create_bow_and_tf(bow_matrix, tf_idf, &list_of_entries, &dictionary);
     // multiplying tf*idf
