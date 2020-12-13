@@ -18,7 +18,7 @@ unsigned long long hash_value_calculator(std::string page_title, std::string id)
 }
 
 // fills up bow anf tf_idf tables
-void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Bow* dictionary) {
+void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Dict* dictionary) {
     Cliquenode* temp = list_of_entries->head;
     Entry* e;
     std::string word;

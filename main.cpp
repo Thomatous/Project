@@ -6,7 +6,7 @@
 #include "entry.hpp"
 #include "hashtable.hpp"
 #include "parser.hpp"
-#include "bow.hpp"
+#include "dict.hpp"
 
 int main() {
     std::cout << "Starting..." << std::endl;
@@ -18,7 +18,7 @@ int main() {
     Entry* e;
     std::string input_dir = "./Datasets/2013_camera_specs/";
     Parser p;
-    Bow bow;
+    Dict all_words;
     // int counter = 0;
     if ( (dir_p = opendir(input_dir.c_str())) == NULL ) {
         perror("can't open the given directory");
@@ -55,7 +55,7 @@ int main() {
                                 e->specs_words = e->get_specs()->clean_up();
                                 // std::cout << counter << std::endl;
                                 // counter++;
-                                bow.root = bow.add(bow.root, e->specs_words, &(e->specs_words));
+                                all_words.root = all_words.add(all_words.root, e->specs_words, &(e->specs_words));
                                 // e->get_specs()->print();
                                 list_of_entries.push(e);
                                 ht.insert(e);
@@ -133,51 +133,53 @@ int main() {
     int num_entries = list_of_entries.get_size();
     // std::cout << first << std::endl;
     // std::cout << second << std::endl;
-    std::cout << "Full dictionary contains " << bow.get_size() << " unique words." << std::endl;
-    std::string bow_vector[bow.get_size()];
-    float idf_vector[bow.get_size()];
+    std::cout << "Full dictionary contains " << all_words.get_size() << " unique words." << std::endl;
+    int num_words = all_words.get_size();
+    
+    std::string all_words_vector[num_words];
+    float all_idf_vector[num_words];
     unsigned int loc = 0;
-    bow.vectorify(bow.root, bow_vector, idf_vector, &loc, num_entries);
+    all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, &loc, num_entries);
     std::cout << "Full dictionary vector has been created." << std::endl;
 
-    int num_words = bow.get_size();
-    mergeSort(idf_vector, bow_vector, 0, num_words-1);
-    Bow dictionary;
+    mergeSort(all_idf_vector, all_words_vector, 0, num_words-1);
+    Dict best_words;
     for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
-        dictionary.root = dictionary.insert(dictionary.root, bow_vector[num_words-1-i], idf_vector[num_words-1-i]);
+        best_words.root = best_words.insert(best_words.root, all_words_vector[num_words-1-i], all_idf_vector[num_words-1-i]);
     }
-    // creating bow anf tf_idf arrays
-    int **bow_matrix = new int*[num_entries];
+    // creating dict anf tf_idf arrays
+    int **dict_matrix = new int*[num_entries];
     float **tf_idf = new float*[num_entries];
     for(int i=0 ; i<num_entries ; i++) {
-        bow_matrix[i] = new int[DICTIONARY_SIZE];
+        dict_matrix[i] = new int[DICTIONARY_SIZE];
         tf_idf[i] = new float[DICTIONARY_SIZE];
         for(int j=0 ; j < DICTIONARY_SIZE ; j++) {
-            bow_matrix[i][j] = 0;
+            dict_matrix[i][j] = 0;
             tf_idf[i][j] = 0;
         }
     }
-    // delete[] bow_vector;
+    // delete[] dict_vector;
     // delete[] idf_vector;
-    std::string bow_vector2[DICTIONARY_SIZE];
-    float idf_vector2[DICTIONARY_SIZE];
+    std::string best_words_vector[DICTIONARY_SIZE];
+    float best_idf_vector[DICTIONARY_SIZE];
     loc = 0;
-    dictionary.vectorify(dictionary.root, bow_vector2, idf_vector2, &loc);
-    // seting values of bow anf tf arrays
-    create_bow_and_tf(bow_matrix, tf_idf, &list_of_entries, &dictionary);
+    best_words.vectorify(best_words.root, best_words_vector, best_idf_vector, &loc);
+    // seting values of dict anf tf arrays
+    create_bow_and_tf(dict_matrix, tf_idf, &list_of_entries, &best_words);
     // multiplying tf*idf
     for(int i=0 ; i<num_entries ; i++) {
         for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
-            tf_idf[i][j] = tf_idf[i][j]*idf_vector[j]; //LA8OS
+            tf_idf[i][j] = tf_idf[i][j]*best_idf_vector[j]; 
         }
     }
+
     // these are for printing
-    for(int i=0 ; i<num_entries ; i++) {
-        for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
-            std::cout << tf_idf[i][j] << "\t";
-        }
-        std::cout << "\n";
-    }
+    // for(int i=0 ; i<num_entries ; i++) {
+    //     for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
+    //         std::cout << tf_idf[i][j] << "\t";
+    //     }
+    //     std::cout << "\n";
+    // }
 
     // output printing
     std::ofstream output;
@@ -243,10 +245,10 @@ int main() {
 
     output.close();
     for(int i=0 ; i<num_entries ;i++) {
-        delete[] bow_matrix[i];
+        delete[] dict_matrix[i];
         delete[] tf_idf[i];
     }
-    delete[] bow_matrix;
+    delete[] dict_matrix;
     delete[] tf_idf;
 
     return 0;

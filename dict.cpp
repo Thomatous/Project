@@ -1,38 +1,38 @@
-#include "bow.hpp"
+#include "Dict.hpp"
 
-//----------------------------------Bownode----------------------------------
+//----------------------------------Dictnode----------------------------------
 
-//Bownode constructor
-Bownode::Bownode(std::string new_data){
+//Dictnode constructor
+Dictnode::Dictnode(std::string new_data){
     data = new_data;
 
     left = right = NULL;
     height = 1;
 }
 
-//Bownode destructor
-Bownode::~Bownode(){
-    // std::cout << "Bownode deleted succesfully!" << std::endl;
+//Dictnode destructor
+Dictnode::~Dictnode(){
+    // std::cout << "Dictnode deleted succesfully!" << std::endl;
 }
 
 //height setter
-void Bownode::set_height(int h){
+void Dictnode::set_height(int h){
     height = h;
 }
 
 //height getter
-unsigned int Bownode::get_height(){
+unsigned int Dictnode::get_height(){
     return height;
 }
 
 //data pointer getter
-std::string Bownode::get_data(){
+std::string Dictnode::get_data(){
     return data;
 }
 
-//if the children of this Bownode have heights
+//if the children of this Dictnode have heights
 //keep the largest of the two
-void Bownode::update_height(){
+void Dictnode::update_height(){
     int left_height = 0;
     int right_height = 0;
 
@@ -45,28 +45,28 @@ void Bownode::update_height(){
     height = std::max(left_height, right_height) +1;
 }
 
-int Bownode::get_vector_loc(){
+int Dictnode::get_vector_loc(){
     return vector_loc;
 }
 
-void Bownode::set_vector_loc(unsigned int l){
+void Dictnode::set_vector_loc(unsigned int l){
     vector_loc = l;
 }
 
-//------------------------------------Bow------------------------------------
+//------------------------------------Dict------------------------------------
 
-//Bow constructor
-Bow::Bow():root(NULL), size(0){
+//Dict constructor
+Dict::Dict():root(NULL), size(0){
 }
 
-//Bow destructor
-Bow::~Bow() {
+//Dict destructor
+Dict::~Dict() {
     clear(root);                                                //recursive function that deletes the tree
     // std::cout << "Tree deleted succesfully!" << std::endl;
 }
 
 //recursive function that parses the tree and deletes it
-void Bow::clear(Bownode* n) {
+void Dict::clear(Dictnode* n) {
     if(n != NULL) {
         clear(n->left);
         clear(n->right);
@@ -74,14 +74,14 @@ void Bow::clear(Bownode* n) {
     }
 }
 
-//Bow size getter
-unsigned int Bow::get_size(){
+//Dict size getter
+unsigned int Dict::get_size(){
     return size;
 }
 
 //recursive function that checks if tree/subtree is balanced
 // return positive if left has more weight, negative if left has less wight and zero if balanced
-int Bow::get_balance(Bownode* n) { 
+int Dict::get_balance(Dictnode* n) { 
     if(n == NULL) {
         return 0;
     }
@@ -105,9 +105,9 @@ int Bow::get_balance(Bownode* n) {
    x   T3   - - - - - - - >        T1   y 
   / \                                  / \
  T1  T2                               T2  T3*/
-Bownode* Bow::right_rotate(Bownode* root) {
-    Bownode* pivot = root->left;
-    Bownode* x = pivot->right;
+Dictnode* Dict::right_rotate(Dictnode* root) {
+    Dictnode* pivot = root->left;
+    Dictnode* x = pivot->right;
 
     pivot->right = root;
     root->left = x;
@@ -125,9 +125,9 @@ Bownode* Bow::right_rotate(Bownode* root) {
    x   T3                          T1   y 
   / \       < - - - - - - -            / \
  T1  T2     Left Rotation            T2  T3*/
-Bownode* Bow::left_rotate(Bownode* root) {
-    Bownode* pivot = root->right;
-    Bownode* x = pivot->left;
+Dictnode* Dict::left_rotate(Dictnode* root) {
+    Dictnode* pivot = root->right;
+    Dictnode* x = pivot->left;
 
     pivot->left = root;
     root->right = x;
@@ -138,12 +138,12 @@ Bownode* Bow::left_rotate(Bownode* root) {
     return pivot;
 }
 
-//inserts data in the Bow tree and rebalances
-Bownode* Bow::insert(Bownode* n, std::string r, std::string *file_string) {
+//inserts data in the Dict tree and rebalances
+Dictnode* Dict::insert(Dictnode* n, std::string r, std::string *file_string) {
     // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
     if(n == NULL) {                                             //found and aprrpprite spot                                  
         size++;
-        Bownode* t = new Bownode(r);
+        Dictnode* t = new Dictnode(r);
         t->idf_count = 1;
         t->last_string = file_string;
         // std::cout << "New word:\t\t\t" << t->get_data() << "\t\t\tidf_count:\t\t\t" << t->idf_count << std::endl;
@@ -163,7 +163,7 @@ Bownode* Bow::insert(Bownode* n, std::string r, std::string *file_string) {
         }
     }
 
-    n->update_height();     //updatee the height  of the Bownode
+    n->update_height();     //updatee the height  of the Dictnode
     
     int b = get_balance(n); //get the balance of hte subtree
 
@@ -188,12 +188,12 @@ Bownode* Bow::insert(Bownode* n, std::string r, std::string *file_string) {
     return n;
 }
 
-//inserts data in the Bow tree and rebalances
-Bownode* Bow::insert(Bownode* n, std::string r, float idf) {
+//inserts data in the Dict tree and rebalances
+Dictnode* Dict::insert(Dictnode* n, std::string r, float idf) {
     // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
     if(n == NULL) {                                             //found and aprrpprite spot                                  
         size++;
-        Bownode* t = new Bownode(r);
+        Dictnode* t = new Dictnode(r);
         t->idf = idf;
         // std::cout << "New word:\t\t\t" << t->get_data() << "\t\t\tidf_count:\t\t\t" << t->idf_count << std::endl;
         return t;
@@ -205,7 +205,7 @@ Bownode* Bow::insert(Bownode* n, std::string r, float idf) {
         n->left = insert(n->left, r, idf);
     }
 
-    n->update_height();     //updatee the height  of the Bownode
+    n->update_height();     //updatee the height  of the Dictnode
     
     int b = get_balance(n); //get the balance of hte subtree
 
@@ -231,7 +231,7 @@ Bownode* Bow::insert(Bownode* n, std::string r, float idf) {
 }
 
 
-Bownode* Bow::add(Bownode* n, std::string r, std::string* file_string){
+Dictnode* Dict::add(Dictnode* n, std::string r, std::string* file_string){
     std::stringstream sw(r);
     std::string w;
     while(std::getline(sw, w, ' ')){
@@ -242,8 +242,8 @@ Bownode* Bow::add(Bownode* n, std::string r, std::string* file_string){
     return n;
 }
 
-//debug function for printing Bow tree preorder
-void Bow::print_preorder(Bownode* n){
+//debug function for printing Dict tree preorder
+void Dict::print_preorder(Dictnode* n){
     if (n == NULL) 
         return; 
     std::cout << n->get_data() << "idf_cout: " << n->idf_count << std::endl;
@@ -253,7 +253,7 @@ void Bow::print_preorder(Bownode* n){
 
 //parses the tree and looks for an data with a matching hashvalue
 //returns null if it hasn't been found, and a pointer to the data if it has been found
-bool Bow::find(Bownode* n, std::string r){
+bool Dict::find(Dictnode* n, std::string r){
     if(n == NULL){
         return false;
     }
@@ -268,7 +268,7 @@ bool Bow::find(Bownode* n, std::string r){
     }
 }
 
-void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc, unsigned int files_count){
+void Dict::vectorify(Dictnode* n, std::string* v, float* idf, unsigned int* loc, unsigned int files_count){
     if (n == NULL) 
         return; 
     v[*loc] = n->get_data();
@@ -279,7 +279,7 @@ void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc, u
     vectorify(n->right, v, idf, loc, files_count);    
 }
 
-void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc){
+void Dict::vectorify(Dictnode* n, std::string* v, float* idf, unsigned int* loc){
     if (n == NULL) 
         return; 
     v[*loc] = n->get_data();
@@ -291,7 +291,7 @@ void Bow::vectorify(Bownode* n, std::string* v, float* idf, unsigned int* loc){
 }
 
 
-int Bow::find_loc(Bownode* n, std::string r){
+int Dict::find_loc(Dictnode* n, std::string r){
     if(n == NULL){
         return -1;
     }
@@ -306,7 +306,7 @@ int Bow::find_loc(Bownode* n, std::string r){
     }
 }
 
-void Bow::set_word_loc(Bownode* n, std::string r, int loc){
+void Dict::set_word_loc(Dictnode* n, std::string r, int loc){
     if(r < n->get_data()){
         set_word_loc(n->left, r, loc);
     }
