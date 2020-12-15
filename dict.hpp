@@ -50,7 +50,7 @@ class Dict{
         Dictnode* add(Dictnode*, std::string, std::string*);
         void print_preorder(Dictnode*);
         bool find(Dictnode*, std::string);
-        void vectorify(Dictnode*, std::string*, float*, unsigned int*, unsigned int);
+        void vectorify(Dictnode*, std::string*, float*, float*, unsigned int*, unsigned int);
         void vectorify(Dictnode*, std::string*, float*, unsigned int*);
         int find_loc(Dictnode*, std::string);
         void set_word_loc(Dictnode*, std::string, int);

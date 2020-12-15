@@ -72,7 +72,7 @@ int main() {
     } 
 
     // parse csv
-    std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
+    std::ifstream file("./Datasets/sigmod_large_labelled_dataset.csv");
     std::string line, word = "";
 
     int first = 0;
@@ -130,48 +130,49 @@ int main() {
         file.clear();
         file.seekg(0);
     }
-    int num_entries = list_of_entries.get_size();
-    // std::cout << first << std::endl;
-    // std::cout << second << std::endl;
-    std::cout << "Full dictionary contains " << all_words.get_size() << " unique words." << std::endl;
-    int num_words = all_words.get_size();
     
+    std::cout << "Full dictionary contains " << all_words.get_size() << " unique words." << std::endl;
+    int num_entries = list_of_entries.get_size();
+    int num_words = all_words.get_size();
     std::string all_words_vector[num_words];
     float all_idf_vector[num_words];
-    unsigned int loc = 0;
-    all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, &loc, num_entries);
-    std::cout << "Full dictionary vector has been created." << std::endl;
+    float all_tfidf_sum_vector[num_words];
 
-    mergeSort(all_idf_vector, all_words_vector, 0, num_words-1);
-    Dict best_words;
-    for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
-        best_words.root = best_words.insert(best_words.root, all_words_vector[num_words-1-i], all_idf_vector[num_words-1-i]);
-    }
-    // creating dict anf tf_idf arrays
-    int **dict_matrix = new int*[num_entries];
-    float **tf_idf = new float*[num_entries];
-    for(int i=0 ; i<num_entries ; i++) {
-        dict_matrix[i] = new int[DICTIONARY_SIZE];
-        tf_idf[i] = new float[DICTIONARY_SIZE];
-        for(int j=0 ; j < DICTIONARY_SIZE ; j++) {
-            dict_matrix[i][j] = 0;
-            tf_idf[i][j] = 0;
-        }
-    }
-    // delete[] dict_vector;
-    // delete[] idf_vector;
-    std::string best_words_vector[DICTIONARY_SIZE];
-    float best_idf_vector[DICTIONARY_SIZE];
-    loc = 0;
-    best_words.vectorify(best_words.root, best_words_vector, best_idf_vector, &loc);
-    // seting values of dict anf tf arrays
-    create_bow_and_tf(dict_matrix, tf_idf, &list_of_entries, &best_words);
-    // multiplying tf*idf
-    for(int i=0 ; i<num_entries ; i++) {
-        for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
-            tf_idf[i][j] = tf_idf[i][j]*best_idf_vector[j]; 
-        }
-    }
+    std::cout << "Vectorifying the full dictionary..." << std::endl;
+    unsigned int loc = 0;
+    all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, all_tfidf_sum_vector, &loc, num_entries);
+    std::cout << "Finished vectorification." << std::endl;
+
+    // mergeSort(all_idf_vector, all_words_vector, 0, num_words-1);
+    // Dict best_words;
+    // for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
+    //     best_words.root = best_words.insert(best_words.root, all_words_vector[num_words-1-i], all_idf_vector[num_words-1-i]);
+    // }
+    // // creating dict anf tf_idf arrays
+    // int **dict_matrix = new int*[num_entries];
+    // float **tf_idf = new float*[num_entries];
+    // for(int i=0 ; i<num_entries ; i++) {
+    //     dict_matrix[i] = new int[DICTIONARY_SIZE];
+    //     tf_idf[i] = new float[DICTIONARY_SIZE];
+    //     for(int j=0 ; j < DICTIONARY_SIZE ; j++) {
+    //         dict_matrix[i][j] = 0;
+    //         tf_idf[i][j] = 0;
+    //     }
+    // }
+    // // delete[] dict_vector;
+    // // delete[] idf_vector;
+    // std::string best_words_vector[DICTIONARY_SIZE];
+    // float best_idf_vector[DICTIONARY_SIZE];
+    // loc = 0;
+    // best_words.vectorify(best_words.root, best_words_vector, best_idf_vector, &loc);
+    // // seting values of dict anf tf arrays
+    // create_bow_and_tf(dict_matrix, tf_idf, &list_of_entries, &best_words);
+    // // multiplying tf*idf
+    // for(int i=0 ; i<num_entries ; i++) {
+    //     for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
+    //         tf_idf[i][j] = tf_idf[i][j]*best_idf_vector[j]; 
+    //     }
+    // }
 
     // these are for printing
     // for(int i=0 ; i<num_entries ; i++) {
@@ -244,12 +245,12 @@ int main() {
     }
 
     output.close();
-    for(int i=0 ; i<num_entries ;i++) {
-        delete[] dict_matrix[i];
-        delete[] tf_idf[i];
-    }
-    delete[] dict_matrix;
-    delete[] tf_idf;
+    // for(int i=0 ; i<num_entries ;i++) {
+    //     delete[] dict_matrix[i];
+    //     delete[] tf_idf[i];
+    // }
+    // delete[] dict_matrix;
+    // delete[] tf_idf;
 
     return 0;
 }

@@ -268,15 +268,16 @@ bool Dict::find(Dictnode* n, std::string r){
     }
 }
 
-void Dict::vectorify(Dictnode* n, std::string* v, float* idf, unsigned int* loc, unsigned int files_count){
+void Dict::vectorify(Dictnode* n, std::string* v, float* idf, float* tfidf, unsigned int* loc, unsigned int files_count){
     if (n == NULL) 
         return; 
     v[*loc] = n->get_data();
-    idf[*loc] = log((float)(files_count/n->idf_count));;
+    idf[*loc] = log((float)(files_count/n->idf_count));
+    tfidf[*loc] = 0;
     n->set_vector_loc(*loc);
     *loc = *loc +1;
-    vectorify(n->left, v, idf, loc, files_count);
-    vectorify(n->right, v, idf, loc, files_count);    
+    vectorify(n->left, v, idf, tfidf, loc, files_count);
+    vectorify(n->right, v, idf, tfidf, loc, files_count);    
 }
 
 void Dict::vectorify(Dictnode* n, std::string* v, float* idf, unsigned int* loc){
