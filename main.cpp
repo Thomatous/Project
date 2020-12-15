@@ -7,6 +7,7 @@
 #include "hashtable.hpp"
 #include "parser.hpp"
 #include "dict.hpp"
+#include "sparse_matrix.hpp"
 
 int main() {
     std::cout << "Starting..." << std::endl;
@@ -72,7 +73,7 @@ int main() {
     } 
 
     // parse csv
-    std::ifstream file("./Datasets/sigmod_large_labelled_dataset.csv");
+    std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
     std::string line, word = "";
 
     int first = 0;
@@ -138,10 +139,15 @@ int main() {
     float all_idf_vector[num_words];
     float all_tfidf_sum_vector[num_words];
 
-    std::cout << "Vectorifying the full dictionary..." << std::endl;
+    std::cout << "Vectorifying the full dictionary...";
     unsigned int loc = 0;
     all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, all_tfidf_sum_vector, &loc, num_entries);
-    std::cout << "Finished vectorification." << std::endl;
+    std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
+
+    std::cout << "Generating bow and tdifd sparse matrixes for all words...";
+    SM files(&list_of_entries, all_tfidf_sum_vector, all_idf_vector, &all_words);
+    std::cout << "\t\t\033[1;32mFINISHED\033[0m" << std::endl;
+
 
     // mergeSort(all_idf_vector, all_words_vector, 0, num_words-1);
     // Dict best_words;

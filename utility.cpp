@@ -43,7 +43,7 @@ void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Dict*
         }
         // after finishing bow table
         // run through it and create tf values 
-        for(int i=0 ; i<DICTIONARY_SIZE ; i++) {
+        for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
             tf_idf[entry_counter][i] = (float)bow[entry_counter][i]/(float)word_counter;
             // if(tf_idf[entry_counter][i] != 0) {
             //     std::cout << tf_idf[entry_counter][i] << "\n";
