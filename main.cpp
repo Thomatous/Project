@@ -289,6 +289,7 @@ int main() {
 
     LR* lr = new LR(DICTIONARY_SIZE*2);
     lr->train(tf_idf, train_set, train_size, 0.001, &ht);
+    // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
 
     // empty heap
     delete lr;
