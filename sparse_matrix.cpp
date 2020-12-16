@@ -152,10 +152,38 @@ void SM::remove_not_best(Dict* best_words){
                     file_vector[i]->head = file_vector[i]->head->next;
                     curr_word_node = file_vector[i]->head;
                 }
-                
+
                 delete temp_word_node;
                 file_vector[i]->decrease_size();
             }
+        }
+    }
+}
+
+void SM::get_bow_vector(int entry_loc, int* bow_vector){
+    if(entry_loc > size){
+        std::cout << "Invalid entry!" << std::endl;
+        exit(1);
+    }
+    else{
+        Wordnode* curr_word_node = file_vector[entry_loc]->head;
+        while(curr_word_node != NULL){
+            bow_vector[curr_word_node->best_words_pos] = curr_word_node->bow;   
+            curr_word_node = curr_word_node->next;
+        }
+    }
+}
+
+void SM::get_tfidf_vector(int entry_loc, float* tfidf_vector){
+    if(entry_loc > size){
+        std::cout << "Invalid entry!" << std::endl;
+        exit(1);
+    }
+    else{
+        Wordnode* curr_word_node = file_vector[entry_loc]->head;
+        while(curr_word_node != NULL){
+            tfidf_vector[curr_word_node->best_words_pos] = curr_word_node->tfidf;   
+            curr_word_node = curr_word_node->next;
         }
     }
 }

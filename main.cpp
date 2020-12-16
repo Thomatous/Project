@@ -145,7 +145,7 @@ int main() {
     all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, all_tfidf_sum_vector, &loc, num_entries);
     std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    std::cout << "Generating bow and tdifd sparse matrixes for all words..." << std::flush;
+    std::cout << "Generating bow and tdifd sparse matrices for all words..." << std::flush;
     SM files(&list_of_entries, all_words_vector, all_tfidf_sum_vector, all_idf_vector, &all_words);
     std::cout << "\t\t\033[1;32mFINISHED\033[0m" << std::endl;
    
@@ -169,43 +169,10 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    // Dict best_words;
-    // for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
-    //     best_words.root = best_words.insert(best_words.root, all_words_vector[num_words-1-i], all_idf_vector[num_words-1-i]);
-    // }
-    // // creating dict anf tf_idf arrays
-    // int **dict_matrix = new int*[num_entries];
-    // float **tf_idf = new float*[num_entries];
-    // for(int i=0 ; i<num_entries ; i++) {
-    //     dict_matrix[i] = new int[DICTIONARY_SIZE];
-    //     tf_idf[i] = new float[DICTIONARY_SIZE];
-    //     for(int j=0 ; j < DICTIONARY_SIZE ; j++) {
-    //         dict_matrix[i][j] = 0;
-    //         tf_idf[i][j] = 0;
-    //     }
-    // }
-    // // delete[] dict_vector;
-    // // delete[] idf_vector;
-    // std::string best_words_vector[DICTIONARY_SIZE];
-    // float best_idf_vector[DICTIONARY_SIZE];
-    // loc = 0;
-    // best_words.vectorify(best_words.root, best_words_vector, best_idf_vector, &loc);
-    // // seting values of dict anf tf arrays
-    // create_bow_and_tf(dict_matrix, tf_idf, &list_of_entries, &best_words);
-    // // multiplying tf*idf
-    // for(int i=0 ; i<num_entries ; i++) {
-    //     for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
-    //         tf_idf[i][j] = tf_idf[i][j]*best_idf_vector[j]; 
-    //     }
-    // }
-
-    // these are for printing
-    // for(int i=0 ; i<num_entries ; i++) {
-    //     for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
-    //         std::cout << tf_idf[i][j] << "\t";
-    //     }
-    //     std::cout << "\n";
-    // }
+    float t[best_words_number] = { 0 }; 
+    files.get_tfidf_vector(3, t);
+    int b[best_words_number] = { 0 }; 
+    files.get_bow_vector(3, b);
 
     // output printing
     std::ofstream output;
