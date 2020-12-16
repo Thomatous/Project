@@ -3,11 +3,22 @@
 
 #include <iostream>
 #include <cmath>
+#include "hashtable.hpp"
 
-#define EPOCHS 5000
+#define EPOCHS 100
 
-void train(int**, float*, int, int, int);
-void train(float**, float*, int, int, int);
-void predict();
+class LR{
+public:
+    float L, J;
+    const unsigned int weights_size;
+    float* weights;
+    LR(unsigned int);
+    ~LR();
+
+    void gradient_descent(int*, int*, float);
+    void gradient_descent(float*, float*, float);
+    void train(float**, std::string*, unsigned int, float, HashTable*);
+    void predict();
+};
 
 #endif

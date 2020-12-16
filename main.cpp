@@ -7,6 +7,7 @@
 #include "hashtable.hpp"
 #include "parser.hpp"
 #include "dict.hpp"
+#include "logistic_regression.hpp"
 
 int main() {
     std::cout << "Starting..." << std::endl;
@@ -286,9 +287,11 @@ int main() {
     }
     delete[] dataset;
 
-
+    LR* lr = new LR(DICTIONARY_SIZE*2);
+    lr->train(tf_idf, train_set, train_size, 0.001, &ht);
 
     // empty heap
+    delete lr;
     delete[] train_set;
     delete[] test_set;
     delete[] validation_set;
