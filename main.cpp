@@ -185,6 +185,7 @@ int main() {
     std::ofstream output;
     output.open("output.csv");
     output << "left_spec_id,right_spec_id,label\n";
+    unsigned int lines_counter = 0;
     Cliquenode* c_n = NULL;
     Clique* c = NULL;
     AntiClique* d = NULL; 
@@ -204,6 +205,7 @@ int main() {
                 for(int j=i+1 ; j<size ; j++) {
                     std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
                     output << url1 << "," << url2 << ",1" <<  "\n";
+                    ++lines_counter;
                 }
                 table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
             }
@@ -226,6 +228,7 @@ int main() {
                         while( d_e != NULL ) {          // for every entry in different clique
                             std::string url2 = d_e->data->get_page_title() + "//" + d_e->data->get_id();
                             output << url1 << "," << url2 << ",0" <<  "\n";
+                            ++lines_counter;
                             d_e = d_e->next;
                         }
                     }
@@ -249,6 +252,46 @@ int main() {
     }
 
     output.close();
+
+    std::ifstream input;
+    input.open("output.csv");
+    std::string* dataset = new std::string[lines_counter];
+    if ( input.is_open() ) {
+        std::string empty;
+        getline(input, empty);          // discard header line
+        // fill up array with info lines
+        for(unsigned int i=0 ; i < lines_counter ; ++i) {
+            getline(input, dataset[i]);
+        }
+    } else {
+        perror("no output file");
+    }
+
+    // create train, test and validation sets
+    shuffle(dataset, lines_counter);
+    int train_size = 0.6*lines_counter;
+    int test_size = 0.2*lines_counter;
+    if( lines_counter > train_size + 2*test_size)
+        train_size += lines_counter-(train_size + 2*test_size);
+    std::string* train_set = new std::string[train_size];
+    std::string* test_set = new std::string[test_size];
+    std::string* validation_set = new std::string[test_size];
+    for(int i=0 ; i < lines_counter ; ++i) {
+        if(i < train_size)
+            train_set[i] = dataset[i];
+        else if(i < train_size+test_size)
+            test_set[i-train_size] = dataset[i];
+        else 
+            validation_set[i-(train_size+test_size)] = dataset[i];
+    }
+    delete[] dataset;
+
+
+
+    // empty heap
+    delete[] train_set;
+    delete[] test_set;
+    delete[] validation_set;
     for(int i=0 ; i<num_entries ;i++) {
         delete[] dict_matrix[i];
         delete[] tf_idf[i];
