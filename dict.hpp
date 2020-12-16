@@ -14,6 +14,7 @@ class Dictnode{
         std::string data;
         int vector_loc;
     public:
+        int best_words_loc;
         int idf_count;
         float idf;
         std::string* last_string;
@@ -46,13 +47,15 @@ class Dict{
         Dictnode* right_rotate(Dictnode*);
         Dictnode* left_rotate(Dictnode*);
         Dictnode* insert(Dictnode*, std::string, std::string*);
-        Dictnode* insert(Dictnode*, std::string, float);
+        Dictnode* insert(Dictnode*, std::string, int, int);
         Dictnode* add(Dictnode*, std::string, std::string*);
         void print_preorder(Dictnode*);
-        bool find(Dictnode*, std::string);
         void vectorify(Dictnode*, std::string*, float*, float*, unsigned int*, unsigned int);
         void vectorify(Dictnode*, std::string*, float*, unsigned int*);
-        int find_loc(Dictnode*, std::string);
         void set_word_loc(Dictnode*, std::string, int);
+        bool find(Dictnode*, std::string);
+        int find_loc(Dictnode*, std::string);
+        Dictnode* find_node(Dictnode*, std::string);
+
 };
 #endif

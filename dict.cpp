@@ -189,20 +189,21 @@ Dictnode* Dict::insert(Dictnode* n, std::string r, std::string *file_string) {
 }
 
 //inserts data in the Dict tree and rebalances
-Dictnode* Dict::insert(Dictnode* n, std::string r, float idf) {
+Dictnode* Dict::insert(Dictnode* n, std::string r, int loc, int best_loc) {
     // std::cout << "Inserting " << r->get_hashvalue() << std::endl;
     if(n == NULL) {                                             //found and aprrpprite spot                                  
         size++;
         Dictnode* t = new Dictnode(r);
-        t->idf = idf;
+        t->set_vector_loc(loc);
+        t->best_words_loc = best_loc;
         // std::cout << "New word:\t\t\t" << t->get_data() << "\t\t\tidf_count:\t\t\t" << t->idf_count << std::endl;
         return t;
     } 
     else if(r > n->get_data()) {    //if data date later insert to the right      
-        n->right = insert(n->right, r, idf);
+        n->right = insert(n->right, r, loc, best_loc);
     } 
     else if(r < n->get_data()) {  //if data date earlier insert to the left
-        n->left = insert(n->left, r, idf);
+        n->left = insert(n->left, r, loc, best_loc);
     }
 
     n->update_height();     //updatee the height  of the Dictnode
@@ -251,23 +252,6 @@ void Dict::print_preorder(Dictnode* n){
     print_preorder(n->right);
 }
 
-//parses the tree and looks for an data with a matching hashvalue
-//returns null if it hasn't been found, and a pointer to the data if it has been found
-bool Dict::find(Dictnode* n, std::string r){
-    if(n == NULL){
-        return false;
-    }
-    else if(r < n->get_data()){
-        return find(n->left, r);
-    }
-    else if(r > n->get_data()){
-        return find(n->right, r);
-    }
-    else {
-        return true; // We found the value.
-    }
-}
-
 void Dict::vectorify(Dictnode* n, std::string* v, float* idf, float* tfidf, unsigned int* loc, unsigned int files_count){
     if (n == NULL) 
         return; 
@@ -292,6 +276,36 @@ void Dict::vectorify(Dictnode* n, std::string* v, float* idf, unsigned int* loc)
 }
 
 
+
+void Dict::set_word_loc(Dictnode* n, std::string r, int loc){
+    if(r < n->get_data()){
+        set_word_loc(n->left, r, loc);
+    }
+    else if(r > n->get_data()){
+        set_word_loc(n->right, r, loc);
+    }
+    else if(r == n->get_data()){
+        n->set_vector_loc(loc);
+    }
+}
+
+//parses the tree and looks for an data with a matching hashvalue
+//returns null if it hasn't been found, and a pointer to the data if it has been found
+bool Dict::find(Dictnode* n, std::string r){
+    if(n == NULL){
+        return false;
+    }
+    else if(r < n->get_data()){
+        return find(n->left, r);
+    }
+    else if(r > n->get_data()){
+        return find(n->right, r);
+    }
+    else {
+        return true; // We found the value.
+    }
+}
+
 int Dict::find_loc(Dictnode* n, std::string r){
     if(n == NULL){
         return -1;
@@ -307,15 +321,18 @@ int Dict::find_loc(Dictnode* n, std::string r){
     }
 }
 
-void Dict::set_word_loc(Dictnode* n, std::string r, int loc){
-    if(r < n->get_data()){
-        set_word_loc(n->left, r, loc);
+Dictnode* Dict::find_node(Dictnode* n, std::string r){
+    if(n == NULL){
+        return NULL;
+    }
+    else if(r < n->get_data()){
+        return find_node(n->left, r);
     }
     else if(r > n->get_data()){
-        set_word_loc(n->right, r, loc);
+        return find_node(n->right, r);
     }
-    else if(r == n->get_data()){
-        n->set_vector_loc(loc);
+    else {
+        return n; // We found the value.
     }
 }
 

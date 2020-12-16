@@ -25,6 +25,7 @@ int main() {
         perror("can't open the given directory");
         exit(2);
     } else {
+        std::cout << "Reading the datasets..." << std::flush;
         while (folder = readdir(dir_p)) { //read each folder
             if (folder->d_name != std::string(".") && folder->d_name != std::string("..")) {
                 // std::cout << "folder = " << folder->d_name << std::endl;
@@ -68,7 +69,7 @@ int main() {
                 }
             } 
         }
-
+        std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;        
         (void) closedir (dir_p);
     } 
 
@@ -139,17 +140,35 @@ int main() {
     float all_idf_vector[num_words];
     float all_tfidf_sum_vector[num_words];
 
-    std::cout << "Vectorifying the full dictionary...";
+    std::cout << "Vectorifying the full dictionary..." << std::flush;
     unsigned int loc = 0;
     all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, all_tfidf_sum_vector, &loc, num_entries);
     std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    std::cout << "Generating bow and tdifd sparse matrixes for all words...";
-    SM files(&list_of_entries, all_tfidf_sum_vector, all_idf_vector, &all_words);
+    std::cout << "Generating bow and tdifd sparse matrixes for all words..." << std::flush;
+    SM files(&list_of_entries, all_words_vector, all_tfidf_sum_vector, all_idf_vector, &all_words);
     std::cout << "\t\t\033[1;32mFINISHED\033[0m" << std::endl;
+   
+    std::cout << "Sorting words based on tfidf sums..." << std::flush;
+    int best_words_pos_vector[num_words];
+    for(int i = 0 ; i < num_words ; i++) best_words_pos_vector[i] = i;
+    mergeSort(all_tfidf_sum_vector, best_words_pos_vector, 0, num_words-1);
+    std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
+    std::cout << "Inserting best words in a dictionary..." << std::flush;
+    int best_words_number = 1000;
+    Dict* best_words = new Dict();
+    for(unsigned int i = 0 ; i < best_words_number ; i++){
+        int j = best_words_pos_vector[num_words-1-i]; 
+        best_words->root = best_words->insert(best_words->root, all_words_vector[j], j, i);
+    }
+    std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    // mergeSort(all_idf_vector, all_words_vector, 0, num_words-1);
+    std::cout << "Removing words that aren't best from sparse matrices..." << std::flush;
+    files.remove_not_best(best_words);
+    delete best_words;
+    std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
+
     // Dict best_words;
     // for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
     //     best_words.root = best_words.insert(best_words.root, all_words_vector[num_words-1-i], all_idf_vector[num_words-1-i]);
