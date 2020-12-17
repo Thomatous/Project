@@ -79,7 +79,7 @@ SM::~SM(){
     for(unsigned int i = 0 ; i < size ; i++){
         delete file_vector[i];
     }
-    // delete[] file_vector;
+    delete[] file_vector;
 }
 
 
