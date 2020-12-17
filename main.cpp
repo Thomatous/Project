@@ -262,7 +262,7 @@ int main() {
     }
 
     // create train, test and validation sets
-    shuffle(dataset, lines_counter);
+    // shuffle(dataset, lines_counter);
     int train_size = 0.6*lines_counter;
     int test_size = 0.2*lines_counter;
     if( lines_counter > train_size + 2*test_size)
@@ -281,7 +281,7 @@ int main() {
     delete[] dataset;
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, train_size, 100, &ht);
+    lr->train(&files, train_set, train_size, 1000, &ht);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
 

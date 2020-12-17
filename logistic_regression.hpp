@@ -10,11 +10,11 @@
 
 class LR{
 public:
-    float L, J;
+    float prevL, L, J;
     const unsigned int weights_size;
     float* weights;
     float* thetaJ;
-    unsigned int pred_counter;
+    unsigned int pred_counter, pred_threshold_counter;
     LR(unsigned int);
     ~LR();
 
