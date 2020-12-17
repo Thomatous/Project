@@ -4,8 +4,9 @@
 #include <iostream>
 #include <cmath>
 #include "hashtable.hpp"
+#include "sparse_matrix.hpp"
 
-#define EPOCHS 5
+#define EPOCHS 50
 
 class LR{
 public:
@@ -13,14 +14,15 @@ public:
     const unsigned int weights_size;
     float* weights;
     float* thetaJ;
+    unsigned int pred_counter;
     LR(unsigned int);
     ~LR();
 
-    void gradient_descent(int*, int*, short int);
-    void gradient_descent(float*, float*, short int);
-    void train(float**, std::string*, unsigned int, float, HashTable*);
-    void train(int**, std::string*, unsigned int, float, HashTable*);
-    void predict();
+    // void gradient_descent(int*, int*, short int);
+    void gradient_descent(int, int, short int, SM*);
+    void train(SM*, std::string*, unsigned int, float, HashTable*);
+    // void train(SM*, std::string*, unsigned int, float, HashTable*);
+    void predict(SM*, std::string*, unsigned int, HashTable*);
 };
 
 #endif

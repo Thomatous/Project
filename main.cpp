@@ -157,7 +157,7 @@ int main() {
     std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
     std::cout << "Inserting best words in a dictionary..." << std::flush;
-    int best_words_number = 1000;
+    int best_words_number = 500;
     Dict* best_words = new Dict();
     for(unsigned int i = 0 ; i < best_words_number ; i++){
         int j = best_words_pos_vector[num_words-1-i]; 
@@ -170,10 +170,10 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    float t[best_words_number] = { 0 }; 
-    files.get_tfidf_vector(3, t);
-    int b[best_words_number] = { 0 }; 
-    files.get_bow_vector(3, b);
+    // float t[best_words_number] = { 0 }; 
+    // files.get_tfidf_vector(3, t);
+    // int b[best_words_number] = { 0 }; 
+    // files.get_bow_vector(3, b);
 
     // output printing
     std::ofstream output;
@@ -280,8 +280,9 @@ int main() {
     }
     delete[] dataset;
 
-    LR* lr = new LR(DICTIONARY_SIZE*2);
-    lr->train(tf_idf, train_set, train_size, 0.001, &ht);
+    LR* lr = new LR(best_words_number*2);
+    lr->train(&files, train_set, train_size, 100, &ht);
+    lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
 
     // empty heap
