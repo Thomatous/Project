@@ -1,5 +1,5 @@
-project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o
-	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o -g3
+project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o
+	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o -g3
 
 avl_test:avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o
 	g++ -Wall -o avl_test -std=c++11 avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o -g3
@@ -64,5 +64,8 @@ dict.o:dict.cpp dict.hpp
 logistic_regression.o:logistic_regression.cpp logistic_regression.hpp
 	g++ -Wall -c -std=c++11 logistic_regression.cpp -g3
 
+sparse_matrix.o:sparse_matrix.cpp sparse_matrix.hpp
+	g++ -Wall -c -std=c++11 sparse_matrix.cpp -g3
+
 clean:
-	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o clique_test.o avl_test.o avl_test clique_test entry_test entry_test.o hashtable_test.o hashtable_test parserlist.o parser.o output.csv anticlique.o anticlique dict dict_main.o dict.o logistic_regression.o
+	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o clique_test.o avl_test.o avl_test clique_test entry_test entry_test.o hashtable_test.o hashtable_test parserlist.o parser.o output.csv anticlique.o anticlique dict dict_main.o dict.o logistic_regression.o sparse_matrix.o

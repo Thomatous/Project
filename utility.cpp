@@ -43,7 +43,7 @@ void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Dict*
         }
         // after finishing bow table
         // run through it and create tf values 
-        for(int i=0 ; i<DICTIONARY_SIZE ; i++) {
+        for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
             tf_idf[entry_counter][i] = (float)bow[entry_counter][i]/(float)word_counter;
             // if(tf_idf[entry_counter][i] != 0) {
             //     std::cout << tf_idf[entry_counter][i] << "\n";
@@ -57,19 +57,19 @@ void create_bow_and_tf(int** bow, float** tf_idf, Clique* list_of_entries, Dict*
 
 // -----------------SORT-------------------------
 
-void merge(float* idf, std::string* words, int l, int m, int r) {
+void merge(float* tfidf, int* words, int l, int m, int r) {
     int n1 = m - l + 1;
     int n2 = r - m;
  
     float L[n1], R[n2];
-    std::string Ls[n1], Rs[n2];
+    int Ls[n1], Rs[n2];
  
     for (int i = 0; i < n1; i++) {
-        L[i] = idf[l + i];
+        L[i] = tfidf[l + i];
         Ls[i] = words[l+i];
     }
     for (int j = 0; j < n2; j++) {
-        R[j] = idf[m + 1 + j];
+        R[j] = tfidf[m + 1 + j];
         Rs[j] = words[m + 1 + j];
     }
  
@@ -79,12 +79,12 @@ void merge(float* idf, std::string* words, int l, int m, int r) {
  
     while (i < n1 && j < n2) {
         if (L[i] <= R[j]) {
-            idf[k] = L[i];
+            tfidf[k] = L[i];
             words[k] = Ls[i];
             i++;
         }
         else {
-            idf[k] = R[j];
+            tfidf[k] = R[j];
             words[k] = Rs[j];
             j++;
         }
@@ -92,28 +92,28 @@ void merge(float* idf, std::string* words, int l, int m, int r) {
     }
  
     while (i < n1) {
-        idf[k] = L[i];
+        tfidf[k] = L[i];
         words[k] = Ls[i];
         i++;
         k++;
     }
  
     while (j < n2) {
-        idf[k] = R[j];
+        tfidf[k] = R[j];
         words[k] = Rs[j];
         j++;
         k++;
     }
 }
 
-void mergeSort(float* idf, std::string* words, int l, int r) {
+void mergeSort(float* tfidf, int* words, int l, int r) {
     if(l>=r) {
         return;//returns recursively
     }
     int m = (l+r-1)/2;
-    mergeSort(idf, words, l, m);
-    mergeSort(idf, words, m+1, r);
-    merge(idf, words, l, m, r);
+    mergeSort(tfidf, words, l, m);
+    mergeSort(tfidf, words, m+1, r);
+    merge(tfidf, words, l, m, r);
 }
 
 // -----------------SHUFFLE-------------------------

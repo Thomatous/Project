@@ -8,6 +8,7 @@
 #include "parser.hpp"
 #include "dict.hpp"
 #include "logistic_regression.hpp"
+#include "sparse_matrix.hpp"
 
 int main() {
     std::cout << "Starting..." << std::endl;
@@ -25,6 +26,7 @@ int main() {
         perror("can't open the given directory");
         exit(2);
     } else {
+        std::cout << "Reading the datasets..." << std::flush;
         while (folder = readdir(dir_p)) { //read each folder
             if (folder->d_name != std::string(".") && folder->d_name != std::string("..")) {
                 // std::cout << "folder = " << folder->d_name << std::endl;
@@ -68,7 +70,7 @@ int main() {
                 }
             } 
         }
-
+        std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;        
         (void) closedir (dir_p);
     } 
 
@@ -131,56 +133,47 @@ int main() {
         file.clear();
         file.seekg(0);
     }
-    int num_entries = list_of_entries.get_size();
-    // std::cout << first << std::endl;
-    // std::cout << second << std::endl;
-    std::cout << "Full dictionary contains " << all_words.get_size() << " unique words." << std::endl;
-    int num_words = all_words.get_size();
     
+    std::cout << "Full dictionary contains " << all_words.get_size() << " unique words." << std::endl;
+    int num_entries = list_of_entries.get_size();
+    int num_words = all_words.get_size();
     std::string all_words_vector[num_words];
     float all_idf_vector[num_words];
+    float all_tfidf_sum_vector[num_words];
+
+    std::cout << "Vectorifying the full dictionary..." << std::flush;
     unsigned int loc = 0;
-    all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, &loc, num_entries);
-    std::cout << "Full dictionary vector has been created." << std::endl;
+    all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, all_tfidf_sum_vector, &loc, num_entries);
+    std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    mergeSort(all_idf_vector, all_words_vector, 0, num_words-1);
-    Dict best_words;
-    for(int i=0 ; i < DICTIONARY_SIZE ; i++) {
-        best_words.root = best_words.insert(best_words.root, all_words_vector[num_words-1-i], all_idf_vector[num_words-1-i]);
-    }
-    // creating dict anf tf_idf arrays
-    int **dict_matrix = new int*[num_entries];
-    float **tf_idf = new float*[num_entries];
-    for(int i=0 ; i<num_entries ; i++) {
-        dict_matrix[i] = new int[DICTIONARY_SIZE];
-        tf_idf[i] = new float[DICTIONARY_SIZE];
-        for(int j=0 ; j < DICTIONARY_SIZE ; j++) {
-            dict_matrix[i][j] = 0;
-            tf_idf[i][j] = 0;
-        }
-    }
-    // delete[] dict_vector;
-    // delete[] idf_vector;
-    std::string best_words_vector[DICTIONARY_SIZE];
-    float best_idf_vector[DICTIONARY_SIZE];
-    loc = 0;
-    best_words.vectorify(best_words.root, best_words_vector, best_idf_vector, &loc);
-    // seting values of dict anf tf arrays
-    create_bow_and_tf(dict_matrix, tf_idf, &list_of_entries, &best_words);
-    // multiplying tf*idf
-    for(int i=0 ; i<num_entries ; i++) {
-        for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
-            tf_idf[i][j] = tf_idf[i][j]*best_idf_vector[j]; 
-        }
-    }
+    std::cout << "Generating bow and tdifd sparse matrices for all words..." << std::flush;
+    SM files(&list_of_entries, all_words_vector, all_tfidf_sum_vector, all_idf_vector, &all_words);
+    std::cout << "\t\t\033[1;32mFINISHED\033[0m" << std::endl;
+   
+    std::cout << "Sorting words based on tfidf sums..." << std::flush;
+    int best_words_pos_vector[num_words];
+    for(int i = 0 ; i < num_words ; i++) best_words_pos_vector[i] = i;
+    mergeSort(all_tfidf_sum_vector, best_words_pos_vector, 0, num_words-1);
+    std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    // these are for printing
-    // for(int i=0 ; i<num_entries ; i++) {
-    //     for(int j=0 ; j<DICTIONARY_SIZE ; j++) {
-    //         std::cout << tf_idf[i][j] << "\t";
-    //     }
-    //     std::cout << "\n";
-    // }
+    std::cout << "Inserting best words in a dictionary..." << std::flush;
+    int best_words_number = 1000;
+    Dict* best_words = new Dict();
+    for(unsigned int i = 0 ; i < best_words_number ; i++){
+        int j = best_words_pos_vector[num_words-1-i]; 
+        best_words->root = best_words->insert(best_words->root, all_words_vector[j], j, i);
+    }
+    std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
+
+    std::cout << "Removing words that aren't best from sparse matrices..." << std::flush;
+    files.remove_not_best(best_words);
+    delete best_words;
+    std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
+
+    float t[best_words_number] = { 0 }; 
+    files.get_tfidf_vector(3, t);
+    int b[best_words_number] = { 0 }; 
+    files.get_bow_vector(3, b);
 
     // output printing
     std::ofstream output;
@@ -296,12 +289,12 @@ int main() {
     delete[] train_set;
     delete[] test_set;
     delete[] validation_set;
-    for(int i=0 ; i<num_entries ;i++) {
-        delete[] dict_matrix[i];
-        delete[] tf_idf[i];
-    }
-    delete[] dict_matrix;
-    delete[] tf_idf;
+    // for(int i=0 ; i<num_entries ;i++) {
+    //     delete[] dict_matrix[i];
+    //     delete[] tf_idf[i];
+    // }
+    // delete[] dict_matrix;
+    // delete[] tf_idf;
 
     return 0;
 }
