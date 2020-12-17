@@ -7,6 +7,7 @@
 #include "hashtable.hpp"
 #include "parser.hpp"
 #include "dict.hpp"
+#include "logistic_regression.hpp"
 #include "sparse_matrix.hpp"
 
 int main() {
@@ -156,7 +157,7 @@ int main() {
     std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
     std::cout << "Inserting best words in a dictionary..." << std::flush;
-    int best_words_number = 1000;
+    int best_words_number = 500;
     Dict* best_words = new Dict();
     for(unsigned int i = 0 ; i < best_words_number ; i++){
         int j = best_words_pos_vector[num_words-1-i]; 
@@ -169,15 +170,16 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    float t[best_words_number] = { 0 }; 
-    files.get_tfidf_vector(3, t);
-    int b[best_words_number] = { 0 }; 
-    files.get_bow_vector(3, b);
+    // float t[best_words_number] = { 0 }; 
+    // files.get_tfidf_vector(3, t);
+    // int b[best_words_number] = { 0 }; 
+    // files.get_bow_vector(3, b);
 
     // output printing
     std::ofstream output;
     output.open("output.csv");
     output << "left_spec_id,right_spec_id,label\n";
+    unsigned int lines_counter = 0;
     Cliquenode* c_n = NULL;
     Clique* c = NULL;
     AntiClique* d = NULL; 
@@ -191,41 +193,48 @@ int main() {
                 table[i] = c->pop();
             }
 
-            for(int i=0 ; i<size ; i++) {       //print every possible pair from that clique
+            // print every possible pair from that clique
+            for(int i=0 ; i<size ; i++) {       
                 std::string url1 = table[i]->data->get_page_title() + "//" + table[i]->data->get_id();
                 for(int j=i+1 ; j<size ; j++) {
                     std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
                     output << url1 << "," << url2 << ",1" <<  "\n";
+                    ++lines_counter;
                 }
                 table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
             }
 
-            d = c->different;
+            // print every possible negative similarity pair of entries
+            d = c->different;                           // list of different cliques 
             if ( !d->is_empty() ) {
                 int d_size = d->get_size();
                 AntiCliquenode* d_table[d_size];
+                // adding all different cliques to d_table
                 for(int i=0 ; i<d_size ; i++) {
                     d_table[i] = d->pop();
                 }
 
-                for(int i=0 ; i<d_size ; i++) {
+                for(int i=0 ; i<d_size ; i++) {         // for every different clique
                     Clique* d_c = d_table[i]->data;
-                    Cliquenode* d_e = d_c->head;
-                    for(int j=0 ; j<size ; j++) {
+                    for(int j=0 ; j<size ; j++) {       // for every entry in c clique
+                        Cliquenode* d_e = d_c->head;
                         std::string url1 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
-                        while( d_e != NULL ) {
+                        while( d_e != NULL ) {          // for every entry in different clique
                             std::string url2 = d_e->data->get_page_title() + "//" + d_e->data->get_id();
                             output << url1 << "," << url2 << ",0" <<  "\n";
+                            ++lines_counter;
                             d_e = d_e->next;
                         }
                     }
-                    d_c->different->remove(c);
+                    d_c->different->remove(c);          // after finishing with this different clique, 
+                                                        //remove c clique from different clique's different list
                 }
 
                 for(int i=0 ; i<d_size ; i++) {
                     delete d_table[i];
                 }
             }
+
             // c->update_clique_ptrs(NULL);
             for(int i=0 ; i<size ; i++) {
                 delete table[i];
@@ -237,6 +246,50 @@ int main() {
     }
 
     output.close();
+
+    std::ifstream input;
+    input.open("output.csv");
+    std::string* dataset = new std::string[lines_counter];
+    if ( input.is_open() ) {
+        std::string empty;
+        getline(input, empty);          // discard header line
+        // fill up array with info lines
+        for(unsigned int i=0 ; i < lines_counter ; ++i) {
+            getline(input, dataset[i]);
+        }
+    } else {
+        perror("no output file");
+    }
+
+    // create train, test and validation sets
+    shuffle(dataset, lines_counter);
+    int train_size = 0.6*lines_counter;
+    int test_size = 0.2*lines_counter;
+    if( lines_counter > train_size + 2*test_size)
+        train_size += lines_counter-(train_size + 2*test_size);
+    std::string* train_set = new std::string[train_size];
+    std::string* test_set = new std::string[test_size];
+    std::string* validation_set = new std::string[test_size];
+    for(int i=0 ; i < lines_counter ; ++i) {
+        if(i < train_size)
+            train_set[i] = dataset[i];
+        else if(i < train_size+test_size)
+            test_set[i-train_size] = dataset[i];
+        else 
+            validation_set[i-(train_size+test_size)] = dataset[i];
+    }
+    delete[] dataset;
+
+    LR* lr = new LR(best_words_number*2);
+    lr->train(&files, train_set, train_size, 100, &ht);
+    lr->predict(&files, test_set, test_size, &ht);
+    // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
+
+    // empty heap
+    delete lr;
+    delete[] train_set;
+    delete[] test_set;
+    delete[] validation_set;
     // for(int i=0 ; i<num_entries ;i++) {
     //     delete[] dict_matrix[i];
     //     delete[] tf_idf[i];

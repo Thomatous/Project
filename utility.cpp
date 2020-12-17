@@ -116,3 +116,21 @@ void mergeSort(float* tfidf, int* words, int l, int r) {
     merge(tfidf, words, l, m, r);
 }
 
+// -----------------SHUFFLE-------------------------
+
+void swap(std::string* a, std::string* b) {
+    std::string temp;
+    temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void shuffle(std::string* array, unsigned int size) {
+    srand(time(NULL));
+    int s1,s2;
+    for(int i=0 ; i < size ; ++i) {
+        s1 = rand()%size;
+        s2 = rand()%size;
+        swap(array[s1], array[s2]);
+    }
+}
