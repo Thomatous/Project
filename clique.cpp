@@ -21,6 +21,7 @@ Cliquenode::~Cliquenode(){
 Clique::Clique(){
     different = new AntiClique();
     head = NULL;
+    printed = false;
     size = 0;
 }
 

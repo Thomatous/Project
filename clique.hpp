@@ -20,6 +20,7 @@ class Clique{
     private:
         int size;
     public:
+        bool printed;
         Cliquenode* head;
         AntiClique* different;
         Clique();
