@@ -21,6 +21,8 @@ class Clique{
         int size;
     public:
         bool printed;
+        Clique** anti_printed;
+
         Cliquenode* head;
         AntiClique* different;
         Clique();

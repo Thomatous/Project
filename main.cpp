@@ -208,36 +208,70 @@ int main() {
             }
             c->printed = true;
 
-            // // print every possible negative similarity pair of entries
-            // d = c->different;                           // list of different cliques 
-            // if ( !d->is_empty() ) {
-            //     int d_size = d->get_size();
-            //     AntiCliquenode* d_table[d_size];
-            //     // adding all different cliques to d_table
-            //     for(int i=0 ; i<d_size ; i++) {
-            //         d_table[i] = d->pop();
-            //     }
+            // print every possible negative similarity pair of entries
+            d = c->different;                           // list of different cliques 
+            if ( !d->is_empty() ) {
+                int d_size = d->get_size();
+                
+                if(c->anti_printed == NULL){
+                    c->anti_printed = new Clique*[d_size];
+                    for(int i=0 ; i < d_size ; i++) c->anti_printed[i] = NULL;
+                }
+            
+                AntiCliquenode* d_table[d_size];
+                AntiCliquenode* temp_d = d->head;
+                // adding all different cliques to d_table
+                for(int i=0 ; i<d_size ; i++) {
+                    d_table[i] = temp_d;
+                    temp_d = temp_d->next;
+                }                
 
-            //     for(int i=0 ; i<d_size ; i++) {         // for every different clique
-            //         Clique* d_c = d_table[i]->data;
-            //         for(int j=0 ; j<size ; j++) {       // for every entry in c clique
-            //             Cliquenode* d_e = d_c->head;
-            //             std::string url1 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
-            //             while( d_e != NULL ) {          // for every entry in different clique
-            //                 std::string url2 = d_e->data->get_page_title() + "//" + d_e->data->get_id();
-            //                 output << url1 << "," << url2 << ",0" <<  "\n";
-            //                 ++lines_counter;
-            //                 d_e = d_e->next;
-            //             }
-            //         }
-            //         d_c->different->remove(c);          // after finishing with this different clique, 
-            //                                             //remove c clique from different clique's different list
-            //     }
+                for(int i=0 ; i<d_size ; i++) {         // for every different clique
+                    Clique* d_c = d_table[i]->data;
+                    
+                    int d_c_size = d_c->get_size();
+                    
+                    if(d_c->anti_printed == NULL){
+                        d_c->anti_printed = new Clique*[d_c_size];
+                        for(int i=0 ; i < d_c_size ; i++) d_c->anti_printed[i] = NULL;
+                    }
 
-            //     for(int i=0 ; i<d_size ; i++) {
-            //         delete d_table[i];
-            //     }
-            // }
+                    bool continue_flag = false;
+                    for(int j = 0 ; j < d_size ; j++){
+                        if(c->anti_printed[j] == d_c){
+                            continue_flag = true;
+                            break;
+                        }
+                    }
+                    if(continue_flag == true) continue;
+                    else{
+                        for(int j = 0 ; j < d_size ; j++){
+                            if(c->anti_printed[j] == NULL){
+                                c->anti_printed[j] = d_c;
+                                break;
+                            }
+                        }
+                    }
+
+
+                    for(int j=0 ; j<size ; j++) {       // for every entry in c clique
+                        Cliquenode* d_e = d_c->head;
+                        std::string url1 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
+                        while( d_e != NULL ) {          // for every entry in different clique
+                            std::string url2 = d_e->data->get_page_title() + "//" + d_e->data->get_id();
+                            output << url1 << "," << url2 << ",0" <<  "\n";
+                            ++lines_counter;
+                            d_e = d_e->next;
+                        }
+                    }
+                    // d_c->different->remove(c);          // after finishing with this different clique, 
+                                                        //remove c clique from different clique's different list
+                }
+
+                // for(int i=0 ; i<d_size ; i++) {
+                //     delete d_table[i];
+                // }
+            }
 
             // c->update_clique_ptrs(NULL);
             // for(int i=0 ; i<size ; i++) {

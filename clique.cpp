@@ -22,6 +22,7 @@ Clique::Clique(){
     different = new AntiClique();
     head = NULL;
     printed = false;
+    anti_printed = NULL;
     size = 0;
 }
 
@@ -35,8 +36,8 @@ Clique::~Clique(){
         head = head->next;
         delete temp;
     }
-    
     delete different;
+    // if(anti_printed != NULL) delete[] anti_printed;
     // std::cout << "Clique deleted!" << std::endl;
 }
 
