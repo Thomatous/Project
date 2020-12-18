@@ -80,6 +80,7 @@ int main() {
 
     int first = 0;
     int second = 0;
+    int third = 0;
     for(int i=1 ; i>-1 ; i--) {
         while( getline(file, line) ) { // read every line of the csv
             std::stringstream line_stringstream(line);
@@ -133,9 +134,10 @@ int main() {
         file.clear();
         file.seekg(0);
     }
+    file.close();
     
     std::cout << "Full dictionary contains " << all_words.get_size() << " unique words." << std::endl;
-    int num_entries = list_of_entries.get_size();
+    int num_entries = list_of_entries.size;
     int num_words = all_words.get_size();
     std::string all_words_vector[num_words];
     float all_idf_vector[num_words];
@@ -170,11 +172,6 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    // float t[best_words_number] = { 0 }; 
-    // files.get_tfidf_vector(3, t);
-    // int b[best_words_number] = { 0 }; 
-    // files.get_bow_vector(3, b);
-
     // output printing
     std::ofstream output;
     output.open("output.csv");
@@ -186,8 +183,8 @@ int main() {
     AntiClique* d = NULL; 
     while( c_n != NULL ) {    //parse list of entries
         c = c_n->data->clique;                  //get entry's clique
+        int size = c->size;
         if( c->printed == false ) {                         //if not NULL
-            int size = c->get_size();
             
             Cliquenode* table[size];            //create table of clique's members
             Cliquenode* temp_entry = c->head;
@@ -211,16 +208,17 @@ int main() {
             // print every possible negative similarity pair of entries
             d = c->different;                           // list of different cliques 
             if ( !d->is_empty() ) {
-                int d_size = d->get_size();
+                // std::cout << d->size << std::endl;
+                int d_size = d->size;
                 
                 if(c->anti_printed == NULL){
                     c->anti_printed = new Clique*[d_size];
                     for(int i=0 ; i < d_size ; i++) c->anti_printed[i] = NULL;
                 }
             
+                // adding all different cliques to d_table
                 AntiCliquenode* d_table[d_size];
                 AntiCliquenode* temp_d = d->head;
-                // adding all different cliques to d_table
                 for(int i=0 ; i<d_size ; i++) {
                     d_table[i] = temp_d;
                     temp_d = temp_d->next;
@@ -229,11 +227,11 @@ int main() {
                 for(int i=0 ; i<d_size ; i++) {         // for every different clique
                     Clique* d_c = d_table[i]->data;
                     
-                    int d_c_size = d_c->get_size();
+                    int d_c_size = d_c->size;
                     
                     if(d_c->anti_printed == NULL){
-                        d_c->anti_printed = new Clique*[d_c_size];
-                        for(int i=0 ; i < d_c_size ; i++) d_c->anti_printed[i] = NULL;
+                        d_c->anti_printed = new Clique*[d_c->different->size];
+                        for(int i=0 ; i < d_c->different->size ; i++) d_c->anti_printed[i] = NULL;
                     }
 
                     bool continue_flag = false;
@@ -243,11 +241,18 @@ int main() {
                             break;
                         }
                     }
-                    if(continue_flag == true) continue;
-                    else{
+                    if(continue_flag == true) {
+                        continue;    
+                    } else {
                         for(int j = 0 ; j < d_size ; j++){
                             if(c->anti_printed[j] == NULL){
                                 c->anti_printed[j] = d_c;
+                                break;
+                            }
+                        }
+                        for(int j = 0 ; j < d_c->different->size ; j++) {
+                            if(d_c->anti_printed[j] == NULL){
+                                d_c->anti_printed[j] = c;
                                 break;
                             }
                         }
@@ -264,76 +269,58 @@ int main() {
                             d_e = d_e->next;
                         }
                     }
-                    // d_c->different->remove(c);          // after finishing with this different clique, 
-                                                        //remove c clique from different clique's different list
                 }
-
-                // for(int i=0 ; i<d_size ; i++) {
-                //     delete d_table[i];
-                // }
             }
-
-            // c->update_clique_ptrs(NULL);
-            // for(int i=0 ; i<size ; i++) {
-            //     delete table[i];
-            // } 
         }
         c_n = c_n->next;
-        // delete c;
-        // delete c_n;
     }
+
 
     output.close();
 
-    // std::ifstream input;
-    // input.open("output.csv");
-    // std::string* dataset = new std::string[lines_counter];
-    // if ( input.is_open() ) {
-    //     std::string empty;
-    //     getline(input, empty);          // discard header line
-    //     // fill up array with info lines
-    //     for(unsigned int i=0 ; i < lines_counter ; ++i) {
-    //         getline(input, dataset[i]);
-    //     }
-    // } else {
-    //     perror("no output file");
-    // }
+    std::ifstream input;
+    input.open("output.csv");
+    std::string* dataset = new std::string[lines_counter];
+    if ( input.is_open() ) {
+        std::string empty;
+        getline(input, empty);          // discard header line
+        // fill up array with info lines
+        for(unsigned int i=0 ; i < lines_counter ; ++i) {
+            getline(input, dataset[i]);
+        }
+    } else {
+        perror("no output file");
+    }
 
-    // // create train, test and validation sets
-    // // shuffle(dataset, lines_counter);
-    // int train_size = 0.6*lines_counter;
-    // int test_size = 0.2*lines_counter;
-    // if( lines_counter > train_size + 2*test_size)
-    //     train_size += lines_counter-(train_size + 2*test_size);
-    // std::string* train_set = new std::string[train_size];
-    // std::string* test_set = new std::string[test_size];
-    // std::string* validation_set = new std::string[test_size];
-    // for(int i=0 ; i < lines_counter ; ++i) {
-    //     if(i < train_size)
-    //         train_set[i] = dataset[i];
-    //     else if(i < train_size+test_size)
-    //         test_set[i-train_size] = dataset[i];
-    //     else 
-    //         validation_set[i-(train_size+test_size)] = dataset[i];
-    // }
-    // delete[] dataset;
+    // create train, test and validation sets
+    // shuffle(dataset, lines_counter);
+    int train_size = 0.6*lines_counter;
+    int test_size = 0.2*lines_counter;
+    if( lines_counter > train_size + 2*test_size)
+        train_size += lines_counter-(train_size + 2*test_size);
+    std::string* train_set = new std::string[train_size];
+    std::string* test_set = new std::string[test_size];
+    std::string* validation_set = new std::string[test_size];
+    for(int i=0 ; i < lines_counter ; ++i) {
+        if(i < train_size)
+            train_set[i] = dataset[i];
+        else if(i < train_size+test_size)
+            test_set[i-train_size] = dataset[i];
+        else 
+            validation_set[i-(train_size+test_size)] = dataset[i];
+    }
+    delete[] dataset;
 
-    // LR* lr = new LR(best_words_number*2);
-    // lr->train(&files, train_set, train_size, 1000, &ht);
-    // lr->predict(&files, test_set, test_size, &ht);
-    // // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
+    LR* lr = new LR(best_words_number*2);
+    lr->train(&files, train_set, train_size, 1000, &ht);
+    lr->predict(&files, test_set, test_size, &ht);
+    // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
 
-    // // empty heap
-    // delete lr;
-    // delete[] train_set;
-    // delete[] test_set;
-    // delete[] validation_set;
-    // // for(int i=0 ; i<num_entries ;i++) {
-    // //     delete[] dict_matrix[i];
-    // //     delete[] tf_idf[i];
-    // // }
-    // // delete[] dict_matrix;
-    // // delete[] tf_idf;
+    // empty heap
+    delete lr;
+    delete[] train_set;
+    delete[] test_set;
+    delete[] validation_set;
 
     return 0;
 }

@@ -2,6 +2,8 @@
 
 LR::LR(unsigned int w_size): weights_size(w_size), pred_counter(0) {
     prevL = INTMAX_MAX;
+    pred_counter = 0;
+    pred_threshold_counter = 0;
     weights = new float[w_size];
     thetaJ = new float[w_size];
     for(int i=0 ; i < w_size ; ++i) {

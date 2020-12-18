@@ -18,8 +18,8 @@ struct Cliquenode{
 
 class Clique{
     private:
-        int size;
     public:
+        int size;
         bool printed;
         Clique** anti_printed;
 

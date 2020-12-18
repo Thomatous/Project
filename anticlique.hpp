@@ -15,8 +15,8 @@ struct AntiCliquenode {
 
 class AntiClique{
     private:
-        int size;
     public:
+        int size;
         AntiCliquenode* head;
         AntiClique();
         ~AntiClique();

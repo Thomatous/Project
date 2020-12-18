@@ -37,8 +37,9 @@ Clique::~Clique(){
         delete temp;
     }
     delete different;
-    // if(anti_printed != NULL) delete[] anti_printed;
-    // std::cout << "Clique deleted!" << std::endl;
+    if(anti_printed != NULL) {
+        delete[] anti_printed;
+    }
 }
 
 //size getter

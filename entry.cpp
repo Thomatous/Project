@@ -33,8 +33,12 @@ Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
 Entry::~Entry(){
     Clique* cp;
     if(clique != NULL) {
-        clique->update_clique_ptrs(NULL);
         cp = clique;
+        clique->update_clique_ptrs(NULL);
+        int size = cp->size;
+        for(int i=0 ; i < size ; i++) {
+            delete cp->pop();
+        }
         delete cp;
     }
     if(specs != NULL)
