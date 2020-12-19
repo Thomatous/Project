@@ -6,7 +6,7 @@
 #include "hashtable.hpp"
 #include "sparse_matrix.hpp"
 
-#define EPOCHS 5
+#define EPOCHS 15
 
 class LR{
 public:
@@ -15,6 +15,7 @@ public:
     float* weights;
     float* thetaJ;
     unsigned int pred_counter, pred_threshold_counter;
+    unsigned int val_counter, val_threshold_counter;
     LR(unsigned int);
     ~LR();
 
@@ -23,6 +24,7 @@ public:
     void train(SM*, std::string*, unsigned int, float, HashTable*);
     // void train(SM*, std::string*, unsigned int, float, HashTable*);
     void predict(SM*, std::string*, unsigned int, HashTable*);
+    void validate(SM*, std::string*, unsigned int , HashTable*);
 };
 
 #endif
