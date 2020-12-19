@@ -260,6 +260,104 @@ void clique_update_clique_ptrs(void) {
     delete e;
 }
 
+//dict tests
+void dictnode_create(void){
+    Dictnode* d = new Dictnode("test");
+    TEST_ASSERT(d->get_data() == "test");
+    TEST_ASSERT(d->left == NULL);  
+    TEST_ASSERT(d->right == NULL);
+
+    delete d;
+}
+
+void dict_create(void){
+    Dict* dc = new Dict();
+
+    TEST_ASSERT(dc->root == NULL);
+
+    delete dc;
+}
+
+void dict_insert(void){
+    srand(time(NULL));
+    Dict* dc = new Dict();
+
+    int n=100;
+    for(int i=0 ; i < n ; i++){
+        dc->root = dc->insert(dc->root, "t" + std::to_string(i), rand()%1000, rand()%1000);
+    }
+    TEST_ASSERT(dc->root != NULL);
+    TEST_ASSERT(dc->get_size() == n);
+
+    delete dc;
+}
+
+void dict_add(void){
+    std::string str = "add this string to the tree";
+    Dict* dc = new Dict();
+    dc->root = dc->add(dc->root, str, 0);
+    TEST_ASSERT(dc->root != NULL);
+    TEST_ASSERT(dc->get_size() == 6);
+
+    delete dc;
+}
+
+void dict_vectorify(void){
+    std::string str = "add this string to the tree";
+    Dict* dc = new Dict();
+    dc->root = dc->add(dc->root, str, 0);
+
+    std::string dv[6];
+    for(int i = 0 ; i < 6 ; i++) dv[i] = "-1";
+
+    float df[6];
+    for(int i = 0 ; i < 6 ; i++) df[i] = -1;
+    
+    unsigned int loc = 0;
+    dc->vectorify(dc->root, dv, df, &loc);
+
+    int count = 0;
+    for(int i = 0 ; i < 6 ; i++){
+        if(dv[i] != "-1"){
+            count++;
+        }
+    }
+    TEST_ASSERT(count == 6);
+
+    count = 0;
+    for(int i = 0 ; i < 6 ; i++){
+        if(df[i] != -1){
+            count++;
+        }
+    }
+    TEST_ASSERT(count == 6);
+    delete dc;
+}
+
+void dict_find(void){
+    std::string str = "add this string to the tree";
+    Dict* dc = new Dict();
+    dc->root = dc->add(dc->root, str, 0);
+
+
+    std::string dv[6];
+    for(int i = 0 ; i < 6 ; i++) dv[i] = "-1";
+
+    float df[6];
+    for(int i = 0 ; i < 6 ; i++) df[i] = -1;
+    
+    unsigned int loc = 0;
+    dc->vectorify(dc->root, dv, df, &loc);
+
+    Dictnode* d = NULL;
+    d = dc->find_node(dc->root, "string");
+    TEST_ASSERT(d != NULL);
+
+    int l = dc->find_loc(dc->root, "string");
+    TEST_ASSERT(l == d->get_vector_loc());
+
+    delete dc;
+}
 
 TEST_LIST = {
 	{ "hashtable_create", hashtable_create },
@@ -279,5 +377,11 @@ TEST_LIST = {
     { "clique_merge", clique_merge },
     { "clique_find", clique_find },
     { "clique_update_clique_ptrs", clique_update_clique_ptrs },
+    { "dictnode_create", dictnode_create },
+    { "dict_create", dict_create },
+    { "dict_insert", dict_insert },
+    { "dict_add", dict_add },
+    { "dict_vectorify", dict_vectorify },
+    { "dict_find", dict_find },
 	{ NULL, NULL }
 };
