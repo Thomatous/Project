@@ -359,6 +359,123 @@ void dict_find(void){
     delete dc;
 }
 
+//anticlique tests
+void anticliquenode_create(void){
+    Clique clique;
+    AntiCliquenode* a = new AntiCliquenode(&clique);
+
+    TEST_ASSERT(a->data == &clique);
+    delete a;
+}
+
+void anticlique_create(void){
+    AntiClique* ac = new AntiClique();
+
+    TEST_ASSERT(ac->head == NULL);
+    TEST_ASSERT(ac->get_size() == 0);
+    TEST_ASSERT(ac->is_empty() == true);
+
+    delete ac;
+}
+
+void anticlique_push_pop(void){
+    AntiClique* ac = new AntiClique();
+
+    int n=100;
+    for(int i=0 ; i < n ; i++){
+        Clique* c = new Clique();
+        ac->push(c);
+    }
+    TEST_ASSERT(ac->head != NULL);
+    TEST_ASSERT(ac->get_size() == n);
+    TEST_ASSERT(ac->is_empty() == false);
+
+    AntiCliquenode* a = ac->pop();
+    TEST_ASSERT(ac->get_size() == n-1);
+    delete a->data;
+    delete a;
+
+    for(int i = 0 ; i < n-1 ; i++){
+        a = ac->pop();
+        delete a->data;
+        delete a;
+    }
+
+    delete ac;
+}
+
+void anticlique_merge(void){
+    AntiClique* ac1 = new AntiClique();
+    AntiClique* ac2 = new AntiClique();
+
+    int n=100;
+    for(int i=0 ; i < n ; i++){
+        Clique* c1 = new Clique();
+        Clique* c2 = new Clique();
+        ac1->push(c1);
+        ac2->push(c2);
+    }
+
+    ac1->merge(ac2);
+    TEST_ASSERT(ac1->get_size() == 2*n);
+
+    for(int i = 0 ; i < 2*n ; i++){
+        AntiCliquenode* a = ac1->pop();
+        delete a->data;
+        delete a;
+    }
+
+    delete ac1;
+}
+
+void anticlique_find(void){
+    AntiClique* ac = new AntiClique();
+
+    int n=100;
+    Clique* cf;
+    for(int i=0 ; i < n ; i++){
+        Clique* c = new Clique();
+        if(i == n/2){
+            cf = c;
+        } 
+        ac->push(c);
+    }
+    bool f = ac->find(cf);
+    TEST_ASSERT(f == true);
+    
+    for(int i = 0 ; i < n ; i++){
+        AntiCliquenode* a = ac->pop();
+        delete a->data;
+        delete a;
+    }
+    delete ac;
+}
+
+void anticlique_remove(void){
+    AntiClique* ac = new AntiClique();
+
+    int n=100;
+    Clique* cf;
+    for(int i=0 ; i < n ; i++){
+        Clique* c = new Clique();
+        if(i == n/2){
+            cf = c;
+        } 
+        ac->push(c);
+    }
+    ac->remove(cf);
+    TEST_ASSERT(ac->find(cf) == false);
+    delete cf;
+
+    for(int i = 0 ; i < n-1 ; i++){
+        AntiCliquenode* a = ac->pop();
+        delete a->data;
+        delete a;
+    }
+    delete ac;
+}
+
+
 TEST_LIST = {
 	{ "hashtable_create", hashtable_create },
 	{ "hashtable_insert", hashtable_insert_and_search },
@@ -383,5 +500,11 @@ TEST_LIST = {
     { "dict_add", dict_add },
     { "dict_vectorify", dict_vectorify },
     { "dict_find", dict_find },
+    { "anticliquenode_create", anticliquenode_create },
+    { "anticlique_create", anticlique_create },
+    { "anticlique_push_pop", anticlique_push_pop },
+    { "anticlique_merge", anticlique_merge },
+    { "anticlique_find", anticlique_find },
+    { "anticlique_remove", anticlique_remove },
 	{ NULL, NULL }
 };

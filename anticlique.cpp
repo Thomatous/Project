@@ -79,7 +79,9 @@ void AntiClique::merge(AntiClique* c){
 bool AntiClique::find(Clique* c){
     AntiCliquenode* temp = head;
     while(temp != NULL){
+        // std::cout << "Comparing " << temp->data << " with " << c << std::endl;
         if(c == temp->data){
+            // std::cout << "FOUND" << std::endl;
             return true;
         }
         temp = temp->next;
