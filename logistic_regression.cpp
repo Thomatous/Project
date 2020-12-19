@@ -164,7 +164,8 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
             pred_threshold_counter++;
     }
     
-    
-    std::cout << pred_counter << " correct predictions out of a total of " << test_size << std::endl;
-    std::cout << pred_threshold_counter << " of which are within " << threshold << " threshold" << std::endl;
+    float pred_perc = 100.0*float(pred_counter)/float(test_size);
+    float pred_thre_perc = 100.0*float(pred_threshold_counter)/float(pred_counter);
+    std::cout << pred_counter << " correct predictions out of a total of " << test_size << " (" << pred_perc << "%)" << std::endl ;
+    std::cout << pred_threshold_counter << " of which are within " << threshold << " threshold" << " (" << pred_thre_perc << "%)" << std::endl;
 }
