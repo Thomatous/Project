@@ -116,7 +116,6 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
     short int label;
     std::string word, site1, id1, site2, id2;
     size_t first_slash;
-    float threshold = 0.05;
     for(int k=0 ; k < test_size ; ++k) {
         std::stringstream line_stringstream(test[k]);
         for(int i=0 ; i < weights_size ; ++i) {
@@ -164,7 +163,7 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
         float dif = abs((float)p - (float)label);
         if(dif < 0.5)
             pred_counter++;
-        if(dif < threshold)
+        if(dif < THRESHOLD)
             pred_threshold_counter++;
     }
     
@@ -172,7 +171,7 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
     float pred_thre_perc = 100.0*float(pred_threshold_counter)/float(pred_counter);
     std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
     std::cout << pred_counter << " correct predictions out of a total of " << test_size << " (" << pred_perc << "%)" << std::endl ;
-    std::cout << pred_threshold_counter << " of which are within " << threshold << " threshold" << " (" << pred_thre_perc << "%)" << std::endl;
+    std::cout << pred_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << pred_thre_perc << "%)" << std::endl;
 }
 
 void LR::validate(SM* files, std::string* validation_set, unsigned int validation_size, HashTable* ht) {
@@ -182,7 +181,6 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
     short int label;
     std::string word, site1, id1, site2, id2;
     size_t first_slash;
-    float threshold = 0.05;
     for(int k=0 ; k < validation_size ; ++k) {
         std::stringstream line_stringstream(validation_set[k]);
         for(int i=0 ; i < weights_size ; ++i) {
@@ -230,7 +228,7 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
         float dif = abs((float)p - (float)label);
         if( dif < 0.5)
             val_counter++;
-        if( dif < threshold)
+        if( dif < THRESHOLD)
             val_threshold_counter++;
     }
     
@@ -238,5 +236,5 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
     float val_thre_perc = 100.0*float(val_threshold_counter)/float(val_counter);
     std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
     std::cout << val_counter << " correct predictions out of a total of " << validation_size << " (" << val_perc << "%)" << std::endl ;
-    std::cout << val_threshold_counter << " of which are within " << threshold << " threshold" << " (" << val_thre_perc << "%)" << std::endl;
+    std::cout << val_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << val_thre_perc << "%)" << std::endl;
 }

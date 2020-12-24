@@ -6,7 +6,8 @@
 #include "hashtable.hpp"
 #include "sparse_matrix.hpp"
 
-#define EPOCHS 15
+#define EPOCHS 5
+#define THRESHOLD 0.05
 
 class LR{
 public:

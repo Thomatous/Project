@@ -326,7 +326,7 @@ int main() {
     input.close();
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, output_lines_counter, 500, &ht);
+    lr->train(&files, train_set, output_lines_counter, 650, &ht);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);
