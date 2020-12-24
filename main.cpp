@@ -82,81 +82,162 @@ int main() {
     unsigned int train_size;
     unsigned int test_size;
     unsigned int counter = 0;
+    std::string* dataset;
+    std::string* cliques_set;
     std::string* test_set;
     std::string* validation_set;
     if(file.is_open()) {
-        for(int i=2 ; i>-1 ; i--) {
-            counter = 0;
-            while( getline(file, line) ) { // read every line of the csv
-                if(i == 2) {
-                    lines_counter++;
-                } else {
-                    if(counter < train_size) {
-                        std::stringstream line_stringstream(line);
-                        Entry* a = NULL;
-                        Entry* b = NULL;
-                        while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
-                            // std::cout << word << "\n";
-                            size_t first_slash = word.find_first_of('/'); //find '/' and strip them
-                            if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
-                                if(std::strcmp(word.c_str(), std::to_string(i).c_str()) == 0){    //if products are similar
-                                    if(a != NULL && b != NULL){ //if both specs have been iterated
-                                        // std::cout << "Merging:" << std::endl;
-                                        // a->clique->print();
-                                        // b->clique->print();
-                                        if(i == 1) {
-                                            a->merge(b);    //merge their cliques
-                                        }
-                                        if(i == 0) {
-                                            a->differs_from(b);
-                                        }
-                                    }
-                                } 
-                                
-                            } else { // then it's a products url
-                                std::string site = word.substr(0,first_slash);
-                                std::string id = word.substr(first_slash+2);
-                                // std::cout << site << " " << id << "\n";
-                                unsigned long long hash_value = hash_value_calculator(site, id);
-                                if(a == NULL) {
-                                    a = ht.search(hash_value);  //find this entry in hashtable 
-                                    // std::cout<<"a: ";
-                                    // a->print();
-                                    // std::cout<<std::endl;
-                                    // a->clique->print();
+        while( getline(file, line) ) {
+            lines_counter++;
+        }
+        lines_counter--;
+        dataset = new std::string[lines_counter];
+        file.clear();
+        file.seekg(0);
+        std::string empty;
+        getline(file, empty);
+        for(int i = 0 ; i < lines_counter ; i++) {
+            getline(file, dataset[i]);
+        }
+        train_size = 0.6*lines_counter;
+        test_size = 0.2*lines_counter;
+        if( lines_counter > train_size + 2*test_size)
+            train_size += lines_counter-(train_size + 2*test_size);
+        cliques_set = new std::string[train_size];
+        test_set = new std::string[test_size];
+        validation_set = new std::string[test_size];
+        shuffle(dataset, lines_counter);
+        for(int i=0 ; i < lines_counter ; ++i) {
+            if(i < train_size)
+                cliques_set[i] = dataset[i];
+            else if(i < train_size+test_size)
+                test_set[i-train_size] = dataset[i];
+            else 
+                validation_set[i-(train_size+test_size)] = dataset[i];
+        }
+        // delete[] dataset;
+        for(int j = 1 ; j >= 0 ; j--) {
+            for(int i = 0 ; i < lines_counter ; i++) {
+                std::stringstream line_stringstream(dataset[i]);
+                Entry* a = NULL;
+                Entry* b = NULL;
+                while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
+                    // std::cout << word << "\n";
+                    size_t first_slash = word.find_first_of('/'); //find '/' and strip them
+                    if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
+                        if(std::strcmp(word.c_str(), std::to_string(j).c_str()) == 0){    //if products are similar
+                            if(a != NULL && b != NULL){ //if both specs have been iterated
+                                // std::cout << "Merging:" << std::endl;
+                                // a->clique->print();
+                                // b->clique->print();
+                                if(j == 1) {
+                                    a->merge(b);    //merge their cliques
                                 }
-                                else{
-                                    b = ht.search(hash_value);  //find this entry in hashtable 
-                                    // std::cout<<"b: ";
-                                    // b->print();
-                                    // std::cout<<std::endl;
-                                    // b->clique->print();
-                                } 
+                                if(j == 0) {
+                                    a->differs_from(b);
+                                }
                             }
-
+                        } 
+                        
+                    } else { // then it's a products url
+                        std::string site = word.substr(0,first_slash);
+                        std::string id = word.substr(first_slash+2);
+                        // std::cout << site << " " << id << "\n";
+                        unsigned long long hash_value = hash_value_calculator(site, id);
+                        if(a == NULL) {
+                            a = ht.search(hash_value);  //find this entry in hashtable 
+                            // std::cout<<"a: ";
+                            // a->print();
+                            // std::cout<<std::endl;
+                            // a->clique->print();
                         }
-                    } else if(counter < train_size + test_size  && i == 1) {
-                        test_set[counter - train_size] = line;
-                    } else if(counter < train_size + 2*test_size && i == 1) {
-                        validation_set[counter - train_size - test_size] = line;
+                        else{
+                            b = ht.search(hash_value);  //find this entry in hashtable 
+                            // std::cout<<"b: ";
+                            // b->print();
+                            // std::cout<<std::endl;
+                            // b->clique->print();
+                        } 
                     }
-                    counter++;
+
                 }
 
             }
-
-            if(i == 2) {
-                train_size = 0.6*lines_counter;
-                test_size = 0.2*lines_counter;
-                if( lines_counter > train_size + 2*test_size)
-                    train_size += lines_counter-(train_size + 2*test_size);
-                test_set = new std::string[test_size];
-                validation_set = new std::string[test_size];
-            }
-
-            file.clear();
-            file.seekg(0);
         }
+        delete[] cliques_set;
+
+        // for(int i=2 ; i>-1 ; i--) {
+        //     counter = 0;
+        //     while( getline(file, line) ) { // read every line of the csv
+        //         if(i == 2) {
+        //             lines_counter++;
+        //         } else {
+        //             if(counter < train_size) {
+        //                 std::stringstream line_stringstream(line);
+        //                 Entry* a = NULL;
+        //                 Entry* b = NULL;
+        //                 while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
+        //                     // std::cout << word << "\n";
+        //                     size_t first_slash = word.find_first_of('/'); //find '/' and strip them
+        //                     if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
+        //                         if(std::strcmp(word.c_str(), std::to_string(i).c_str()) == 0){    //if products are similar
+        //                             if(a != NULL && b != NULL){ //if both specs have been iterated
+        //                                 // std::cout << "Merging:" << std::endl;
+        //                                 // a->clique->print();
+        //                                 // b->clique->print();
+        //                                 if(i == 1) {
+        //                                     a->merge(b);    //merge their cliques
+        //                                 }
+        //                                 if(i == 0) {
+        //                                     a->differs_from(b);
+        //                                 }
+        //                             }
+        //                         } 
+                                
+        //                     } else { // then it's a products url
+        //                         std::string site = word.substr(0,first_slash);
+        //                         std::string id = word.substr(first_slash+2);
+        //                         // std::cout << site << " " << id << "\n";
+        //                         unsigned long long hash_value = hash_value_calculator(site, id);
+        //                         if(a == NULL) {
+        //                             a = ht.search(hash_value);  //find this entry in hashtable 
+        //                             // std::cout<<"a: ";
+        //                             // a->print();
+        //                             // std::cout<<std::endl;
+        //                             // a->clique->print();
+        //                         }
+        //                         else{
+        //                             b = ht.search(hash_value);  //find this entry in hashtable 
+        //                             // std::cout<<"b: ";
+        //                             // b->print();
+        //                             // std::cout<<std::endl;
+        //                             // b->clique->print();
+        //                         } 
+        //                     }
+
+        //                 }
+        //             } else if(counter < train_size + test_size  && i == 1) {
+        //                 test_set[counter - train_size] = line;
+        //             } else if(counter < train_size + 2*test_size && i == 1) {
+        //                 validation_set[counter - train_size - test_size] = line;
+        //             }
+        //             counter++;
+        //         }
+
+        //     }
+
+        //     if(i == 2) {
+        //         train_size = 0.6*lines_counter;
+        //         test_size = 0.2*lines_counter;
+        //         if( lines_counter > train_size + 2*test_size)
+        //             train_size += lines_counter-(train_size + 2*test_size);
+        //         test_set = new std::string[test_size];
+        //         validation_set = new std::string[test_size];
+        //     }
+
+        //     file.clear();
+        //     file.seekg(0);
+        // }
         file.close();
 
     } else {
