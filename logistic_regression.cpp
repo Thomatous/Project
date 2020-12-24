@@ -238,3 +238,53 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
     std::cout << val_counter << " correct predictions out of a total of " << validation_size << " (" << val_perc << "%)" << std::endl ;
     std::cout << val_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << val_thre_perc << "%)" << std::endl;
 }
+
+void LR::validate_unknown(SM* files, Clique* single_entries, Clique* list_of_entries) {
+    Cliquenode* cn = single_entries->head;
+    Entry *e1 = NULL;
+    Entry *e2 = NULL;
+    std::ofstream output;
+    output.open("validation_output.csv");
+    output << "left_spec_id,right_spec_id,label\n";
+
+    while( cn != NULL ) {
+        e1 = cn->data;
+        Cliquenode* cn_all = list_of_entries->head;
+        Entry* most_similar_entry = NULL;
+        float max = 0;
+        float tf_idf1[weights_size/2] = {0};
+        files->get_tfidf_vector(e1->loc, tf_idf1);
+        while( cn_all != NULL ) {
+            e2 = cn_all->data;
+            if(e1 != e2) {
+
+                float f = 0;
+                float p;
+                float tf_idf2[weights_size/2] = {0};
+                files->get_tfidf_vector(e2->loc, tf_idf2);
+
+                for(int i=0 ; i < weights_size ; ++i) {
+                    if(i < weights_size/2) {
+                        f += weights[i]*((float)tf_idf1[i]);
+                    }
+                    else {
+                        f += weights[i]*((float)tf_idf2[i-weights_size/2]);
+                    }
+                }
+                p = 1.0/(1.0+exp(-f));
+
+                if( max < p ) {
+                    max = p;
+                    most_similar_entry = e2;
+                }
+            }
+            cn_all = cn_all->next;
+        }
+        std::string url1 = e1->get_page_title() + "//" + e1->get_id();
+        std::string url2 = most_similar_entry->get_page_title() + "//" + most_similar_entry->get_id();
+        output << url1 << "," << url2 << ",1" <<  "\n";
+
+        cn = cn->next;
+    }
+    output.close();
+}

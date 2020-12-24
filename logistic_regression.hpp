@@ -5,6 +5,7 @@
 #include <cmath>
 #include "hashtable.hpp"
 #include "sparse_matrix.hpp"
+#include <fstream>
 
 #define EPOCHS 5
 #define THRESHOLD 0.05
@@ -26,6 +27,7 @@ public:
     // void train(SM*, std::string*, unsigned int, float, HashTable*);
     void predict(SM*, std::string*, unsigned int, HashTable*);
     void validate(SM*, std::string*, unsigned int , HashTable*);
+    void validate_unknown(SM*, Clique*, Clique*);
 };
 
 #endif

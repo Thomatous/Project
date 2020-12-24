@@ -207,6 +207,7 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
+    Clique single_entries;
     // output printing
     std::ofstream output;
     output.open("output.csv");
@@ -218,6 +219,9 @@ int main() {
     while( c_n != NULL ) {    //parse list of entries
         c = c_n->data->clique;                  //get entry's clique
         int size = c->size;
+        if( c->size == 1) {                     //if not similar to anyone keep it for validation
+            single_entries.push(c_n->data);
+        }
         if( c->printed == false ) {                         //if not NULL
             
             Cliquenode* table[size];            //create table of clique's members
@@ -330,6 +334,8 @@ int main() {
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);
+    // std::cout << single_entries.size << std::endl;
+    // lr->validate_unknown(&files, &single_entries, &list_of_entries);
 
     // empty heap
     delete lr;
