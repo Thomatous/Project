@@ -78,63 +78,98 @@ int main() {
     std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
     std::string line, word = "";
 
-    int first = 0;
-    int second = 0;
-    int third = 0;
-    for(int i=1 ; i>-1 ; i--) {
-        while( getline(file, line) ) { // read every line of the csv
-            std::stringstream line_stringstream(line);
-            Entry* a = NULL;
-            Entry* b = NULL;
-            while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
-                // std::cout << word << "\n";
-                size_t first_slash = word.find_first_of('/'); //find '/' and strip them
-                if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
-                    if(std::strcmp(word.c_str(), std::to_string(i).c_str()) == 0){    //if products are similar
-                        if(a != NULL && b != NULL){ //if both specs have been iterated
-                            // std::cout << "Merging:" << std::endl;
+    unsigned int lines_counter = 0;
+    unsigned int train_size;
+    unsigned int test_size;
+    unsigned int counter = 0;
+    std::string* dataset;
+    std::string* cliques_set;
+    std::string* test_set;
+    std::string* validation_set;
+    if(file.is_open()) {
+        while( getline(file, line) ) {
+            lines_counter++;
+        }
+        lines_counter--;
+        dataset = new std::string[lines_counter];
+        file.clear();
+        file.seekg(0);
+        std::string empty;
+        getline(file, empty);
+        for(int i = 0 ; i < lines_counter ; i++) {
+            getline(file, dataset[i]);
+        }
+        train_size = 0.6*lines_counter;
+        test_size = 0.2*lines_counter;
+        if( lines_counter > train_size + 2*test_size)
+            train_size += lines_counter-(train_size + 2*test_size);
+        cliques_set = new std::string[train_size];
+        test_set = new std::string[test_size];
+        validation_set = new std::string[test_size];
+        shuffle(dataset, lines_counter);
+        for(int i=0 ; i < lines_counter ; ++i) {
+            if(i < train_size)
+                cliques_set[i] = dataset[i];
+            else if(i < train_size+test_size)
+                test_set[i-train_size] = dataset[i];
+            else 
+                validation_set[i-(train_size+test_size)] = dataset[i];
+        }
+        delete[] dataset;
+        for(int j = 1 ; j >= 0 ; j--) {
+            for(int i = 0 ; i < train_size ; i++) {
+                std::stringstream line_stringstream(cliques_set[i]);
+                Entry* a = NULL;
+                Entry* b = NULL;
+                while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
+                    // std::cout << word << "\n";
+                    size_t first_slash = word.find_first_of('/'); //find '/' and strip them
+                    if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
+                        if(std::strcmp(word.c_str(), std::to_string(j).c_str()) == 0){    //if products are similar
+                            if(a != NULL && b != NULL){ //if both specs have been iterated
+                                // std::cout << "Merging:" << std::endl;
+                                // a->clique->print();
+                                // b->clique->print();
+                                if(j == 1) {
+                                    a->merge(b);    //merge their cliques
+                                }
+                                if(j == 0) {
+                                    a->differs_from(b);
+                                }
+                            }
+                        } 
+                        
+                    } else { // then it's a products url
+                        std::string site = word.substr(0,first_slash);
+                        std::string id = word.substr(first_slash+2);
+                        // std::cout << site << " " << id << "\n";
+                        unsigned long long hash_value = hash_value_calculator(site, id);
+                        if(a == NULL) {
+                            a = ht.search(hash_value);  //find this entry in hashtable 
+                            // std::cout<<"a: ";
+                            // a->print();
+                            // std::cout<<std::endl;
                             // a->clique->print();
-                            // b->clique->print();
-                            if(i == 1) {
-                                a->merge(b);    //merge their cliques
-                                first++;
-                            }
-                            if(i == 0) {
-                                a->differs_from(b);
-                                second++;
-                            }
                         }
-                    } 
-                    
-                } else { // then it's a products url
-                    std::string site = word.substr(0,first_slash);
-                    std::string id = word.substr(first_slash+2);
-                    // std::cout << site << " " << id << "\n";
-                    unsigned long long hash_value = hash_value_calculator(site, id);
-                    if(a == NULL) {
-                        a = ht.search(hash_value);  //find this entry in hashtable 
-                        // std::cout<<"a: ";
-                        // a->print();
-                        // std::cout<<std::endl;
-                        // a->clique->print();
+                        else{
+                            b = ht.search(hash_value);  //find this entry in hashtable 
+                            // std::cout<<"b: ";
+                            // b->print();
+                            // std::cout<<std::endl;
+                            // b->clique->print();
+                        } 
                     }
-                    else{
-                        b = ht.search(hash_value);  //find this entry in hashtable 
-                        // std::cout<<"b: ";
-                        // b->print();
-                        // std::cout<<std::endl;
-                        // b->clique->print();
-                    } 
+
                 }
 
             }
-
         }
+        delete[] cliques_set;
+        file.close();
 
-        file.clear();
-        file.seekg(0);
+    } else {
+        perror("could not open dataset W");
     }
-    file.close();
     
     std::cout << "Full dictionary contains " << all_words.get_size() << " unique words." << std::endl;
     int num_entries = list_of_entries.size;
@@ -172,18 +207,21 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
+    Clique single_entries;
     // output printing
     std::ofstream output;
     output.open("output.csv");
     output << "left_spec_id,right_spec_id,label\n";
-    unsigned int lines_counter = 0;
-    
+    unsigned int output_lines_counter = 0;
     Cliquenode* c_n = list_of_entries.head;
     Clique* c = NULL;
     AntiClique* d = NULL; 
     while( c_n != NULL ) {    //parse list of entries
         c = c_n->data->clique;                  //get entry's clique
         int size = c->size;
+        if( c->size == 1) {                     //if not similar to anyone keep it for validation
+            single_entries.push(c_n->data);
+        }
         if( c->printed == false ) {                         //if not NULL
             
             Cliquenode* table[size];            //create table of clique's members
@@ -265,7 +303,7 @@ int main() {
                         while( d_e != NULL ) {          // for every entry in different clique
                             std::string url2 = d_e->data->get_page_title() + "//" + d_e->data->get_id();
                             output << url1 << "," << url2 << ",0" <<  "\n";
-                            ++lines_counter;
+                            ++output_lines_counter;
                             d_e = d_e->next;
                         }
                     }
@@ -274,47 +312,30 @@ int main() {
         }
         c_n = c_n->next;
     }
-
-
     output.close();
 
     std::ifstream input;
     input.open("output.csv");
-    std::string* dataset = new std::string[lines_counter];
+    std::string* train_set = new std::string[output_lines_counter];
     if ( input.is_open() ) {
         std::string empty;
         getline(input, empty);          // discard header line
         // fill up array with info lines
-        for(unsigned int i=0 ; i < lines_counter ; ++i) {
-            getline(input, dataset[i]);
+        for(unsigned int i=0 ; i < output_lines_counter ; ++i) {
+            getline(input, train_set[i]);
         }
     } else {
         perror("no output file");
     }
-
-    // create train, test and validation sets
-    // shuffle(dataset, lines_counter);
-    int train_size = 0.6*lines_counter;
-    int test_size = 0.2*lines_counter;
-    if( lines_counter > train_size + 2*test_size)
-        train_size += lines_counter-(train_size + 2*test_size);
-    std::string* train_set = new std::string[train_size];
-    std::string* test_set = new std::string[test_size];
-    std::string* validation_set = new std::string[test_size];
-    for(int i=0 ; i < lines_counter ; ++i) {
-        if(i < train_size)
-            train_set[i] = dataset[i];
-        else if(i < train_size+test_size)
-            test_set[i-train_size] = dataset[i];
-        else 
-            validation_set[i-(train_size+test_size)] = dataset[i];
-    }
-    delete[] dataset;
+    input.close();
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, train_size, 1000, &ht);
+    lr->train(&files, train_set, output_lines_counter, 650, &ht);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
+    lr->validate(&files, validation_set, test_size, &ht);
+    // std::cout << single_entries.size << std::endl;
+    // lr->validate_unknown(&files, &single_entries, &list_of_entries);
 
     // empty heap
     delete lr;
