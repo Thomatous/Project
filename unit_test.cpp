@@ -5,6 +5,8 @@
 #include "entry.hpp"
 #include "parser.hpp"
 #include "avl.hpp"
+#include "sparse_matrix.hpp"
+#include "logistic_regression.hpp"
 
 //hashtable tests
 void hashtable_create(void) {
@@ -476,6 +478,62 @@ void anticlique_remove(void){
 }
 
 
+
+//sparse matrix tests
+
+void wordnode_create(void){
+    Wordnode* w = new Wordnode("test", 1, 1, 1.1);
+    TEST_ASSERT(w->next == NULL);
+    TEST_ASSERT(w->word == "test");
+    TEST_ASSERT(w->all_words_pos == 1);
+    TEST_ASSERT(w->bow == 1);
+    TEST_ASSERT(w->best_words_pos == -1);
+    delete w; 
+}
+
+void wordlist_create(void){
+    Wordlist *wl = new Wordlist();
+    TEST_ASSERT(wl->head == NULL);
+    delete wl;
+}
+
+void wordlist_push_pop(void){
+    Wordlist* wl = new Wordlist();
+
+    int n=100;
+    for(int i=0 ; i < n ; i++){
+        wl->push(std::to_string(i), i, i, (float)i);
+    }
+    TEST_ASSERT(wl->head != NULL);
+    TEST_ASSERT(wl->get_size() == n);
+
+    Wordnode* w = wl->pop();
+    TEST_ASSERT(wl->get_size() == n-1);
+    
+    delete w;
+    delete wl;
+}
+
+void sparse_matrix_create(void){
+    int n = 100;
+    SM* sm = new SM(n);
+    TEST_ASSERT(sm->size == n);
+    TEST_ASSERT(sm->file_vector != NULL);
+    delete sm;
+}
+
+void sparse_matrix_complicated_create(void){
+    Clique clique;
+    
+	int n = 100;
+    for(int i = 0 ; i < n ; i++){
+        Entry* e = new Entry("e", std::to_string(i));
+        clique.push(e);
+    }
+
+}
+
+
 TEST_LIST = {
 	{ "hashtable_create", hashtable_create },
 	{ "hashtable_insert", hashtable_insert_and_search },
@@ -506,5 +564,9 @@ TEST_LIST = {
     { "anticlique_merge", anticlique_merge },
     { "anticlique_find", anticlique_find },
     { "anticlique_remove", anticlique_remove },
-	{ NULL, NULL }
+    { "wordnode_create", wordnode_create },
+    { "wordlist_create", wordlist_create },
+	{ "wordlist_push_pop", wordlist_push_pop },
+    { "sparse_matrix_create", sparse_matrix_create },
+    { NULL, NULL }
 };

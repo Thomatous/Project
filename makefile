@@ -1,8 +1,8 @@
 project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o
 	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o -g3
 
-unit_test: unit_test.o hashtable.o avl.o entry.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o
-	g++ -Wall -o unit_test -std=c++11 unit_test.o avl.o entry.o hashtable.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o -g3 
+unit_test: unit_test.o hashtable.o avl.o entry.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o
+	g++ -Wall -o unit_test -std=c++11 unit_test.o avl.o entry.o hashtable.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o -g3 
 
 dict:dict_main.o entry.o parser.o parserlist.o clique.o utility.o dict.o anticlique.o parser.o
 	g++ -Wall -o dict -std=c++11 dict_main.o entry.o parser.o parserlist.o clique.o utility.o dict.o anticlique.o parser.o -g3

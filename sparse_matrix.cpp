@@ -5,7 +5,8 @@ Wordnode::Wordnode(std::string new_word, int pos, int new_bow, float new_tfidf){
     all_words_pos = pos;
     bow = new_bow;
     tfidf = new_tfidf;
-    best_words_pos = -1;   
+    best_words_pos = -1;
+    next = NULL;   
 }
 
 Wordlist::Wordlist(){
@@ -52,21 +53,6 @@ Wordnode* Wordlist::pop() {
     return temp;
 }
 
-void Wordlist::remove_not_best(int* best_words_vector, int vector_size){
-    Wordlist *new_list = new Wordlist();
-    while(size != 0){
-        Wordnode* temp = this->pop();
-        for(int i = 0 ; i < vector_size ; i++){
-            if(temp->all_words_pos == best_words_vector[i]){
-                new_list->push(temp->word ,temp->all_words_pos, i, temp->bow, temp->tfidf);
-                break;
-            }
-        }
-        delete temp;
-    }
-    head = new_list->head;   
-}
-
 SM::SM(unsigned int new_size){
     size = new_size;
     file_vector = new Wordlist*[size];
@@ -111,11 +97,11 @@ SM::SM(Clique* list_of_entries, std::string* all_words_vector, float* tfidf_sum_
             word_loc = all_words->find_loc(all_words->root, word);  //find it's location in the all words vector
             counter_array[word_loc] = counter_array[word_loc] + 1;  //update parallel location in counter array 
         }
-        for(unsigned int i = 0 ; i < all_words->get_size() ; i++) { //go through counter array
-            if(counter_array[i] != 0){                              //if you find a word that exists in specs
-                int bow = counter_array[i];                         //calculate it's bow
-                float tfidf = (float)bow/(float)word_counter;       //calculate it's tfidf
-                file_vector[j]->push(all_words_vector[i], i, bow, tfidf);                //add it to the wordlist
+        for(unsigned int i = 0 ; i < all_words->get_size() ; i++) {         //go through counter array
+            if(counter_array[i] != 0){                                      //if you find a word that exists in specs
+                int bow = counter_array[i];                                 //calculate it's bow
+                float tfidf = (float)bow/(float)word_counter;               //calculate it's tfidf
+                file_vector[j]->push(all_words_vector[i], i, bow, tfidf);   //add it to the wordlist
 
                 tfidf_sum_vector[i] = tfidf_sum_vector[i] + tfidf;  //increase tfidf sum vector
             }

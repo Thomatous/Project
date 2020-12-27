@@ -31,7 +31,6 @@ class Wordlist{
         void push(std::string, int, int, float);
         void push(std::string, int, int, int, float);
         Wordnode* pop();                
-        void remove_not_best(int *, int);    //parse list and remove nodes with all_words_pos not in given array & update best_words_pos
         // float* vectorify(int);          //create vector of words with given size
         // float get_tfidf(int);           //get tfidf of word with given pos
 };
