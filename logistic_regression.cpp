@@ -8,7 +8,7 @@ LR::LR(unsigned int w_size): weights_size(w_size), pred_counter(0) {
     val_threshold_counter = 0;
     weights = new float[w_size];
     thetaJ = new float[w_size];
-    for(int i=0 ; i < w_size ; ++i) {
+    for(unsigned int i=0 ; i < w_size ; ++i) {
         weights[i] = 0;
         thetaJ[i] = 0;
     }
@@ -31,7 +31,7 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
     files->get_tfidf_vector(e1, tf_idf1);
     files->get_tfidf_vector(e2, tf_idf2);
 
-    for(int i=0 ; i < weights_size ; ++i) {
+    for(unsigned int i=0 ; i < weights_size ; ++i) {
         if(i < weights_size/2) {
             x[i] = tf_idf1[i];
             x[i+weights_size/2] = tf_idf2[i];
@@ -40,7 +40,7 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
     }
     p = 1.0/(1.0+exp(-f));
     L += -y*(log(p)) - (1-y)*log(1-p);
-    for(int j=0 ; j < weights_size ; ++j) {
+    for(unsigned int j=0 ; j < weights_size ; ++j) {
         thetaJ[j] += (p*(1-p) - y)*x[j];
     }
 }
@@ -54,11 +54,11 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, float lea
     size_t first_slash;
     for(int j=0 ; j < EPOCHS ; ++j) {
         std::cout << "Iteration: " << j+1 << ", L = " << std::flush;
-        for(int i=0 ; i < train_size ; ++i) {
+        for(unsigned int i=0 ; i < train_size ; ++i) {
             std::stringstream line_stringstream(train[i]);
             prevL = L;
             L = 0;
-            for(int k=0 ; k < weights_size ; ++k) {
+            for(unsigned int k=0 ; k < weights_size ; ++k) {
                 thetaJ[k] = 0;
             }
             for(int k=0 ; k < 3 ; ++k  ) {
@@ -94,7 +94,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, float lea
         }
 
         float max=0;
-        for(int k=0 ; k < weights_size ; ++k) {
+        for(unsigned int k=0 ; k < weights_size ; ++k) {
             float temp = weights[k];
             weights[k] = weights[k] - (learning_rate*thetaJ[k]);
             float dif = abs((float)temp - (float)weights[k]);
@@ -116,9 +116,9 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
     short int label;
     std::string word, site1, id1, site2, id2;
     size_t first_slash;
-    for(int k=0 ; k < test_size ; ++k) {
+    for(unsigned int k=0 ; k < test_size ; ++k) {
         std::stringstream line_stringstream(test[k]);
-        for(int i=0 ; i < weights_size ; ++i) {
+        for(unsigned int i=0 ; i < weights_size ; ++i) {
             thetaJ[i] = 0;
         }
         for(int j=0 ; j < 3 ; ++j  ) {
@@ -151,7 +151,7 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
         files->get_tfidf_vector(e1, tf_idf1);
         files->get_tfidf_vector(e2, tf_idf2);
 
-        for(int i=0 ; i < weights_size ; ++i) {
+        for(unsigned int i=0 ; i < weights_size ; ++i) {
             if(i < weights_size/2) {
                 x[i] = tf_idf1[i];
                 x[i+weights_size/2] = tf_idf2[i];
@@ -181,9 +181,9 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
     short int label;
     std::string word, site1, id1, site2, id2;
     size_t first_slash;
-    for(int k=0 ; k < validation_size ; ++k) {
+    for(unsigned int k=0 ; k < validation_size ; ++k) {
         std::stringstream line_stringstream(validation_set[k]);
-        for(int i=0 ; i < weights_size ; ++i) {
+        for(unsigned int i=0 ; i < weights_size ; ++i) {
             thetaJ[i] = 0;
         }
         for(int j=0 ; j < 3 ; ++j  ) {
@@ -216,7 +216,7 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
         files->get_tfidf_vector(e1, tf_idf1);
         files->get_tfidf_vector(e2, tf_idf2);
 
-        for(int i=0 ; i < weights_size ; ++i) {
+        for(unsigned int i=0 ; i < weights_size ; ++i) {
             if(i < weights_size/2) {
                 x[i] = tf_idf1[i];
                 x[i+weights_size/2] = tf_idf2[i];
@@ -263,7 +263,7 @@ void LR::validate_unknown(SM* files, Clique* single_entries, Clique* list_of_ent
                 float tf_idf2[weights_size/2] = {0};
                 files->get_tfidf_vector(e2->loc, tf_idf2);
 
-                for(int i=0 ; i < weights_size ; ++i) {
+                for(unsigned int i=0 ; i < weights_size ; ++i) {
                     if(i < weights_size/2) {
                         f += weights[i]*((float)tf_idf1[i]);
                     }
