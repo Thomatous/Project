@@ -8,10 +8,10 @@ unsigned long long hash_value_calculator(std::string page_title, std::string id)
     const char* site_c = page_title.c_str();
     const char* id_c = id.c_str();
 
-    while (c = *site_c++)
+    while ( (c = *site_c++) )
         hashvalue = ((hashvalue << 5) + hashvalue) + c; /* hash * 33 + c */
 
-    while (c = *id_c++)
+    while ( (c = *id_c++) )
         hashvalue = ((hashvalue << 5) + hashvalue) + c; /* hash * 33 + c */
 
     return hashvalue;
@@ -128,7 +128,7 @@ void swap(std::string* a, std::string* b) {
 void shuffle(std::string* array, unsigned int size) {
     srand(time(NULL));
     // int s1,s2;
-    for(int i=0 ; i < size ; ++i) {
+    for(unsigned int i=0 ; i < size ; ++i) {
         // s1 = rand()%size;
         // s2 = rand()%size;
         swap(array[i], array[rand()%size]);

@@ -160,7 +160,7 @@ void SM::remove_not_best(Dict* best_words){
     }
 }
 
-void SM::get_bow_vector(int entry_loc, int* bow_vector){
+void SM::get_bow_vector(unsigned int entry_loc, int* bow_vector){
     if(entry_loc > size){
         std::cout << "Invalid entry!" << std::endl;
         exit(1);
@@ -174,7 +174,7 @@ void SM::get_bow_vector(int entry_loc, int* bow_vector){
     }
 }
 
-void SM::get_tfidf_vector(int entry_loc, float* tfidf_vector){
+void SM::get_tfidf_vector(unsigned int entry_loc, float* tfidf_vector){
     if(entry_loc > size){
         std::cout << "Invalid entry!" << std::endl;
         exit(1);

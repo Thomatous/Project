@@ -55,7 +55,9 @@ void Treenode::update_height(){
 //------------------------------------AVL------------------------------------
 
 //avl constructor
-AVL::AVL():root(NULL), size(0){
+AVL::AVL(){
+    root = NULL;
+    size = 0;
 }
 
 //avl destructor

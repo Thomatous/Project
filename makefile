@@ -1,5 +1,5 @@
 project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o
-	g++ -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o -g3
+	g++ -Wall -o project1 -std=c++11 main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o -g3
 
 avl_test:avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o
 	g++ -Wall -o avl_test -std=c++11 avl_test.o avl.o entry.o clique.o utility.o parser.o parserlist.o -g3
@@ -35,7 +35,7 @@ clique.o:clique.cpp clique.hpp
 	g++ -Wall -c -std=c++11 clique.cpp -g3
 
 anticlique.o:anticlique.cpp anticlique.hpp
-	g++ -c -std=c++11 anticlique.cpp -g3
+	g++ -Wall -c -std=c++11 anticlique.cpp -g3
 
 utility.o:utility.cpp utility.hpp
 	g++ -Wall -c -std=c++11 utility.cpp -g3

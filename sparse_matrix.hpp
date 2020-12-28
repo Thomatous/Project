@@ -43,8 +43,8 @@ struct SM{
     SM(unsigned int);
     SM(Clique*, std::string*, float*, float*, Dict*);
     void remove_not_best(Dict*);
-    void get_bow_vector(int, int*);
-    void get_tfidf_vector(int, float*);
+    void get_bow_vector(unsigned int, int*);
+    void get_tfidf_vector(unsigned int, float*);
     ~SM();
 };
 #endif

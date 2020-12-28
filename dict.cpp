@@ -56,7 +56,9 @@ void Dictnode::set_vector_loc(unsigned int l){
 //------------------------------------Dict------------------------------------
 
 //Dict constructor
-Dict::Dict():root(NULL), size(0){
+Dict::Dict() {
+    root = NULL;
+    size = 0;
 }
 
 //Dict destructor
