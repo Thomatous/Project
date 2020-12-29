@@ -112,9 +112,9 @@ void avl_create(void) {
 void avl_insert(void) {
     srand(time(NULL));
     AVL a;
-    int n=10;
+    unsigned int n=10;
 
-    for(int i=0 ; i < n ; i++){
+    for(unsigned int i=0 ; i < n ; i++){
         Entry *e = new Entry( std::to_string(rand()%1000), std::to_string(rand()%1000));
         a.root = a.insert(a.root, e);
     }
@@ -284,8 +284,8 @@ void dict_insert(void){
     srand(time(NULL));
     Dict* dc = new Dict();
 
-    int n=100;
-    for(int i=0 ; i < n ; i++){
+    unsigned int n=100;
+    for(unsigned int i=0 ; i < n ; i++){
         dc->root = dc->insert(dc->root, "t" + std::to_string(i), rand()%1000, rand()%1000);
     }
     TEST_ASSERT(dc->root != NULL);
@@ -326,13 +326,6 @@ void dict_vectorify(void){
     }
     TEST_ASSERT(count == 6);
 
-    count = 0;
-    for(int i = 0 ; i < 6 ; i++){
-        if(df[i] != -1){
-            count++;
-        }
-    }
-    TEST_ASSERT(count == 6);
     delete dc;
 }
 
@@ -500,8 +493,8 @@ void wordlist_create(void){
 void wordlist_push_pop(void){
     Wordlist* wl = new Wordlist();
 
-    int n=100;
-    for(int i=0 ; i < n ; i++){
+    unsigned int n=100;
+    for(unsigned int i=0 ; i < n ; i++){
         wl->push(std::to_string(i), i, i, (float)i);
     }
     TEST_ASSERT(wl->head != NULL);
@@ -515,7 +508,7 @@ void wordlist_push_pop(void){
 }
 
 void sparse_matrix_create(void){
-    int n = 100;
+    unsigned int n = 100;
     SM* sm = new SM(n);
     TEST_ASSERT(sm->size == n);
     TEST_ASSERT(sm->file_vector != NULL);
