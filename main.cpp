@@ -27,7 +27,7 @@ int main() {
         exit(2);
     } else {
         std::cout << "Reading the datasets..." << std::flush;
-        while (folder = readdir(dir_p)) { //read each folder
+        while ( (folder = readdir(dir_p)) ) { //read each folder
             if (folder->d_name != std::string(".") && folder->d_name != std::string("..")) {
                 // std::cout << "folder = " << folder->d_name << std::endl;
                 // for each json use name for constructor
@@ -39,7 +39,7 @@ int main() {
                     perror("can't open the given directory");
                     exit(2);
                 } else {
-                    while (file = readdir(dir_f)) {
+                    while ( (file = readdir(dir_f)) ) {
                         if (file->d_name != std::string(".") && file->d_name != std::string("..")) {
                             // std::cout << "folder = " << folder->d_name << "file = " << file->d_name << std::endl;
                             std::string id_str = file->d_name; //keep id of product from file's title
@@ -81,7 +81,7 @@ int main() {
     unsigned int lines_counter = 0;
     unsigned int train_size;
     unsigned int test_size;
-    unsigned int counter = 0;
+    // unsigned int counter = 0;
     std::string* dataset;
     std::string* cliques_set;
     std::string* test_set;
@@ -96,7 +96,7 @@ int main() {
         file.seekg(0);
         std::string empty;
         getline(file, empty);
-        for(int i = 0 ; i < lines_counter ; i++) {
+        for(unsigned int i = 0 ; i < lines_counter ; i++) {
             getline(file, dataset[i]);
         }
         train_size = 0.6*lines_counter;
@@ -107,7 +107,7 @@ int main() {
         test_set = new std::string[test_size];
         validation_set = new std::string[test_size];
         shuffle(dataset, lines_counter);
-        for(int i=0 ; i < lines_counter ; ++i) {
+        for(unsigned int i=0 ; i < lines_counter ; ++i) {
             if(i < train_size)
                 cliques_set[i] = dataset[i];
             else if(i < train_size+test_size)
@@ -117,7 +117,7 @@ int main() {
         }
         delete[] dataset;
         for(int j = 1 ; j >= 0 ; j--) {
-            for(int i = 0 ; i < train_size ; i++) {
+            for(unsigned int i = 0 ; i < train_size ; i++) {
                 std::stringstream line_stringstream(cliques_set[i]);
                 Entry* a = NULL;
                 Entry* b = NULL;
@@ -194,7 +194,7 @@ int main() {
     std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
     std::cout << "Inserting best words in a dictionary..." << std::flush;
-    int best_words_number = 500;
+    unsigned int best_words_number = 500;
     Dict* best_words = new Dict();
     for(unsigned int i = 0 ; i < best_words_number ; i++){
         int j = best_words_pos_vector[num_words-1-i]; 
@@ -264,9 +264,7 @@ int main() {
 
                 for(int i=0 ; i<d_size ; i++) {         // for every different clique
                     Clique* d_c = d_table[i]->data;
-                    
-                    int d_c_size = d_c->size;
-                    
+                                        
                     if(d_c->anti_printed == NULL){
                         d_c->anti_printed = new Clique*[d_c->different->size];
                         for(int i=0 ; i < d_c->different->size ; i++) d_c->anti_printed[i] = NULL;
