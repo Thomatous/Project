@@ -2,6 +2,10 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <csignal>
+#include <thread>
+#include <mutex>
+
 #include <dirent.h>
 #include "entry.hpp"
 #include "hashtable.hpp"
@@ -10,7 +14,27 @@
 #include "logistic_regression.hpp"
 #include "sparse_matrix.hpp"
 
+//global variables
+sig_atomic_t signal_caught;
+std::mutex cout_mutex;
+
+//sigint signal handler
+void signal_handler(int sig){
+    signal_caught = 0;
+}
+
+//print to cout with mutexes
+void cout_print(std::string message){
+    cout_mutex.lock();
+    std::cout << message << std::endl;
+    cout_mutex.unlock();
+}
+
 int main() {
+
+    signal(SIGINT, &signal_handler);    //init sigint signal handler
+    //JOB SCHEDULER INIT CALL HERE
+
     std::cout << "Starting..." << std::endl;
     DIR *dir_p;
     DIR *dir_f;
