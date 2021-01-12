@@ -54,6 +54,8 @@ int main() {
         std::cout << "Reading the datasets..." << std::flush;
         while ( (folder = readdir(dir_p)) ) { //read each folder
             if (folder->d_name != std::string(".") && folder->d_name != std::string("..")) {
+                // REPLACE WITH JOB SCHEDULE ADD 
+
                 // std::cout << "folder = " << folder->d_name << std::endl;
                 // for each json use name for constructor
                 std::string file_dir = "./Datasets/2013_camera_specs/";
@@ -93,7 +95,9 @@ int main() {
 
                     (void) closedir (dir_f);
                 }
-            } 
+            }
+
+            // RUN TASKS 
         }
         std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;        
         (void) closedir (dir_p);
