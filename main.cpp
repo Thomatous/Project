@@ -54,7 +54,7 @@ int main() {
         std::cout << "Reading the datasets..." << std::flush;
         while ( (folder = readdir(dir_p)) ) { //read each folder
             if (folder->d_name != std::string(".") && folder->d_name != std::string("..")) {
-                // REPLACE WITH JOB SCHEDULE ADD 
+                // NOTE: REPLACE WITH JOB SCHEDULE ADD 
 
                 // std::cout << "folder = " << folder->d_name << std::endl;
                 // for each json use name for constructor
@@ -97,7 +97,7 @@ int main() {
                 }
             }
 
-            // RUN TASKS 
+            // NOTE: RUN TASKS 
         }
         std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;        
         (void) closedir (dir_p);
@@ -253,7 +253,7 @@ int main() {
             single_entries.push(c_n->data);
         }
         if( c->printed == false ) {                         //if not NULL
-            
+            // NOTE: replace till "c->printed = true;" with print_clique_Job add to queue
             Cliquenode* table[size];            //create table of clique's members
             Cliquenode* temp_entry = c->head;
             for(int i=0 ; i < size ; i++) {

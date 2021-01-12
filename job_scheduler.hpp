@@ -105,6 +105,43 @@ public:
     }
 };
 
+class print_clique_Job : public Job {
+    std::ofstream* output;
+    unsigned int* lines_counter;
+    Clique* clique;
+    pthread_mutex_t* mutex;
+
+public:
+    print_clique_Job(Clique* c, std::ofstream* out, unsigned int* lc, pthread_mutex_t* m) {
+        clique = c;
+        output = out;
+        lines_counter = lc;
+        mutex = m;
+    }
+    void run() {
+        unsigned int size = clique->size; 
+        Cliquenode* table[size];            //create table of clique's members
+        Cliquenode* temp_entry = clique->head;
+        for(int i=0 ; i < size ; i++) {
+            table[i] = temp_entry;
+            temp_entry = temp_entry->next;
+        }
+
+        // print every possible pair from that clique
+        for(int i=0 ; i<size ; i++) {       
+            std::string url1 = table[i]->data->get_page_title() + "//" + table[i]->data->get_id();
+            for(int j=i+1 ; j<size ; j++) {
+                std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
+                pthread_mutex_lock(mutex); // ADD NEEDED MUTEX
+                *output << url1 << "," << url2 << ",1" <<  "\n";
+                *lines_counter += 1;
+                pthread_mutex_unlock(mutex); // ADD NEEDED MUTEX
+            }
+            // table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
+        }
+    }
+};
+
 struct JobScheduler{
     int execution_threads;  //number of execution threads
     pthread_t* tids; // execution threads    
