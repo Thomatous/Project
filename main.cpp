@@ -13,6 +13,7 @@
 #include "dict.hpp"
 #include "logistic_regression.hpp"
 #include "sparse_matrix.hpp"
+#include "job_scheduler.hpp"
 
 //global variables
 sig_atomic_t signal_caught;
@@ -204,6 +205,7 @@ int main() {
 
     std::cout << "Vectorifying the full dictionary..." << std::flush;
     unsigned int loc = 0;
+    
     all_words.vectorify(all_words.root, all_words_vector, all_idf_vector, all_tfidf_sum_vector, &loc, num_entries);
     std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 

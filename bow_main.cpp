@@ -1,12 +1,6 @@
 #include <iostream>
-#include <string>
-#include <fstream>
 #include <sstream>
-#include <dirent.h>
-#include "entry.hpp"
-#include "parser.hpp"
-#include "bow.hpp"
-#include <sstream>
+#include "job_scheduler.hpp"
 
 int main(void){
     Bow bow;
