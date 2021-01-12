@@ -267,7 +267,7 @@ int main() {
                 for(int j=i+1 ; j<size ; j++) {
                     std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
                     output << url1 << "," << url2 << ",1" <<  "\n";
-                    ++lines_counter;
+                    ++output_lines_counter;
                 }
                 // table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
             }
@@ -358,7 +358,7 @@ int main() {
     input.close();
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, output_lines_counter, 650, &ht);
+    lr->train(&files, train_set, output_lines_counter, 150, &ht);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);

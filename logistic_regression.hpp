@@ -8,7 +8,7 @@
 #include <fstream>
 
 #define EPOCHS 5
-#define THRESHOLD 0.05
+#define THRESHOLD 0.2
 
 class LR{
 public:
