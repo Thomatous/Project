@@ -84,6 +84,102 @@ public:
     }
 };
 
+class create_database_Job : public Job {
+    Dict* all_words;
+    Parser* p;
+    dirent *folder;
+    HashTable* ht;
+    Clique* list_of_entries;
+    pthread_mutex_t* mutex;
+
+public:
+    create_database_Job(Dict* aw, Parser* parser, dirent* dir, HashTable* hash, Clique* loe, pthread_mutex_t* m) {
+        all_words = aw;
+        p = parser;
+        folder = dir;
+        ht = hash;
+        list_of_entries = loe;
+        mutex = m;
+    }
+    void run() override {
+        // std::cout << "folder = " << folder->d_name << std::endl;
+        // for each json use name for constructor
+        std::string file_dir = "./Datasets/2013_camera_specs/";
+        file_dir.append(folder->d_name); //create every folders path
+        // std::cout << file_dir << "\n";
+        struct dirent *file;
+        Entry* e;
+        DIR *dir_f;
+        if ( (dir_f = opendir(file_dir.c_str())) == NULL ) { //open the created folder path to access jsons
+            perror("can't open the given directory");
+            exit(2);
+        } else {
+            while ( (file = readdir(dir_f)) ) {
+                if (file->d_name != std::string(".") && file->d_name != std::string("..")) {
+                    // std::cout << "folder = " << folder->d_name << "file = " << file->d_name << std::endl;
+                    std::string id_str = file->d_name; //keep id of product from file's title
+                    size_t lastdot = id_str.find_last_of(".");
+
+                    std::string id = id_str.substr(0, lastdot);
+                    // std::cout << "folder = " << folder->d_name << " file = " << id_str << std::endl;
+                    // call entry constructor and insert to entry_list and hashtable
+                    std::string path = file_dir+"/"+id_str;
+
+                    pthread_mutex_lock(mutex); // ADD NEEDED MUTEX
+                    e = new Entry(std::string(folder->d_name), id, p->parse(path));
+                    e->specs_words = e->get_specs()->clean_up();
+                    // std::cout << counter << std::endl;
+                    // counter++;
+                    all_words->root = all_words->add(all_words->root, e->specs_words, &(e->specs_words));
+                    // e->get_specs()->print();
+                    list_of_entries->push(e);
+                    ht->insert(e);
+                    pthread_mutex_unlock(mutex); // ADD NEEDED MUTEX
+                }
+            }
+
+            (void) closedir (dir_f);
+        }
+    }
+};
+
+class print_clique_Job : public Job {
+    std::ofstream* output;
+    unsigned int* lines_counter;
+    Clique* clique;
+    pthread_mutex_t* mutex;
+
+public:
+    print_clique_Job(Clique* c, std::ofstream* out, unsigned int* lc, pthread_mutex_t* m) {
+        clique = c;
+        output = out;
+        lines_counter = lc;
+        mutex = m;
+    }
+    void run() {
+        unsigned int size = clique->size; 
+        Cliquenode* table[size];            //create table of clique's members
+        Cliquenode* temp_entry = clique->head;
+        for(int i=0 ; i < size ; i++) {
+            table[i] = temp_entry;
+            temp_entry = temp_entry->next;
+        }
+
+        // print every possible pair from that clique
+        for(int i=0 ; i<size ; i++) {       
+            std::string url1 = table[i]->data->get_page_title() + "//" + table[i]->data->get_id();
+            for(int j=i+1 ; j<size ; j++) {
+                std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
+                pthread_mutex_lock(mutex); // ADD NEEDED MUTEX
+                *output << url1 << "," << url2 << ",1" <<  "\n";
+                *lines_counter += 1;
+                pthread_mutex_unlock(mutex); // ADD NEEDED MUTEX
+            }
+            // table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
+        }
+    }
+};
+
 struct JobScheduler{
     int execution_threads;  //number of execution threads
     pthread_t* tids; // execution threads    

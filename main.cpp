@@ -54,6 +54,8 @@ int main() {
         std::cout << "Reading the datasets..." << std::flush;
         while ( (folder = readdir(dir_p)) ) { //read each folder
             if (folder->d_name != std::string(".") && folder->d_name != std::string("..")) {
+                // NOTE: REPLACE WITH JOB SCHEDULE ADD 
+
                 // std::cout << "folder = " << folder->d_name << std::endl;
                 // for each json use name for constructor
                 std::string file_dir = "./Datasets/2013_camera_specs/";
@@ -93,7 +95,9 @@ int main() {
 
                     (void) closedir (dir_f);
                 }
-            } 
+            }
+
+            // NOTE: RUN TASKS 
         }
         std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;        
         (void) closedir (dir_p);
@@ -249,7 +253,7 @@ int main() {
             single_entries.push(c_n->data);
         }
         if( c->printed == false ) {                         //if not NULL
-            
+            // NOTE: replace till "c->printed = true;" with print_clique_Job add to queue
             Cliquenode* table[size];            //create table of clique's members
             Cliquenode* temp_entry = c->head;
             for(int i=0 ; i < size ; i++) {
@@ -263,7 +267,7 @@ int main() {
                 for(int j=i+1 ; j<size ; j++) {
                     std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
                     output << url1 << "," << url2 << ",1" <<  "\n";
-                    ++lines_counter;
+                    ++output_lines_counter;
                 }
                 // table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
             }
@@ -354,7 +358,7 @@ int main() {
     input.close();
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, output_lines_counter, 650, &ht);
+    lr->train(&files, train_set, output_lines_counter, 150, &ht);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);
