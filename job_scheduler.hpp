@@ -22,6 +22,51 @@ public:
     virtual void run() = 0;
     virtual ~Job() { }
 };
+    // unsigned int best_words_numberunsigned int best_words_number = 500;
+    // Dict* best_words = new Dict();
+    // for(unsigned int i = 0 ; i < best_words_number ; i++){
+    //     int j = best_words_pos_vector[num_words-1-i]; 
+    //     best_words->root = best_words->insert(best_words->root, all_words_vector[j], j, i);
+    // }
+class best_words_dict_Job : public Job{
+private:
+    unsigned int best_words_number;
+    Dict* best_words;
+    std::string *all_words_vector;
+    int* best_words_pos_vector;
+    int num_words;
+public:
+    best_words_dict_Job(Dict* n_best_words, unsigned int n_best_words_number, std::string *n_all_words_vector, int* n_best_words_pos_vector, int n_num_words){
+        best_words = n_best_words;
+        best_words_number = n_best_words_number;
+        all_words_vector = n_all_words_vector;
+        best_words_pos_vector = n_best_words_pos_vector;
+        num_words = n_num_words;
+    };
+    void run() override {
+        for(unsigned int i = 0 ; i < best_words_number ; i++){
+            int j = best_words_pos_vector[num_words-1-i]; 
+            best_words->root = best_words->insert(best_words->root, all_words_vector[j], j, i);
+        }   
+    }
+};
+
+class sort_Job : public Job{
+private:
+    float *all_tfidf_sum_vector;
+    int* best_words_pos_vector;
+    int num_words;
+public:
+    sort_Job(float *n_all_tfidf_sum_vector, int* n_best_words_pos_vector, int n_num_words){
+        all_tfidf_sum_vector = n_all_tfidf_sum_vector;
+        best_words_pos_vector = n_best_words_pos_vector;
+        num_words = n_num_words;
+    };
+    void run() override {
+        for(int i = 0 ; i < num_words ; i++) best_words_pos_vector[i] = i;
+        mergeSort(all_tfidf_sum_vector, best_words_pos_vector, 0, num_words-1);
+    }
+};
 
 class remove_not_best_Job : public Job{
 private:
