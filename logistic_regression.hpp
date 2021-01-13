@@ -9,6 +9,7 @@
 
 #define EPOCHS 5
 #define THRESHOLD 0.2
+#define LEARNING_RATE 150
 
 class LR{
 public:

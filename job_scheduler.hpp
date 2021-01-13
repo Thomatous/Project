@@ -107,7 +107,7 @@ public:
 
 class print_clique_Job : public Job {
     std::ofstream* output;
-    unsigned int* lines_counter;
+    unsigned int* output_lines_counter;
     Clique* clique;
     pthread_mutex_t* mutex;
 
@@ -115,11 +115,11 @@ public:
     print_clique_Job(Clique* c, std::ofstream* out, unsigned int* lc, pthread_mutex_t* m) {
         clique = c;
         output = out;
-        lines_counter = lc;
+        output_lines_counter = lc;
         mutex = m;
     }
     void run() {
-        unsigned int size = clique->size; 
+        int size = clique->size; 
         Cliquenode* table[size];            //create table of clique's members
         Cliquenode* temp_entry = clique->head;
         for(int i=0 ; i < size ; i++) {
@@ -134,10 +134,43 @@ public:
                 std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
                 pthread_mutex_lock(mutex); // ADD NEEDED MUTEX
                 *output << url1 << "," << url2 << ",1" <<  "\n";
-                *lines_counter += 1;
+                *output_lines_counter += 1;
                 pthread_mutex_unlock(mutex); // ADD NEEDED MUTEX
             }
             // table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
+        }
+    }
+};
+
+class print_anticlique_Job : public Job {
+    std::ofstream* output;
+    unsigned int* output_lines_counter;
+    Clique* clique;
+    Clique* anticlique;
+    pthread_mutex_t* mutex;
+
+public:
+    print_anticlique_Job(Clique* c, Clique* ac, std::ofstream* out, unsigned int* lc, pthread_mutex_t* m) {
+        clique = c;
+        anticlique = ac;
+        output = out;
+        output_lines_counter = lc;
+        mutex = m;
+    }
+    void run() {
+        Cliquenode* e = clique->head;
+        while(e != NULL) {       // for every entry in c clique
+            Cliquenode* d_e = anticlique->head;
+            std::string url1 = e->data->get_page_title() + "//" + e->data->get_id();
+            while( d_e != NULL ) {          // for every entry in different clique
+                std::string url2 = d_e->data->get_page_title() + "//" + d_e->data->get_id();
+                pthread_mutex_lock(mutex); // ADD NEEDED MUTEX
+                *output << url1 << "," << url2 << ",0" <<  "\n";
+                *output_lines_counter += 1;
+                pthread_mutex_unlock(mutex); // ADD NEEDED MUTEX
+                d_e = d_e->next;
+            }
+            e = e->next;
         }
     }
 };
