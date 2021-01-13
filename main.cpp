@@ -324,7 +324,11 @@ int main() {
                         }
                     }
 
-
+                    /*pthread_mutex_t* mutex;
+                    pthread_mutex_init(mutex, NULL);
+                    print_anticlique_Job paj(c, d_c, &output, &output_lines_counter, mutex);
+                    paj.run();*/
+                    // NOTE: to replace with add to job scheduler (args as above)
                     for(int j=0 ; j<size ; j++) {       // for every entry in c clique
                         Cliquenode* d_e = d_c->head;
                         std::string url1 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
@@ -340,6 +344,7 @@ int main() {
         }
         c_n = c_n->next;
     }
+    // NOTE: run printing tasks
     output.close();
 
     std::ifstream input;
@@ -358,7 +363,7 @@ int main() {
     input.close();
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, output_lines_counter, 150, &ht);
+    lr->train(&files, train_set, output_lines_counter, LEARNING_RATE, &ht);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);
