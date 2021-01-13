@@ -118,7 +118,7 @@ public:
         output_lines_counter = lc;
         mutex = m;
     }
-    void run() {
+    void run() override {
         int size = clique->size; 
         Cliquenode* table[size];            //create table of clique's members
         Cliquenode* temp_entry = clique->head;
@@ -157,7 +157,7 @@ public:
         output_lines_counter = lc;
         mutex = m;
     }
-    void run() {
+    void run() override {
         Cliquenode* e = clique->head;
         while(e != NULL) {       // for every entry in c clique
             Cliquenode* d_e = anticlique->head;
@@ -172,6 +172,26 @@ public:
             }
             e = e->next;
         }
+    }
+};
+
+class read_output_Job : public Job {
+    unsigned int i;
+    std::ifstream* input;
+    std::string *train_set;
+    pthread_mutex_t* mutex;
+
+public:
+    read_output_Job(std::string* ts, std::ifstream* in, unsigned int iter, pthread_mutex_t* m) {
+        train_set = ts;
+        input = in;
+        i = iter;
+        mutex = m;
+    }
+    void run() override {
+        pthread_mutex_lock(mutex); // ADD NEEDED MUTEX
+        getline(*input, train_set[i]);
+        pthread_mutex_unlock(mutex); // ADD NEEDED MUTEX
     }
 };
 
