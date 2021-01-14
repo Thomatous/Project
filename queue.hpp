@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "job_scheduler.hpp"
 
+class Job;
 struct QueueNode {
     Job* job;
     QueueNode* next;
@@ -21,9 +22,5 @@ struct Queue {
     ~Queue();
     void push_back(Job*);
     Job* pop();
-}
-
-
-
-
+};
 #endif
