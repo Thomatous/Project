@@ -22,6 +22,123 @@ public:
     virtual void run() = 0;
     virtual ~Job() { }
 };
+    // unsigned int best_words_numberunsigned int best_words_number = 500;
+    // Dict* best_words = new Dict();
+    // for(unsigned int i = 0 ; i < best_words_number ; i++){
+    //     int j = best_words_pos_vector[num_words-1-i]; 
+    //     best_words->root = best_words->insert(best_words->root, all_words_vector[j], j, i);
+    // }
+class best_words_dict_Job : public Job{
+private:
+    unsigned int best_words_number;
+    Dict* best_words;
+    std::string *all_words_vector;
+    int* best_words_pos_vector;
+    int num_words;
+public:
+    best_words_dict_Job(Dict* n_best_words, unsigned int n_best_words_number, std::string *n_all_words_vector, int* n_best_words_pos_vector, int n_num_words){
+        best_words = n_best_words;
+        best_words_number = n_best_words_number;
+        all_words_vector = n_all_words_vector;
+        best_words_pos_vector = n_best_words_pos_vector;
+        num_words = n_num_words;
+    };
+    void run() override {
+        for(unsigned int i = 0 ; i < best_words_number ; i++){
+            int j = best_words_pos_vector[num_words-1-i]; 
+            best_words->root = best_words->insert(best_words->root, all_words_vector[j], j, i);
+        }   
+    }
+};
+
+class sort_Job : public Job{
+private:
+    float *all_tfidf_sum_vector;
+    int* best_words_pos_vector;
+    int num_words;
+public:
+    sort_Job(float *n_all_tfidf_sum_vector, int* n_best_words_pos_vector, int n_num_words){
+        all_tfidf_sum_vector = n_all_tfidf_sum_vector;
+        best_words_pos_vector = n_best_words_pos_vector;
+        num_words = n_num_words;
+    };
+    void run() override {
+        for(int i = 0 ; i < num_words ; i++) best_words_pos_vector[i] = i;
+        mergeSort(all_tfidf_sum_vector, best_words_pos_vector, 0, num_words-1);
+    }
+};
+
+class remove_not_best_Job : public Job{
+private:
+    SM *files;
+    Dict *best_words;
+
+public:
+    remove_not_best_Job(SM *n_files, Dict *n_best_words){
+        files = n_files;
+        best_words = n_best_words;
+    };
+    void run() override {
+        files->remove_not_best(best_words);
+    }
+};
+
+class sparse_matrix_Job : public Job{
+private:
+    SM *files;
+    Clique* list_of_entries;
+    Dict *all_words;
+    std::string *all_words_vector;
+    float *all_idf_vector;
+    float *all_tfidf_sum_vector;
+    int j;
+    Wordlist** file_vector;
+    Cliquenode* temp;
+
+public:
+    sparse_matrix_Job(  Clique* n_list_of_entries, Dict *n_all_words, std::string *n_all_words_vector, float *n_all_idf_vector, 
+                        float *n_all_tfidf_sum_vector, int n_file_pos, Wordlist** n_file_vector, Cliquenode* n_temp){
+        
+        list_of_entries = n_list_of_entries;
+        all_words = n_all_words;
+        all_words_vector = n_all_words_vector;
+        all_idf_vector = n_all_idf_vector;
+        all_tfidf_sum_vector = n_all_tfidf_sum_vector;
+
+        j = n_file_pos;
+        file_vector = n_file_vector;
+        temp = n_temp;
+    };
+    void run() override {
+        Entry* e;
+        std::string word;
+
+        int word_loc;                           //location of word in all words vector
+        int word_counter = 0;                   //counter for words in entry specs 
+        
+        e = temp->data;                         //get the entry
+        e->loc = j;                             //save row number as loc for entry
+
+        int counter_array[all_words->get_size()] = { 0 };   //init counter array for this entry
+        std::istringstream iss(e->specs_words);
+        while(iss){                                         // for each word in the specs
+            word_counter++;                                 //update word counter 
+            iss >> word;
+            word_loc = all_words->find_loc(all_words->root, word);  //find it's location in the all words vector
+            counter_array[word_loc] = counter_array[word_loc] + 1;  //update parallel location in counter array 
+        }
+        for(unsigned int i = 0 ; i < all_words->get_size() ; i++) {         //go through counter array
+            if(counter_array[i] != 0){                                      //if you find a word that exists in specs
+                int bow = counter_array[i];                                 //calculate it's bow
+                float tfidf = (float)bow/(float)word_counter;               //calculate it's tfidf
+                file_vector[j]->push(all_words_vector[i], i, bow, tfidf);   //add it to the wordlist
+
+                all_tfidf_sum_vector[i] = all_tfidf_sum_vector[i] + tfidf;  //increase tfidf sum vector
+            }
+        }
+        temp = temp->next;  
+    }
+};
 
 class vectorify_Job : public Job{
 private:
@@ -40,13 +157,13 @@ public:
         all_tfidf_sum_vector = n_all_idf_vector;
         loc = n_loc;
         num_entries = n_num_entries;
-    };
+    }
     void run() override {
         all_words->vectorify(all_words->root, all_words_vector, all_idf_vector, all_tfidf_sum_vector, loc, num_entries);
     }
 };
 
-class create_database_Job : public Job {
+class create_database_Job : public Job { 
     Dict* all_words;
     Parser* p;
     dirent *folder;
@@ -205,7 +322,7 @@ struct JobScheduler{
     JobScheduler* initialize_scheduler(int n_execution_threads){
         execution_threads = n_execution_threads;
         tids = new pthread_t[execution_threads];
-    };
+    }
 
     int submit_job(JobScheduler* sch, Job* j);
     int execute_all_jobs(JobScheduler* sch);
