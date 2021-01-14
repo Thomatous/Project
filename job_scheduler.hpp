@@ -91,18 +91,52 @@ private:
     std::string *all_words_vector;
     float *all_idf_vector;
     float *all_tfidf_sum_vector;
+    int j;
+    Wordlist** file_vector;
+    Cliquenode* temp;
 
 public:
-    sparse_matrix_Job(SM *n_files, Clique* n_list_of_entries, Dict *n_all_words, std::string *n_all_words_vector, float *n_all_idf_vector, float *n_all_tfidf_sum_vector){
-        files = n_files;
+    sparse_matrix_Job(  Clique* n_list_of_entries, Dict *n_all_words, std::string *n_all_words_vector, float *n_all_idf_vector, 
+                        float *n_all_tfidf_sum_vector, int n_file_pos, Wordlist** n_file_vector, Cliquenode* n_temp){
+        
         list_of_entries = n_list_of_entries;
         all_words = n_all_words;
         all_words_vector = n_all_words_vector;
         all_idf_vector = n_all_idf_vector;
         all_tfidf_sum_vector = n_all_tfidf_sum_vector;
+
+        j = n_file_pos;
+        file_vector = n_file_vector;
+        temp = n_temp;
     };
     void run() override {
-        files = new SM(list_of_entries, all_words_vector, all_tfidf_sum_vector, all_idf_vector, all_words);
+        Entry* e;
+        std::string word;
+
+        int word_loc;                           //location of word in all words vector
+        int word_counter = 0;                   //counter for words in entry specs 
+        
+        e = temp->data;                         //get the entry
+        e->loc = j;                             //save row number as loc for entry
+
+        int counter_array[all_words->get_size()] = { 0 };   //init counter array for this entry
+        std::istringstream iss(e->specs_words);
+        while(iss){                                         // for each word in the specs
+            word_counter++;                                 //update word counter 
+            iss >> word;
+            word_loc = all_words->find_loc(all_words->root, word);  //find it's location in the all words vector
+            counter_array[word_loc] = counter_array[word_loc] + 1;  //update parallel location in counter array 
+        }
+        for(unsigned int i = 0 ; i < all_words->get_size() ; i++) {         //go through counter array
+            if(counter_array[i] != 0){                                      //if you find a word that exists in specs
+                int bow = counter_array[i];                                 //calculate it's bow
+                float tfidf = (float)bow/(float)word_counter;               //calculate it's tfidf
+                file_vector[j]->push(all_words_vector[i], i, bow, tfidf);   //add it to the wordlist
+
+                all_tfidf_sum_vector[i] = all_tfidf_sum_vector[i] + tfidf;  //increase tfidf sum vector
+            }
+        }
+        temp = temp->next;  
     }
 };
 
@@ -129,7 +163,7 @@ public:
     }
 };
 
-class create_database_Job : public Job {
+class create_database_Job : public Job { 
     Dict* all_words;
     Parser* p;
     dirent *folder;
