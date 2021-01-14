@@ -8,8 +8,8 @@
 #include <fstream>
 
 #define EPOCHS 5
-#define THRESHOLD 0.2
-#define LEARNING_RATE 150
+#define THRESHOLD 0.05
+#define LEARNING_RATE 0.3
 
 class LR{
 public:
@@ -24,7 +24,7 @@ public:
 
     // void gradient_descent(int*, int*, short int);
     void gradient_descent(int, int, short int, SM*);
-    void train(SM*, std::string*, unsigned int, float, HashTable*);
+    void train(SM*, std::string*, unsigned int, HashTable*);
     // void train(SM*, std::string*, unsigned int, float, HashTable*);
     void predict(SM*, std::string*, unsigned int, HashTable*);
     void validate(SM*, std::string*, unsigned int , HashTable*);

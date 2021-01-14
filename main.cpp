@@ -19,22 +19,8 @@
 sig_atomic_t signal_caught;
 std::mutex cout_mutex;
 
-//sigint signal handler
-void signal_handler(int sig){
-    signal_caught = 0;
-}
-
-//print to cout with mutexes
-void cout_print(std::string message){
-    cout_mutex.lock();
-    std::cout << message << std::endl;
-    cout_mutex.unlock();
-}
-
 int main() {
-
-    signal(SIGINT, &signal_handler);    //init sigint signal handler
-    //JOB SCHEDULER INIT CALL HERE
+    std::cout << LEARNING_RATE << std::endl;
 
     std::cout << "Starting..." << std::endl;
     DIR *dir_p;
@@ -369,7 +355,7 @@ int main() {
     input.close();
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, output_lines_counter, LEARNING_RATE, &ht);
+    lr->train(&files, train_set, output_lines_counter, &ht);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);

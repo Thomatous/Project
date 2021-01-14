@@ -7,7 +7,7 @@ unit_test: unit_test.o hashtable.o avl.o entry.o clique.o utility.o parserlist.o
 dict:dict_main.o entry.o parser.o parserlist.o clique.o utility.o dict.o anticlique.o parser.o
 	g++ -Wall -o dict -std=c++11 -pthread dict_main.o entry.o parser.o parserlist.o clique.o utility.o dict.o anticlique.o parser.o -g3
 
-main.o:main.cpp
+main.o:main.cpp logistic_regression.o
 	g++ -Wall -c -std=c++11 -pthread main.cpp -g3
 
 dict_main.o:dict_main.cpp

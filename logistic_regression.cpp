@@ -41,11 +41,11 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
     p = 1.0/(1.0+exp(-f));
     L += -y*(log(p)) - (1-y)*log(1-p);
     for(unsigned int j=0 ; j < weights_size ; ++j) {
-        thetaJ[j] += (p*(1-p) - y)*x[j];
+        thetaJ[j] += (p - y)*x[j];
     }
 }
 
-void LR::train(SM* files, std::string* train, unsigned int train_size, float learning_rate, HashTable* ht) {
+void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht) {
     std::cout << "Started training..." << std::endl;
     Entry *e1, *e2;
     std::string url1, url2, label_str;
@@ -53,10 +53,10 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, float lea
     std::string word, site1, id1, site2, id2;
     size_t first_slash;
     for(int j=0 ; j < EPOCHS ; ++j) {
-        std::cout << "Iteration: " << j+1 << ", L = " << std::flush;
+        std::cout << "Iteration: " << j+1 << ", J = " << std::flush;
         for(unsigned int i=0 ; i < train_size ; ++i) {
             std::stringstream line_stringstream(train[i]);
-            prevL = L;
+            prevL = J;
             L = 0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 thetaJ[k] = 0;
@@ -84,27 +84,27 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, float lea
 
             gradient_descent(e1->loc, e2->loc, label, files);
 
+            float max=0;
+            for(unsigned int k=0 ; k < weights_size ; ++k) {
+                float temp = weights[k];
+                weights[k] = weights[k] - (LEARNING_RATE*thetaJ[k]);
+                float dif = abs((float)temp - (float)weights[k]);
+                if( max < dif)
+                    max = dif; 
+            }
+            // if( max < 0.000001 ) {
+            //     std::cout << "Stoped training at " << j << " iterations (weights change < e)" << std::endl;
+            //     break;
+            // }
         }
 
-        std::cout << L << "\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;;
-        J = -(1.0/(float)train_size)*L;
-        if( abs(prevL) < abs(L) ) {
-            std::cout << "Stoped training at " << j << " iterations (L went up)" << std::endl;
-            break;
-        }
+        J = -L/(float)train_size;
+        std::cout << J << "\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;;
+        // if( abs(prevL) < abs(J) ) {
+        //     std::cout << "Stoped training at " << j << " iterations (J went up)" << std::endl;
+        //     break;
+        // }
 
-        float max=0;
-        for(unsigned int k=0 ; k < weights_size ; ++k) {
-            float temp = weights[k];
-            weights[k] = weights[k] - (learning_rate*thetaJ[k]);
-            float dif = abs((float)temp - (float)weights[k]);
-            if( max < dif)
-                max = dif; 
-        }
-        if( max < 0.01 ) {
-            std::cout << "Stoped training at " << j << " iterations (weights change < e)" << std::endl;
-            break;
-        }
 
     }
 }
