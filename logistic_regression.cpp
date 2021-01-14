@@ -87,7 +87,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, float lea
         }
 
         std::cout << L << "\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;;
-        J = (1.0/(float)train_size)*L;
+        J = -(1.0/(float)train_size)*L;
         if( abs(prevL) < abs(L) ) {
             std::cout << "Stoped training at " << j << " iterations (L went up)" << std::endl;
             break;
