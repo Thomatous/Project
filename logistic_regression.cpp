@@ -52,42 +52,48 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
     short int label;
     std::string word, site1, id1, site2, id2;
     size_t first_slash;
+    unsigned int iters = train_size/BATCH_SIZE + (train_size%BATCH_SIZE > 0);
     for(int j=0 ; j < EPOCHS ; ++j) {
-        std::cout << "Iteration: " << j+1 << ", J = " << std::flush;
-        for(unsigned int i=0 ; i < train_size ; ++i) {
+        std::cout << "Epoch: " << j+1 << std::flush;
+        for(unsigned int i=0 ; i < iters ; ++i) {
             std::stringstream line_stringstream(train[i]);
             prevL = J;
             L = 0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 thetaJ[k] = 0;
             }
-            for(int k=0 ; k < 3 ; ++k  ) {
-                if(k == 0) {
-                    getline(line_stringstream, url1 , ',');
-                    first_slash = url1.find_first_of('/');
-                    site1 = url1.substr(0,first_slash);
-                    id1 = url1.substr(first_slash+2);
+            unsigned int l = 0;
+            for(l=0 ; l < BATCH_SIZE && i*BATCH_SIZE+l < train_size ; ++l) {
+                for(int k=0 ; k < 3 ; ++k  ) {
+                    if(k == 0) {
+                        getline(line_stringstream, url1 , ',');
+                        first_slash = url1.find_first_of('/');
+                        site1 = url1.substr(0,first_slash);
+                        id1 = url1.substr(first_slash+2);
+                    }
+                    else if(k == 1) {
+                        getline(line_stringstream, url2, ',');
+                        first_slash = url2.find_first_of('/');
+                        site2 = url2.substr(0,first_slash);
+                        id2 = url2.substr(first_slash+2);
+                    }
+                    else if(k == 2) {
+                        getline(line_stringstream, label_str, ',');
+                        label = atoi(label_str.c_str());       
+                    }
                 }
-                else if(k == 1) {
-                    getline(line_stringstream, url2, ',');
-                    first_slash = url2.find_first_of('/');
-                    site2 = url2.substr(0,first_slash);
-                    id2 = url2.substr(first_slash+2);
-                }
-                else if(k == 2) {
-                    getline(line_stringstream, label_str, ',');
-                    label = atoi(label_str.c_str());       
-                }
-            }
-            e1 = ht->search(hash_value_calculator(site1, id1));
-            e2 = ht->search(hash_value_calculator(site2, id2));
+                e1 = ht->search(hash_value_calculator(site1, id1));
+                e2 = ht->search(hash_value_calculator(site2, id2));
 
-            gradient_descent(e1->loc, e2->loc, label, files);
+                gradient_descent(e1->loc, e2->loc, label, files);
+
+            }
+            J = -L/(float)(l);
 
             float max=0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 float temp = weights[k];
-                weights[k] = weights[k] - (LEARNING_RATE*thetaJ[k]);
+                weights[k] = weights[k] - ((float)LEARNING_RATE*thetaJ[k]);
                 float dif = abs((float)temp - (float)weights[k]);
                 if( max < dif)
                     max = dif; 
@@ -96,17 +102,18 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             //     std::cout << "Stoped training at " << j << " iterations (weights change < e)" << std::endl;
             //     break;
             // }
+
+            // if( abs(prevL) < abs(J) ) {
+            //     std::cout << "Stoped training at " << j << " iterations (J went up)" << std::endl;
+            //     break;
+            // }
+
         }
-
-        J = -L/(float)train_size;
-        std::cout << J << "\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;;
-        // if( abs(prevL) < abs(J) ) {
-        //     std::cout << "Stoped training at " << j << " iterations (J went up)" << std::endl;
-        //     break;
-        // }
-
+        std::cout << "\t\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;;
+        // std::cout << "lines trained = " << lines_trained << std::endl;
 
     }
+
 }
 
 void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable* ht) {

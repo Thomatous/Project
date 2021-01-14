@@ -9,7 +9,10 @@
 
 #define EPOCHS 5
 #define THRESHOLD 0.05
-#define LEARNING_RATE 0.3
+// medium: bs 1 lr 0.3 , bs 16 lr 4.8
+// large:  bs 1 lr     , bs 16 lr 8
+#define LEARNING_RATE 4.8
+#define BATCH_SIZE 16
 
 class LR{
 public:

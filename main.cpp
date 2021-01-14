@@ -15,12 +15,8 @@
 #include "sparse_matrix.hpp"
 #include "job_scheduler.hpp"
 
-//global variables
-sig_atomic_t signal_caught;
-std::mutex cout_mutex;
-
 int main() {
-    std::cout << LEARNING_RATE << std::endl;
+    // std::cout << "learning rate = " << LEARNING_RATE << " batxh size = " << BATCH_SIZE << std::endl;
 
     std::cout << "Starting..." << std::endl;
     DIR *dir_p;
