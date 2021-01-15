@@ -1,6 +1,15 @@
 #include "job_scheduler.hpp"
 
+bool running = true;
+
 bool start = false;
+std::mutex m_start;
+std::condition_variable cv_start;
+
+bool end = false;
+std::mutex m_end;
+std::condition_variable cv_end;
+
 std::mutex print_mutex;
 std::condition_variable cv;
 std::mutex m;
@@ -8,37 +17,38 @@ std::mutex queue_mutex;
 std::mutex train_mutex;
 
 void thread_f(JobScheduler* js){
-    
-    // print_mutex.lock(); 
-    // std::cout << "Thread " << std::this_thread::get_id() << " is waiting..." << std::endl;
-    // print_mutex.unlock();
-
-    {
-        std::unique_lock<std::mutex> lock(m);
-        cv.wait(lock, [] {return start;});
-    }
-
-    while(js->q->head != NULL){
-        queue_mutex.lock();
-        bool locked = true;
-        if(js->q->head != NULL){
-            Job* cj = js->q->pop();
-            queue_mutex.unlock();
-            locked = false;
-
-            cj->run();
-            // print_mutex.lock(); 
-            std::cout  << std::this_thread::get_id() << std::endl;
-            print_mutex.unlock();   
+    while (1){
+        //wait for execute_all from job scheduler
+        {
+            std::unique_lock<std::mutex> lock(m_start);
+            cv_start.wait(lock, [] {return start;});
         }
 
-        if(locked == true)
-            queue_mutex.unlock();
-    }
+        if(!running){
+            break;
+        }
 
-    // print_mutex.lock(); 
-    // std::cout << "Thread " << std::this_thread::get_id() << " run." << std::endl;
-    // print_mutex.unlock();
+        while(js->q->head != NULL){
+            queue_mutex.lock();
+            bool locked = true;
+            if(js->q->head != NULL){
+                Job* cj = js->q->pop();
+                queue_mutex.unlock();
+                locked = false;
+
+                cj->run(); 
+            }
+
+            if(locked == true)
+                queue_mutex.unlock();
+        }
+
+        //wait for wait_for_tasks_to_finish
+        {
+            std::unique_lock<std::mutex> lock(m_end);
+            cv_end.wait(lock, [] {return end;});
+        }
+    }
 }
 
 //============================================================================================================
@@ -108,15 +118,27 @@ JobScheduler::JobScheduler(int n_execution_threads){
 
 void JobScheduler::execute_all_jobs(){
     start = true;
-    cv.notify_all();
-};
+    end = false;
+    cv_start.notify_all();
+}
+
+void JobScheduler::wait_all_tasks_finish(){
+    start = false;
+    end = true;
+    cv_end.notify_all();
+ 
+}
 
 void JobScheduler::submit_job(Job* j){
     q->push_back(j);
-};
-
-void JobScheduler::wait_all_tasks_finish(){
-    for(int i = 0 ; i < execution_threads ; i++) 
-        tids[i].join(); 
-    std::cout << "All " << execution_threads << " have terminated." << std::endl;
 }
+
+JobScheduler::~JobScheduler(){
+    running = false;
+    execute_all_jobs();
+    for(int i = 0 ; i < execution_threads ; i++) 
+        tids[i].join();
+    delete q;
+    delete[] tids;
+}   
+

@@ -16,6 +16,8 @@
 #define LEARNING_RATE 0.3
 #define BATCH_SIZE 16
 
+class JobScheduler;
+
 class LR{
 public:
     float prevL, L, J;
@@ -29,7 +31,7 @@ public:
 
     // void gradient_descent(int*, int*, short int);
     void gradient_descent(int, int, short int, SM*);
-    void train(SM*, std::string*, unsigned int, HashTable*);
+    void train(SM*, std::string*, unsigned int, HashTable*, JobScheduler*);
     // void train(SM*, std::string*, unsigned int, float, HashTable*);
     void predict(SM*, std::string*, unsigned int, HashTable*);
     void validate(SM*, std::string*, unsigned int , HashTable*);

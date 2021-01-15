@@ -23,10 +23,17 @@
 class Queue;
 class LR;
 
+extern bool running;
+
 extern bool start;
+extern std::mutex m_start;
+extern std::condition_variable cv_start;
+
+extern bool end;
+extern std::mutex m_end;
+extern std::condition_variable cv_end;
+
 extern std::mutex print_mutex;
-extern std::condition_variable cv;
-extern std::mutex m;
 extern std::mutex queue_mutex;
 extern std::mutex train_mutex;
 
@@ -72,12 +79,11 @@ private:
 public:
     Queue *q;
     
-    JobScheduler(int);\
+    JobScheduler(int);
+    ~JobScheduler();
     void submit_job(Job*);
     void execute_all_jobs();
     void wait_all_tasks_finish();
-    int destroy_scheduler(JobScheduler* sch);
-
 };
 
 //============================================================================================================

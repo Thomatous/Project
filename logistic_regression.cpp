@@ -47,7 +47,7 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
     train_mutex.unlock();
 }
 
-void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht) {
+void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht, JobScheduler* js) {
     std::cout << "Started training..." << std::endl;
     Entry *e1, *e2;
     std::string url1, url2, label_str;
@@ -66,33 +66,36 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             }
             for(l=0 ; l < BATCH_SIZE && i*BATCH_SIZE+l < train_size ; ++l) {
                 std::stringstream line_stringstream(train[i*BATCH_SIZE+l]);
-                for(int k=0 ; k < 3 ; ++k  ) {
-                    if(k == 0) {
-                        getline(line_stringstream, url1 , ',');
-                        first_slash = url1.find_first_of('/');
-                        site1 = url1.substr(0,first_slash);
-                        id1 = url1.substr(first_slash+2);
-                    }
-                    else if(k == 1) {
-                        getline(line_stringstream, url2, ',');
-                        first_slash = url2.find_first_of('/');
-                        site2 = url2.substr(0,first_slash);
-                        id2 = url2.substr(first_slash+2);
-                    }
-                    else if(k == 2) {
-                        getline(line_stringstream, label_str, ',');
-                        label = atoi(label_str.c_str());       
-                    }
-                }
-                e1 = ht->search(hash_value_calculator(site1, id1));
-                e2 = ht->search(hash_value_calculator(site2, id2));
+                // for(int k=0 ; k < 3 ; ++k  ) {
+                //     if(k == 0) {
+                //         getline(line_stringstream, url1 , ',');
+                //         first_slash = url1.find_first_of('/');
+                //         site1 = url1.substr(0,first_slash);
+                //         id1 = url1.substr(first_slash+2);
+                //     }
+                //     else if(k == 1) {
+                //         getline(line_stringstream, url2, ',');
+                //         first_slash = url2.find_first_of('/');
+                //         site2 = url2.substr(0,first_slash);
+                //         id2 = url2.substr(first_slash+2);
+                //     }
+                //     else if(k == 2) {
+                //         getline(line_stringstream, label_str, ',');
+                //         label = atoi(label_str.c_str());       
+                //     }
+                // }
+                // e1 = ht->search(hash_value_calculator(site1, id1));
+                // e2 = ht->search(hash_value_calculator(site2, id2));
 
-                gradient_descent(e1->loc, e2->loc, label, files);
+                // gradient_descent(e1->loc, e2->loc, label, files);
                 // NOTE: add to job scheduler queue
-                // lr_train_Job ltj(&line_stringstream, ht, files, this);
+                lr_train_Job *ltj = new lr_train_Job(&line_stringstream, ht, files, this);
+                js->submit_job(ltj);
                 // ltj.run();
 
             }
+            js->execute_all_jobs();
+            js->wait_all_tasks_finish();
             // NOTE: run lr_train_Job
             // J = -L/(float)(l);
 

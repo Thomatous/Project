@@ -19,6 +19,9 @@ int main() {
     std::cout << "learning rate = " << LEARNING_RATE << " batch size = " << BATCH_SIZE << std::endl;
 
     std::cout << "Starting..." << std::endl;
+    
+    JobScheduler js(8);
+    
     DIR *dir_p;
     DIR *dir_f;
     struct dirent *folder;
@@ -351,7 +354,7 @@ int main() {
     input.close();
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, output_lines_counter, &ht);
+    lr->train(&files, train_set, output_lines_counter, &ht, &js);
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);
