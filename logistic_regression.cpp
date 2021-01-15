@@ -39,12 +39,12 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
         f += weights[i]*((float)x[i]);
     }
     p = 1.0/(1.0+exp(-f));
-    // pthread_mutex_lock(mutex);
+    train_mutex.lock();
     L += -y*(log(p)) - (1-y)*log(1-p);
     for(unsigned int j=0 ; j < weights_size ; ++j) {
         thetaJ[j] += (p - y)*x[j];
     }
-    // pthread_mutex_unlock(mutex);
+    train_mutex.unlock();
 }
 
 void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht) {
@@ -87,13 +87,13 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
                 e1 = ht->search(hash_value_calculator(site1, id1));
                 e2 = ht->search(hash_value_calculator(site2, id2));
 
-                // pthread_mutex_t* mutex;
-                // pthread_mutex_init(mutex, NULL);
                 gradient_descent(e1->loc, e2->loc, label, files);
-                // lr_train_Job ltj(&line_stringstream, ht, files, this, mutex);
+                // NOTE: add to job scheduler queue
+                // lr_train_Job ltj(&line_stringstream, ht, files, this);
                 // ltj.run();
 
             }
+            // NOTE: run lr_train_Job
             // J = -L/(float)(l);
 
             float max=0;
