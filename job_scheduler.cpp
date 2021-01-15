@@ -8,9 +8,9 @@ std::mutex queue_mutex;
 
 void thread_f(JobScheduler* js){
     
-    print_mutex.lock(); 
-    std::cout << "Thread " << std::this_thread::get_id() << " is waiting..." << std::endl;
-    print_mutex.unlock();
+    // print_mutex.lock(); 
+    // std::cout << "Thread " << std::this_thread::get_id() << " is waiting..." << std::endl;
+    // print_mutex.unlock();
 
     {
         std::unique_lock<std::mutex> lock(m);
@@ -26,7 +26,7 @@ void thread_f(JobScheduler* js){
             locked = false;
 
             cj->run();
-            print_mutex.lock(); 
+            // print_mutex.lock(); 
             std::cout  << std::this_thread::get_id() << std::endl;
             print_mutex.unlock();   
         }
@@ -35,9 +35,9 @@ void thread_f(JobScheduler* js){
             queue_mutex.unlock();
     }
 
-    print_mutex.lock(); 
-    std::cout << "Thread " << std::this_thread::get_id() << " run." << std::endl;
-    print_mutex.unlock();
+    // print_mutex.lock(); 
+    // std::cout << "Thread " << std::this_thread::get_id() << " run." << std::endl;
+    // print_mutex.unlock();
 }
 
 //============================================================================================================
@@ -50,7 +50,7 @@ TestJob::TestJob(unsigned int i){
 void TestJob::run(){
     print_mutex.lock();
     std::cout << "Job " << id << " executed by ";
-    print_mutex.unlock();
+    // print_mutex.unlock();
     sleep(1);
 }
 
