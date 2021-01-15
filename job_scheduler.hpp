@@ -21,12 +21,14 @@
 #include "queue.hpp"
 
 class Queue;
+class LR;
 
 extern bool start;
 extern std::mutex print_mutex;
 extern std::condition_variable cv;
 extern std::mutex m;
 extern std::mutex queue_mutex;
+extern std::mutex train_mutex;
 
 
 
@@ -45,6 +47,17 @@ private:
     unsigned int id;
 public:
     TestJob(unsigned int);
+    void run() override;
+};
+
+class lr_train_Job : public Job {
+    std::stringstream* line_stringstream;
+    HashTable* ht;
+    SM* files;
+    LR* lr;
+
+public: 
+    lr_train_Job(std::stringstream*, HashTable*, SM*, LR*);
     void run() override;
 };
 
