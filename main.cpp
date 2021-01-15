@@ -16,7 +16,7 @@
 #include "job_scheduler.hpp"
 
 int main() {
-    // std::cout << "learning rate = " << LEARNING_RATE << " batxh size = " << BATCH_SIZE << std::endl;
+    std::cout << "learning rate = " << LEARNING_RATE << " batch size = " << BATCH_SIZE << std::endl;
 
     std::cout << "Starting..." << std::endl;
     DIR *dir_p;

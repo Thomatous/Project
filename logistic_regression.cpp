@@ -39,10 +39,12 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
         f += weights[i]*((float)x[i]);
     }
     p = 1.0/(1.0+exp(-f));
+    // pthread_mutex_lock(mutex);
     L += -y*(log(p)) - (1-y)*log(1-p);
     for(unsigned int j=0 ; j < weights_size ; ++j) {
         thetaJ[j] += (p - y)*x[j];
     }
+    // pthread_mutex_unlock(mutex);
 }
 
 void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht) {
@@ -55,15 +57,15 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
     unsigned int iters = train_size/BATCH_SIZE + (train_size%BATCH_SIZE > 0);
     for(int j=0 ; j < EPOCHS ; ++j) {
         std::cout << "Epoch: " << j+1 << std::flush;
+        unsigned int l = 0;
         for(unsigned int i=0 ; i < iters ; ++i) {
-            std::stringstream line_stringstream(train[i]);
             prevL = J;
             L = 0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 thetaJ[k] = 0;
             }
-            unsigned int l = 0;
             for(l=0 ; l < BATCH_SIZE && i*BATCH_SIZE+l < train_size ; ++l) {
+                std::stringstream line_stringstream(train[i*BATCH_SIZE+l]);
                 for(int k=0 ; k < 3 ; ++k  ) {
                     if(k == 0) {
                         getline(line_stringstream, url1 , ',');
@@ -85,10 +87,14 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
                 e1 = ht->search(hash_value_calculator(site1, id1));
                 e2 = ht->search(hash_value_calculator(site2, id2));
 
+                // pthread_mutex_t* mutex;
+                // pthread_mutex_init(mutex, NULL);
                 gradient_descent(e1->loc, e2->loc, label, files);
+                // lr_train_Job ltj(&line_stringstream, ht, files, this, mutex);
+                // ltj.run();
 
             }
-            J = -L/(float)(l);
+            // J = -L/(float)(l);
 
             float max=0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
@@ -175,7 +181,7 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
     }
     
     float pred_perc = 100.0*float(pred_counter)/float(test_size);
-    float pred_thre_perc = 100.0*float(pred_threshold_counter)/float(pred_counter);
+    float pred_thre_perc = 100.0*float(pred_threshold_counter)/float(test_size);
     std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
     std::cout << pred_counter << " correct predictions out of a total of " << test_size << " (" << pred_perc << "%)" << std::endl ;
     std::cout << pred_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << pred_thre_perc << "%)" << std::endl;
@@ -240,7 +246,7 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
     }
     
     float val_perc = 100.0*float(val_counter)/float(validation_size);
-    float val_thre_perc = 100.0*float(val_threshold_counter)/float(val_counter);
+    float val_thre_perc = 100.0*float(val_threshold_counter)/float(validation_size);
     std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
     std::cout << val_counter << " correct predictions out of a total of " << validation_size << " (" << val_perc << "%)" << std::endl ;
     std::cout << val_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << val_thre_perc << "%)" << std::endl;

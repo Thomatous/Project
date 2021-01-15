@@ -6,12 +6,14 @@
 #include "hashtable.hpp"
 #include "sparse_matrix.hpp"
 #include <fstream>
+// #include "job_scheduler.hpp"
+#include "thread"
 
 #define EPOCHS 5
 #define THRESHOLD 0.05
-// medium: bs 1 lr 0.3 , bs 16 lr 4.8
+// medium: bs 1 lr 0.3 , bs 16 lr 0.3
 // large:  bs 1 lr     , bs 16 lr 8
-#define LEARNING_RATE 4.8
+#define LEARNING_RATE 0.3
 #define BATCH_SIZE 16
 
 class LR{

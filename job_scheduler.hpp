@@ -312,6 +312,52 @@ public:
     }
 };
 
+// class lr_train_Job : public Job {
+//     std::stringstream* line_stringstream;
+//     HashTable* ht;
+//     SM* files;
+//     LR* lr;
+//     pthread_mutex_t* mutex;
+
+// public:
+//     lr_train_Job(std::stringstream* ls, HashTable* hash, SM* f, LR* log_reg, pthread_mutex_t* m) {
+//         line_stringstream = ls;
+//         ht = hash;
+//         files = f;
+//         lr = log_reg;
+//         mutex = m;
+//     }
+//     void run() {
+//         Entry *e1, *e2;
+//         std::string url1, url2, label_str;
+//         short int label;
+//         std::string word, site1, id1, site2, id2;
+//         size_t first_slash;
+//         for(int k=0 ; k < 3 ; ++k  ) {
+//             if(k == 0) {
+//                 getline(*line_stringstream, url1 , ',');
+//                 first_slash = url1.find_first_of('/');
+//                 site1 = url1.substr(0,first_slash);
+//                 id1 = url1.substr(first_slash+2);
+//             }
+//             else if(k == 1) {
+//                 getline(*line_stringstream, url2, ',');
+//                 first_slash = url2.find_first_of('/');
+//                 site2 = url2.substr(0,first_slash);
+//                 id2 = url2.substr(first_slash+2);
+//             }
+//             else if(k == 2) {
+//                 getline(*line_stringstream, label_str, ',');
+//                 label = atoi(label_str.c_str());       
+//             }
+//         }
+//         e1 = ht->search(hash_value_calculator(site1, id1));
+//         e2 = ht->search(hash_value_calculator(site2, id2));
+
+//         lr->gradient_descent(e1->loc, e2->loc, label, files, mutex);
+//     }
+// };
+
 struct JobScheduler{
     int execution_threads;  //number of execution threads
     pthread_t* tids; // execution threads    
