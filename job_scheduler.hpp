@@ -327,7 +327,7 @@ public:
 //         lr = log_reg;
 //         mutex = m;
 //     }
-//     void run() {
+//     void run() override {
 //         Entry *e1, *e2;
 //         std::string url1, url2, label_str;
 //         short int label;

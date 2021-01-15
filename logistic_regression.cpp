@@ -99,7 +99,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             float max=0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 float temp = weights[k];
-                weights[k] = weights[k] - ((float)LEARNING_RATE*thetaJ[k]);
+                weights[k] = weights[k] - ((float)LEARNING_RATE*thetaJ[k]/(float)(l+1));
                 float dif = abs((float)temp - (float)weights[k]);
                 if( max < dif)
                     max = dif; 
