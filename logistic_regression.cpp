@@ -44,17 +44,13 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
     for(unsigned int j=0 ; j < weights_size ; ++j) {
         thetaJ[j] += (p - y)*x[j];
     }
+    // counter++;
     train_mutex.unlock();
 }
 
 void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht, JobScheduler* js) {
     std::cout << "Started training..." << std::endl;
-    Entry *e1, *e2;
-    std::string url1, url2, label_str;
-    short int label;
-    std::string word, site1, id1, site2, id2;
-    size_t first_slash;
-    unsigned int iters = train_size/BATCH_SIZE + (train_size%BATCH_SIZE > 0);
+    unsigned int iters = train_size/BATCH_SIZE + (train_size%BATCH_SIZE > 0 ? 1 : 0);
     for(int j=0 ; j < EPOCHS ; ++j) {
         std::cout << "Epoch: " << j+1 << std::flush;
         unsigned int l = 0;
@@ -89,13 +85,14 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
 
                 // gradient_descent(e1->loc, e2->loc, label, files);
                 // NOTE: add to job scheduler queue
-                lr_train_Job *ltj = new lr_train_Job(&line_stringstream, ht, files, this);
-                js->submit_job(ltj);
+                js->submit_job( new lr_train_Job(train[i*BATCH_SIZE+l], ht, files, this) );
+                // lr_train_Job ltj(train[i*BATCH_SIZE+l], ht, files, this);
                 // ltj.run();
 
             }
             js->execute_all_jobs();
             js->wait_all_tasks_finish();
+            // counter = 0;
             // NOTE: run lr_train_Job
             // J = -L/(float)(l);
 

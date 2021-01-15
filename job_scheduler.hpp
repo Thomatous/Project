@@ -58,13 +58,13 @@ public:
 };
 
 class lr_train_Job : public Job {
-    std::stringstream* line_stringstream;
+    std::string line;
     HashTable* ht;
     SM* files;
     LR* lr;
 
 public: 
-    lr_train_Job(std::stringstream*, HashTable*, SM*, LR*);
+    lr_train_Job(std::string, HashTable*, SM*, LR*);
     void run() override;
 };
 

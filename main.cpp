@@ -14,13 +14,14 @@
 #include "logistic_regression.hpp"
 #include "sparse_matrix.hpp"
 #include "job_scheduler.hpp"
+#include <time.h>
 
 int main() {
     std::cout << "learning rate = " << LEARNING_RATE << " batch size = " << BATCH_SIZE << std::endl;
 
     std::cout << "Starting..." << std::endl;
     
-    JobScheduler js(8);
+    JobScheduler js(3);
     
     DIR *dir_p;
     DIR *dir_f;
