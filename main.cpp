@@ -121,7 +121,7 @@ int main() {
         cliques_set = new std::string[train_size];
         test_set = new std::string[test_size];
         validation_set = new std::string[test_size];
-        shuffle(dataset, lines_counter);
+        // shuffle(dataset, lines_counter);
         for(unsigned int i=0 ; i < lines_counter ; ++i) {
             if(i < train_size)
                 cliques_set[i] = dataset[i];
@@ -131,53 +131,48 @@ int main() {
                 validation_set[i-(train_size+test_size)] = dataset[i];
         }
         delete[] dataset;
-        for(int j = 1 ; j >= 0 ; j--) {
-            for(unsigned int i = 0 ; i < train_size ; i++) {
-                std::stringstream line_stringstream(cliques_set[i]);
-                Entry* a = NULL;
-                Entry* b = NULL;
-                while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
-                    // std::cout << word << "\n";
-                    size_t first_slash = word.find_first_of('/'); //find '/' and strip them
-                    if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
-                        if(std::strcmp(word.c_str(), std::to_string(j).c_str()) == 0){    //if products are similar
-                            if(a != NULL && b != NULL){ //if both specs have been iterated
-                                // std::cout << "Merging:" << std::endl;
-                                // a->clique->print();
-                                // b->clique->print();
-                                if(j == 1) {
-                                    a->merge(b);    //merge their cliques
-                                }
-                                if(j == 0) {
-                                    a->differs_from(b);
-                                }
-                            }
-                        } 
-                        
-                    } else { // then it's a products url
-                        std::string site = word.substr(0,first_slash);
-                        std::string id = word.substr(first_slash+2);
-                        // std::cout << site << " " << id << "\n";
-                        unsigned long long hash_value = hash_value_calculator(site, id);
-                        if(a == NULL) {
-                            a = ht.search(hash_value);  //find this entry in hashtable 
-                            // std::cout<<"a: ";
-                            // a->print();
-                            // std::cout<<std::endl;
-                            // a->clique->print();
+        for(unsigned int i = 0 ; i < train_size ; i++) {
+            std::stringstream line_stringstream(cliques_set[i]);
+            Entry* a = NULL;
+            Entry* b = NULL;
+            while( getline( line_stringstream, word, ',') ) { //tokenize with delimeter: ","
+                // std::cout << word << "\n";
+                size_t first_slash = word.find_first_of('/'); //find '/' and strip them
+                if ( first_slash == std::string::npos) { //then it's 0 || 1 for similarities
+                    if(a != NULL && b != NULL){ //if both specs have been iterated
+                        // std::cout << "Merging:" << std::endl;
+                        // a->clique->print();
+                        // b->clique->print();
+                        if( word == "1" ) {
+                            a->merge(b);    //merge their cliques
                         }
-                        else{
-                            b = ht.search(hash_value);  //find this entry in hashtable 
-                            // std::cout<<"b: ";
-                            // b->print();
-                            // std::cout<<std::endl;
-                            // b->clique->print();
-                        } 
+                        else if( word == "0" ) {
+                            a->differs_from(b);
+                        }
                     }
-
+                } else { // then it's a products url
+                    std::string site = word.substr(0,first_slash);
+                    std::string id = word.substr(first_slash+2);
+                    // std::cout << site << " " << id << "\n";
+                    unsigned long long hash_value = hash_value_calculator(site, id);
+                    if(a == NULL) {
+                        a = ht.search(hash_value);  //find this entry in hashtable 
+                        // std::cout<<"a: ";
+                        // a->print();
+                        // std::cout<<std::endl;
+                        // a->clique->print();
+                    }
+                    else{
+                        b = ht.search(hash_value);  //find this entry in hashtable 
+                        // std::cout<<"b: ";
+                        // b->print();
+                        // std::cout<<std::endl;
+                        // b->clique->print();
+                    } 
                 }
 
             }
+
         }
         delete[] cliques_set;
         file.close();

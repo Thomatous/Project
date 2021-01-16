@@ -72,7 +72,9 @@ void Entry::print(){
 //merges the clique of this entry with the given entry's clique
 void Entry::merge(Entry *e){
     if(e->clique != clique){
-        // clique->different->merge(e->clique->different);
+        // e->clique->replace_different(this->clique);
+        // e->clique->replace_different(this->clique);
+        clique->merge_different(e->clique);
         clique->merge(e->clique);           //call clique merrge
         clique->update_clique_ptrs(clique); //make all entries in the clique point to this new merged one
     }

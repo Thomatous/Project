@@ -22,6 +22,7 @@ Clique::Clique(){
     different = new AntiClique();
     head = NULL;
     printed = false;
+    destroyed = false;
     anti_printed = NULL;
     size = 0;
 }
@@ -36,7 +37,9 @@ Clique::~Clique(){
         head = head->next;
         delete temp;
     }
-    delete different;
+    if ( different != NULL ) {
+        delete different;
+    }
     if(anti_printed != NULL) {
         delete[] anti_printed;
     }
@@ -60,6 +63,11 @@ void Clique::push(Entry* e){
     size++;   
 }
 
+void Clique::push(Cliquenode* n){
+    n->next = head;        
+    head = n;
+    size++;
+}
 
 //removes entry at the top of the list
 Cliquenode* Clique::pop() {
@@ -75,11 +83,35 @@ Cliquenode* Clique::pop() {
 //deletes the other list
 void Clique::merge(Clique* c){
     while( !(c->is_empty()) ) {
-        Cliquenode* new_node = c->pop();
-        this->push(new_node->data);
-        delete new_node;
+        this->push(c->pop());
+        // Cliquenode* new_node = c->pop();
+        // this->push(new_node->data);
+        // delete new_node;
     }
     delete c;
+    // c->destroy();
+}
+
+void Clique::merge_different(Clique* c){
+    while( !(c->different->is_empty()) ) {
+        AntiCliquenode* new_node = c->different->pop();
+        if( new_node->data->different )
+            new_node->data->different->replace(c, this);
+        if( !this->different->find(new_node->data) )
+            this->different->push(new_node);
+        // delete new_node;
+    }
+    // delete c->different;
+    // c->different = NULL;
+}
+
+void Clique::replace_different(Clique* rc){
+    AntiCliquenode* temp = this->different->head;
+    while( temp != NULL ) {
+        if(temp->data->different != NULL)
+            temp->data->different->replace(this, rc);
+        temp = temp->next;
+    }
 }
 
 //returns true if the entry exists somewhere in the clique
@@ -117,4 +149,9 @@ void Clique::update_clique_ptrs(Clique* address){
         temp->data->clique = address;
         temp = temp->next;
     }
+}
+
+void Clique::destroy() {
+    destroyed = true;
+    different->destroy();
 }

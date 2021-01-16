@@ -4,6 +4,12 @@ project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist
 unit_test: unit_test.o hashtable.o avl.o entry.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o
 	g++ -Wall -o unit_test -std=c++11 -pthread unit_test.o avl.o entry.o hashtable.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o -g3 
 
+test: test.o avl.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o job_scheduler.hpp queue.o job_scheduler.o
+	g++ -Wall -o test -std=c++11 -pthread test.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o job_scheduler.hpp queue.o job_scheduler.o
+
+test.o:test.cpp logistic_regression.o
+	g++ -Wall -c -std=c++11 test.cpp -g3
+
 dict:dict_main.o entry.o parser.o parserlist.o clique.o utility.o dict.o anticlique.o parser.o
 	g++ -Wall -o dict -std=c++11 -pthread dict_main.o entry.o parser.o parserlist.o clique.o utility.o dict.o anticlique.o parser.o -g3
 

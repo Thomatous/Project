@@ -20,6 +20,7 @@ AntiCliquenode::~AntiCliquenode(){
 AntiClique::AntiClique(){
     head = NULL;
     size = 0;
+    destroyed = false;
 }
 
 //AntiClique destructor
@@ -50,6 +51,11 @@ void AntiClique::push(Clique* c){
     size++;   
 }
 
+void AntiClique::push(AntiCliquenode* n){
+    n->next = head;
+    head = n;
+    size++;
+}
 
 //removes clique at the top of the list
 AntiCliquenode* AntiClique::pop() {
@@ -92,20 +98,48 @@ bool AntiClique::find(Clique* c){
 void AntiClique::remove(Clique* c) {
     AntiCliquenode* temp = head;
     AntiCliquenode* to_delete;
-    if(c == head->data) {
+    while(temp != NULL && c == head->data) {
         head = head->next;
         size--;
         delete temp;
-    } else {
-        while(temp->next != NULL){
-            if(c == temp->next->data){
-                to_delete = temp->next;
-                temp->next = to_delete->next;
-                delete to_delete;
-                size--;
-                break;
-            }
-            temp = temp->next;
+        temp = head;
+    }
+    while(temp != NULL && temp->next != NULL){
+        if(c == temp->next->data){
+            to_delete = temp->next;
+            temp->next = to_delete->next;
+            delete to_delete;
+            size--;
         }
+        temp = temp->next;
     }
 } 
+
+void AntiClique::replace(Clique* c, Clique* rep){
+    // AntiCliquenode* temp = head;
+    // bool found = false;
+    // if(c == head->data) {
+    //     head->data = rep;
+    //     found = true;
+    // } 
+    // while(temp != NULL && temp->next != NULL){
+    //     if(c == temp->next->data){
+    //         if(!found) {
+    //             temp->next->data = rep;
+    //             found = true;
+    //         } else {
+    //             AntiCliquenode* to_delete = temp->next;
+    //             temp->next = to_delete->next;
+    //             delete to_delete;
+    //             size--;
+    //         }
+    //     }
+    //     temp = temp->next;
+    // }
+    remove(c);
+    push(rep);
+}
+
+void AntiClique::destroy() {
+    destroyed = true;
+}
