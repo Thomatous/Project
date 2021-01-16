@@ -1,5 +1,5 @@
-project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o job_scheduler.hpp queue.o job_scheduler.o
-	g++ -Wall -o project1 -std=c++11 -pthread main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o queue.o job_scheduler.o -g3
+project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o job_scheduler.hpp queue.o job_scheduler.o connection_tree.o
+	g++ -Wall -o project1 -std=c++11 -pthread main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o queue.o job_scheduler.o connection_tree.o -g3
 
 unit_test: unit_test.o hashtable.o avl.o entry.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o
 	g++ -Wall -o unit_test -std=c++11 -pthread unit_test.o avl.o entry.o hashtable.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o -g3 
@@ -61,5 +61,8 @@ queue.o:queue.cpp queue.hpp
 job_scheduler.o:job_scheduler.cpp job_scheduler.hpp
 	g++ -Wall -c -std=c++11 -pthread job_scheduler.cpp -g3
 
+connection_tree.o:connection_tree.cpp connection_tree.hpp
+	g++ -Wall -c -std=c++11 -pthread connection_tree.cpp -g3
+
 clean:
-	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o unit_test.o unit_test parserlist.o parser.o output.csv anticlique.o anticlique dict dict_main.o dict.o logistic_regression.o sparse_matrix.o thread_main.o thread_test queue.o job_scheduler.o
+	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o unit_test.o unit_test parserlist.o parser.o output.csv anticlique.o anticlique dict dict_main.o dict.o logistic_regression.o sparse_matrix.o thread_main.o thread_test queue.o job_scheduler.o connection_tree.o

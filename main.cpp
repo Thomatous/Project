@@ -21,7 +21,7 @@ int main() {
 
     std::cout << "Starting..." << std::endl;
     
-    JobScheduler js(3);
+    JobScheduler js(4);
     
     DIR *dir_p;
     DIR *dir_f;
