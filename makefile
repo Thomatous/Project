@@ -64,5 +64,8 @@ job_scheduler.o:job_scheduler.cpp job_scheduler.hpp
 connection_tree.o:connection_tree.cpp connection_tree.hpp
 	g++ -Wall -c -std=c++11 -pthread connection_tree.cpp -g3
 
+double_linked_list.o:double_linked_list.cpp double_linked_list.hpp
+	g++ -Wall -c -std=c++11 -pthread double_linked_list.cpp -g3
+
 clean:
-	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o unit_test.o unit_test parserlist.o parser.o output.csv anticlique.o anticlique dict dict_main.o dict.o logistic_regression.o sparse_matrix.o thread_main.o thread_test queue.o job_scheduler.o connection_tree.o
+	rm project1 main.o avl.o entry.o hashtable.o test_main.o clique.o utility.o unit_test.o unit_test parserlist.o parser.o output.csv anticlique.o anticlique dict dict_main.o dict.o logistic_regression.o sparse_matrix.o thread_main.o thread_test queue.o job_scheduler.o connection_tree.o double_linked_list.o
