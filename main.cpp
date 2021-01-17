@@ -14,6 +14,7 @@
 #include "logistic_regression.hpp"
 #include "sparse_matrix.hpp"
 #include "job_scheduler.hpp"
+#include "double_linked_list.hpp"
 #include <time.h>
 
 int main() {
@@ -32,6 +33,7 @@ int main() {
     std::string input_dir = "./Datasets/2013_camera_specs/";
     Parser p;
     Dict all_words;
+    unsigned int json_counter = 0;
     // int counter = 0;
     if ( (dir_p = opendir(input_dir.c_str())) == NULL ) {
         perror("can't open the given directory");
@@ -54,6 +56,7 @@ int main() {
                 } else {
                     while ( (file = readdir(dir_f)) ) {
                         if (file->d_name != std::string(".") && file->d_name != std::string("..")) {
+                            json_counter++;
                             // std::cout << "folder = " << folder->d_name << "file = " << file->d_name << std::endl;
                             std::string id_str = file->d_name; //keep id of product from file's title
                             size_t lastdot = id_str.find_last_of(".");
@@ -143,6 +146,9 @@ int main() {
                         // std::cout << "Merging:" << std::endl;
                         // a->clique->print();
                         // b->clique->print();
+                        a->conn_tree->root = a->conn_tree->insert(a->conn_tree->root, b);
+                        b->conn_tree->root = b->conn_tree->insert(b->conn_tree->root, a);
+                        
                         if( word == "1" ) {
                             a->merge(b);    //merge their cliques
                         }
@@ -218,7 +224,7 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    Clique single_entries;
+    // Clique single_entries;
     // output printing
     std::ofstream output;
     output.open("output.csv");
@@ -230,9 +236,9 @@ int main() {
     while( c_n != NULL ) {    //parse list of entries
         c = c_n->data->clique;                  //get entry's clique
         int size = c->size;
-        if( c->size == 1) {                     //if not similar to anyone keep it for validation
-            single_entries.push(c_n->data);
-        }
+        // if( c->size == 1) {                     //if not similar to anyone keep it for validation
+        //     single_entries.push(c_n->data);
+        // }
         if( c->printed == false ) {                         //if not NULL
             // NOTE: replace till "c->printed = true;" with print_clique_Job add to queue
             Cliquenode* table[size];            //create table of clique's members
@@ -348,6 +354,14 @@ int main() {
         perror("no output file");
     }
     input.close();
+
+    // Creating array of all entries
+    Cliquenode* temp = list_of_entries.head;
+    Entry** entries_array = new Entry*[list_of_entries.size];
+    for(int i=0 ; i < list_of_entries.size ; ++i) {
+        entries_array[i] = temp->data;
+        temp = temp->next;
+    }
 
     LR* lr = new LR(best_words_number*2);
     lr->train(&files, train_set, output_lines_counter, &ht, &js);

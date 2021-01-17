@@ -1,5 +1,5 @@
-project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o job_scheduler.hpp queue.o job_scheduler.o connection_tree.o
-	g++ -Wall -o project1 -std=c++11 -pthread main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o queue.o job_scheduler.o connection_tree.o -g3
+project1:main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o job_scheduler.hpp queue.o job_scheduler.o connection_tree.o double_linked_list.o
+	g++ -Wall -o project1 -std=c++11 -pthread main.o avl.o entry.o hashtable.o clique.o utility.o parser.o parserlist.o anticlique.o dict.o logistic_regression.o sparse_matrix.o queue.o job_scheduler.o connection_tree.o double_linked_list.o -g3
 
 unit_test: unit_test.o hashtable.o avl.o entry.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o
 	g++ -Wall -o unit_test -std=c++11 -pthread unit_test.o avl.o entry.o hashtable.o clique.o utility.o parserlist.o anticlique.o dict.o parser.o sparse_matrix.o logistic_regression.o -g3 

@@ -4,6 +4,7 @@
 DoubleLinkedNode::DoubleLinkedNode(Entry* a, Entry* b){
     A = a;
     B = b;
+    pred = -1;
     next = prev = NULL;
 }
 

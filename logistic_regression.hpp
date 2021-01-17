@@ -13,8 +13,8 @@
 #define THRESHOLD 0.1
 // medium: bs 1 lr 0.3 , bs 16 lr 0.3
 // large:  bs 1 lr     , bs 16 lr 8
-#define LEARNING_RATE 0.3
-#define BATCH_SIZE 2048
+#define LEARNING_RATE 5
+#define BATCH_SIZE 1024
 
 class JobScheduler;
 
