@@ -6,7 +6,9 @@
 #include "utility.hpp"
 #include "clique.hpp"
 #include "parserlist.hpp"
+#include "connection_tree.hpp"
 
+class ConnectionTree;
 class Clique;
 class Entry{
     private:
@@ -18,6 +20,9 @@ class Entry{
         std::string specs_words;
         int loc; 
         Clique* clique;
+
+        ConnectionTree *conn_tree;
+
         Entry();                            //constructors
         Entry(std::string, std::string);
         Entry(std::string, std::string, Parserlist*);

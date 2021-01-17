@@ -40,12 +40,12 @@ void thread_f(JobScheduler* js){
                 // print_mutex.lock();
                 // std::cout << std::this_thread::get_id() << std::endl;
                 // print_mutex.unlock();
+                // sleep(0.1);
             }
 
             if(locked == true)
                 queue_mutex.unlock();
         }
-
         //wait for wait_for_tasks_to_finish
         // {
         //     std::unique_lock<std::mutex> lock(m_end);

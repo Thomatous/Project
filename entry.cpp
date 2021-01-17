@@ -3,6 +3,7 @@
 Entry::Entry(){
     id = "None";                //default value for not initialized id
     page_title = "None";        //dedefault value for not initialized page_tiyle
+    conn_tree = new ConnectionTree();
 }
 
 //constructor for entries
@@ -16,6 +17,7 @@ Entry::Entry(std::string new_page_title, std::string new_id){
     specs = NULL;
     //generating hashvalue for entry
     hashvalue = hash_value_calculator(new_page_title, new_id);
+    conn_tree = new ConnectionTree();
 }
 
 Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
@@ -27,6 +29,7 @@ Entry::Entry(std::string new_page_title, std::string new_id, Parserlist* list){
     specs = list;
     //generating hashvalue for entry
     hashvalue = hash_value_calculator(new_page_title, new_id);
+    conn_tree = new ConnectionTree();
 }
 
 //entry destructor
@@ -43,6 +46,9 @@ Entry::~Entry(){
     }
     if(specs != NULL)
         delete specs;
+        
+    if(conn_tree != NULL)
+        delete conn_tree;
 }
 
 //id getter

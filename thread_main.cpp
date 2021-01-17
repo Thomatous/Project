@@ -35,7 +35,7 @@ int main() {
     signal(SIGINT, &signal_handler);    //init sigint signal handler
     std::cout << "Starting..." << std::endl;
     
-    JobScheduler jb(3);
+    JobScheduler jb(10);
 
     for(int i = 0 ; i < 10 ; i++){
         TestJob* t = new TestJob(i);
