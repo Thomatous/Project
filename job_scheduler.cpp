@@ -17,41 +17,20 @@ std::mutex queue_mutex;
 std::mutex train_mutex;
 
 void thread_f(JobScheduler* js){
-    // while (1){
-        //wait for execute_all from job scheduler
-        // {
-        //     std::unique_lock<std::mutex> lock(m_start);
-        //     cv_start.wait(lock, [] {return true;});
-        // }
+    while(js->q->head != NULL){
+        queue_mutex.lock();
+        bool locked = true;
+        if(js->q->head != NULL){
+            Job* cj = js->q->pop();
+            queue_mutex.unlock();
+            locked = false;
 
-        // if(!running){
-        //     break;
-        // }
-
-        while(js->q->head != NULL){
-            queue_mutex.lock();
-            bool locked = true;
-            if(js->q->head != NULL){
-                Job* cj = js->q->pop();
-                queue_mutex.unlock();
-                locked = false;
-
-                cj->run(); 
-                // print_mutex.lock();
-                // std::cout << std::this_thread::get_id() << std::endl;
-                // print_mutex.unlock();
-                // sleep(0.1);
-            }
-
-            if(locked == true)
-                queue_mutex.unlock();
+            cj->run();
+            delete cj; 
         }
-        //wait for wait_for_tasks_to_finish
-        // {
-        //     std::unique_lock<std::mutex> lock(m_end);
-        //     cv_end.wait(lock, [] {return end;});
-        // }
-    // }
+        if(locked == true)
+            queue_mutex.unlock();
+    }
 }
 
 //============================================================================================================
@@ -141,10 +120,6 @@ void JobScheduler::submit_job(Job* j){
 }
 
 JobScheduler::~JobScheduler(){
-    running = false;
-    execute_all_jobs();
-    for(int i = 0 ; i < execution_threads ; i++) 
-        tids[i].join();
     delete q;
     delete[] tids;
 }   
