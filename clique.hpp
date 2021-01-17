@@ -39,7 +39,6 @@ class Clique{
         bool find(Entry*);
         void print();
         void update_clique_ptrs(Clique*);
-        void destroy();
 };
 
 #endif

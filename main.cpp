@@ -121,7 +121,7 @@ int main() {
         cliques_set = new std::string[train_size];
         test_set = new std::string[test_size];
         validation_set = new std::string[test_size];
-        // shuffle(dataset, lines_counter);
+        shuffle(dataset, lines_counter);
         for(unsigned int i=0 ; i < lines_counter ; ++i) {
             if(i < train_size)
                 cliques_set[i] = dataset[i];

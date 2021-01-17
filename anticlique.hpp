@@ -30,7 +30,6 @@ class AntiClique{
         bool find(Clique*);
         void remove(Clique*);
         void replace(Clique*, Clique*);
-        void destroy();
 };
 
 #endif

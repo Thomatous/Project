@@ -14,7 +14,7 @@
 // medium: bs 1 lr 0.3 , bs 16 lr 0.3
 // large:  bs 1 lr     , bs 16 lr 8
 #define LEARNING_RATE 0.3
-#define BATCH_SIZE 16
+#define BATCH_SIZE 2048
 
 class JobScheduler;
 

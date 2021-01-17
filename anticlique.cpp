@@ -137,9 +137,6 @@ void AntiClique::replace(Clique* c, Clique* rep){
     //     temp = temp->next;
     // }
     remove(c);
-    push(rep);
-}
-
-void AntiClique::destroy() {
-    destroyed = true;
+    if( !find(rep) )
+        push(rep);
 }

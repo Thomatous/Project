@@ -83,13 +83,12 @@ Cliquenode* Clique::pop() {
 //deletes the other list
 void Clique::merge(Clique* c){
     while( !(c->is_empty()) ) {
-        this->push(c->pop());
-        // Cliquenode* new_node = c->pop();
-        // this->push(new_node->data);
-        // delete new_node;
+        // this->push(c->pop());
+        Cliquenode* new_node = c->pop();
+        this->push(new_node->data);
+        delete new_node;
     }
     delete c;
-    // c->destroy();
 }
 
 void Clique::merge_different(Clique* c){
@@ -98,11 +97,11 @@ void Clique::merge_different(Clique* c){
         if( new_node->data->different )
             new_node->data->different->replace(c, this);
         if( !this->different->find(new_node->data) )
-            this->different->push(new_node);
-        // delete new_node;
+            this->different->push(new_node->data);
+        delete new_node;
     }
-    // delete c->different;
-    // c->different = NULL;
+    delete c->different;
+    c->different = NULL;
 }
 
 void Clique::replace_different(Clique* rc){
@@ -149,9 +148,4 @@ void Clique::update_clique_ptrs(Clique* address){
         temp->data->clique = address;
         temp = temp->next;
     }
-}
-
-void Clique::destroy() {
-    destroyed = true;
-    different->destroy();
 }
