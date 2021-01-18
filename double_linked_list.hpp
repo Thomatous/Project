@@ -4,7 +4,7 @@
 #include <iostream>
 #include "entry.hpp"
 
-
+class Entry;
 struct DoubleLinkedNode {
     Entry* A;
     Entry* B;

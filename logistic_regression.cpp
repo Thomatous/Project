@@ -198,7 +198,7 @@ float LR::predict(SM* files, Entry* e1, Entry* e2) {
         if(i < weights_size/2) {
             f += weights[i]*(float)tf_idf1[i];
         } else {
-            f += weights[i]*((float)tf_idf2[i-weights_size/2];
+            f += weights[i]*((float)tf_idf2[i-weights_size/2]);
         }
     }
     p = 1.0/(1.0+exp(-f));

@@ -10,6 +10,7 @@
 #include "double_linked_list.hpp"
 
 class Clique;
+class DoubleLinkedNode;
 
 unsigned long long hash_value_calculator(std::string, std::string);
 void create_bow_and_tf(int**, float**, Clique*, Dict*);
@@ -17,7 +18,7 @@ void merge(float*, int*, int, int, int);
 void mergeSort(float*, int*, int, int);
 void swap(std::string*, std::string*);
 void shuffle(std::string*, unsigned int);
-void prediction_merge(DoubleLinkedNode*, int, int, int);
-void prediction_mergeSort(DoubleLinkedNode*, int, int);
+void prediction_merge(DoubleLinkedNode**, int, int, int);
+void prediction_mergeSort(DoubleLinkedNode**, int, int);
 
 #endif

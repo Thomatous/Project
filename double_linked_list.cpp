@@ -69,4 +69,5 @@ DoubleLinkedNode* DoubleLinkedList::pop() {
         head = tail = NULL;
     }
     size--;
+    return temp;
 }
