@@ -357,14 +357,65 @@ int main() {
 
     // Creating array of all entries
     Cliquenode* temp = list_of_entries.head;
-    Entry** entries_array = new Entry*[list_of_entries.size];
-    for(int i=0 ; i < list_of_entries.size ; ++i) {
+    unsigned int size = list_of_entries.size;
+    Entry** entries_array = new Entry*[size];
+    for(int i=0 ; i < size ; ++i) {
         entries_array[i] = temp->data;
         temp = temp->next;
     }
 
     LR* lr = new LR(best_words_number*2);
-    lr->train(&files, train_set, output_lines_counter, &ht, &js);
+
+    float threshold = 0.02;
+    Entry *e1, *e2;
+    DoubleLinkedList* results = new DoubleLinkedList();
+    for(unsigned int i=0 ; i < 1 ; ++i) {
+        lr->train(&files, train_set, output_lines_counter, &ht, &js);
+        for(unsigned int j=0 ; j < size ; ++j) {
+            e1 = entries_array[i];
+            for(unsigned int k=j+1 ; k < size ; ++k) {
+                e2 = entries_array[k];
+                if( !e1->conn_tree->find(e1->conn_tree->root, e2) ) {
+                    float pred = lr->predict(&files, e1, e2);
+                    if(pred < threshold || pred > 1.0-threshold)
+                        results->push(e1, e2, pred);
+                }
+            }
+        }
+        DoubleLinkedNode** results_array = new DoubleLinkedNode*[results->size];
+        unsigned int results_size = results->size;
+        for(unsigned int j=0 ; j < results_size ; ++j) {
+            results_array[j] = results->pop();
+        }
+        delete results;
+        prediction_mergeSort(results_array, 0, results_size-1);
+        for(unsigned int j=0 ; j < results_size ; ++j) {
+            e1 = results_array[j]->A;
+            e2 = results_array[j]->B;
+            if( results_array[j]->pred > 0.5 ) {
+                if( !(e1->clique->different->find(e2->clique)) ) {
+                    e1->merge(e2);
+                    e1->conn_tree->insert(e1->conn_tree->root, e2);
+                    e2->conn_tree->insert(e2->conn_tree->root, e1);
+                }
+            } else {
+                if( !(e1->clique->find(e2)) ) {
+                    e1->differs_from(e2);
+                    e1->conn_tree->insert(e1->conn_tree->root, e2);
+                    e2->conn_tree->insert(e2->conn_tree->root, e1);
+                }
+            }
+        }
+        // print output
+        // increment threshold
+
+    }
+
+    
+    
+    
+    
+    
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);

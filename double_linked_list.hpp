@@ -25,6 +25,7 @@ struct DoubleLinkedList {
     ~DoubleLinkedList();
     DoubleLinkedNode* push(Entry*, Entry*);
     void pop_from_address(DoubleLinkedNode*);
+    DoubleLinkedNode* pop();
 };
 
 #endif

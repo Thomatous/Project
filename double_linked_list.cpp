@@ -57,3 +57,13 @@ void DoubleLinkedList::pop_from_address(DoubleLinkedNode* node) {
     size--;
     delete node;
 }
+
+DoubleLinkedNode* DoubleLinkedList::pop() {
+    DoubleLinkedNode* temp = head;
+    if( size > 1 ) {
+        head = head->next;
+    } else {
+        head = tail = NULL;
+    }
+    size--;
+}

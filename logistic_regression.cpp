@@ -187,6 +187,25 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
     std::cout << pred_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << pred_thre_perc << "%)" << std::endl;
 }
 
+float LR::predict(SM* files, Entry* e1, Entry* e2) {
+    float f = 0;
+    float p;
+    float tf_idf1[weights_size/2] = {0};
+    float tf_idf2[weights_size/2] = {0};
+    files->get_tfidf_vector(e1->loc, tf_idf1);
+    files->get_tfidf_vector(e2->loc, tf_idf2);
+    for(unsigned int i=0 ; i < weights_size ; ++i) {
+        if(i < weights_size/2) {
+            f += weights[i]*(float)tf_idf1[i];
+        } else {
+            f += weights[i]*((float)tf_idf2[i-weights_size/2];
+        }
+    }
+    p = 1.0/(1.0+exp(-f));
+
+    return p;
+}
+
 void LR::validate(SM* files, std::string* validation_set, unsigned int validation_size, HashTable* ht) {
     std::cout << "Started validation..." << std::flush;
     int e1, e2;

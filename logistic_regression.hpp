@@ -34,6 +34,7 @@ public:
     void train(SM*, std::string*, unsigned int, HashTable*, JobScheduler*);
     // void train(SM*, std::string*, unsigned int, float, HashTable*);
     void predict(SM*, std::string*, unsigned int, HashTable*);
+    float predict(SM* files, Entry* e1, Entry* e2);
     void validate(SM*, std::string*, unsigned int , HashTable*);
     void validate_unknown(SM*, Clique*, Clique*);
 };
