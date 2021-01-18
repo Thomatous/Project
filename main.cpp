@@ -359,14 +359,14 @@ int main() {
     Cliquenode* temp = list_of_entries.head;
     unsigned int size = list_of_entries.size;
     Entry** entries_array = new Entry*[size];
-    for(int i=0 ; i < size ; ++i) {
+    for(unsigned int i=0 ; i < size ; ++i) {
         entries_array[i] = temp->data;
         temp = temp->next;
     }
 
     LR* lr = new LR(best_words_number*2);
 
-    float threshold = 0.02;
+    float threshold = 0.03;
     Entry *e1, *e2;
     DoubleLinkedList* results = new DoubleLinkedList();
     for(unsigned int i=0 ; i < 1 ; ++i) {
@@ -376,12 +376,20 @@ int main() {
             for(unsigned int k=j+1 ; k < size ; ++k) {
                 e2 = entries_array[k];
                 if( !e1->conn_tree->find(e1->conn_tree->root, e2) ) {
-                    float pred = lr->predict(&files, e1, e2);
-                    if(pred < threshold || pred > 1.0-threshold)
-                        results->push(e1, e2, pred);
+                    js.submit_job(new lr_retrain_Job(e1, e2, &files, results, lr, threshold));
+                    if( (j*size+k) % 1000000 == 0) {
+                        js.execute_all_jobs();
+                        js.wait_all_tasks_finish();
+                        // std::cout << "Pairs checked " << j << " Results added: " << results->size << std::endl;
+                    }
                 }
             }
         }
+        if( js.q->size > 0 ) {
+            js.execute_all_jobs();
+            js.wait_all_tasks_finish();
+        }
+        std::cout << "Etries to add: " << results->size << std::endl;
         DoubleLinkedNode** results_array = new DoubleLinkedNode*[results->size];
         unsigned int results_size = results->size;
         for(unsigned int j=0 ; j < results_size ; ++j) {
@@ -407,6 +415,7 @@ int main() {
             }
         }
         // print output
+        // create new train set by reading output
         // increment threshold
 
     }
