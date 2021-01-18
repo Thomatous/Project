@@ -116,6 +116,58 @@ void mergeSort(float* tfidf, int* words, int l, int r) {
     merge(tfidf, words, l, m, r);
 }
 
+void prediction_merge(DoubleLinkedNode* pairs, int l, int m, int r){
+    int n1 = m - l + 1;
+    int n2 = r - m;
+ 
+    DoubleLinkedNode L[n1], R[n2];
+ 
+    for (int i = 0; i < n1; i++) {
+        L[i] = pairs[l + i];
+    }
+    for (int j = 0; j < n2; j++) {
+        R[j] = pairs[m + 1 + j];
+    }
+ 
+    int i = 0;
+    int j = 0;
+    int k = l;
+ 
+    while (i < n1 && j < n2) {
+        if (L[i].pred <= R[j].pred) {
+            pairs[k] = L[i];
+            i++;
+        }
+        else if(L[i].pred > R[j].pred) {
+            pairs[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+ 
+    while (i < n1) {
+        pairs[k] = L[i];
+        i++;
+        k++;
+    }
+ 
+    while (j < n2) {
+        pairs[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void prediction_mergeSort(DoubleLinkedNode* pairs, int l, int r){
+   if(l>=r) {
+        return;//returns recursively
+    }
+    int m = (l+r-1)/2;
+    prediction_mergeSort(pairs, l, m);
+    prediction_mergeSort(pairs , m+1, r);
+    prediction_merge(pairs, l, m, r);
+}
+
 // -----------------SHUFFLE-------------------------
 
 void swap(std::string* a, std::string* b) {

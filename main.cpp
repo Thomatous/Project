@@ -427,6 +427,5 @@ int main() {
     delete[] train_set;
     delete[] test_set;
     delete[] validation_set;
-
     return 0;
 }

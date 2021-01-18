@@ -11,8 +11,8 @@ struct DoubleLinkedNode {
     float pred;
     DoubleLinkedNode* next;
     DoubleLinkedNode* prev;
-
-    DoubleLinkedNode(Entry*, Entry*);
+    DoubleLinkedNode();
+    DoubleLinkedNode(Entry*, Entry*, float);
     ~DoubleLinkedNode();
 };
 
@@ -23,7 +23,7 @@ struct DoubleLinkedList {
 
     DoubleLinkedList();
     ~DoubleLinkedList();
-    DoubleLinkedNode* push(Entry*, Entry*);
+    DoubleLinkedNode* push(Entry*, Entry*, float);
     void pop_from_address(DoubleLinkedNode*);
     DoubleLinkedNode* pop();
 };
