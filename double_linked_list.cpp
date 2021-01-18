@@ -1,9 +1,13 @@
 #include "double_linked_list.hpp"
 
 
-DoubleLinkedNode::DoubleLinkedNode(Entry* a, Entry* b){
+DoubleLinkedNode::DoubleLinkedNode(){
+}
+
+DoubleLinkedNode::DoubleLinkedNode(Entry* a, Entry* b, float p){
     A = a;
     B = b;
+    pred = p;
     next = prev = NULL;
 }
 
@@ -25,8 +29,8 @@ DoubleLinkedList::~DoubleLinkedList() {
     }
 }
 
-DoubleLinkedNode* DoubleLinkedList::push(Entry* a, Entry* b) {
-    DoubleLinkedNode* n = new DoubleLinkedNode(a, b);
+DoubleLinkedNode* DoubleLinkedList::push(Entry* a, Entry* b, float p) {
+    DoubleLinkedNode* n = new DoubleLinkedNode(a, b, p);
     if( size == 0 ) {
         head = tail = n;
     } else {

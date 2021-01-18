@@ -7,6 +7,7 @@
 #include <sstream> 
 #include <string> 
 #include <ctime>
+#include "double_linked_list.hpp"
 
 class Clique;
 
@@ -16,5 +17,7 @@ void merge(float*, int*, int, int, int);
 void mergeSort(float*, int*, int, int);
 void swap(std::string*, std::string*);
 void shuffle(std::string*, unsigned int);
+void prediction_merge(DoubleLinkedNode*, int, int, int);
+void prediction_mergeSort(DoubleLinkedNode*, int, int);
 
 #endif
