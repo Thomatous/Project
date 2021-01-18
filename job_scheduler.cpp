@@ -15,6 +15,7 @@ std::condition_variable cv;
 std::mutex m;
 std::mutex queue_mutex;
 std::mutex train_mutex;
+std::mutex retrain_mutex;
 
 void thread_f(JobScheduler* js){
     while(js->q->head != NULL){
@@ -85,6 +86,26 @@ void lr_train_Job::run() {
     e2 = ht->search(hash_value_calculator(site2, id2));
 
     lr->gradient_descent(e1->loc, e2->loc, label, files);
+}
+
+//============================================================================================================
+
+lr_retrain_Job::lr_retrain_Job(Entry* a, Entry* b, SM* f, DoubleLinkedList* ls, LR* log_reg, float t) {
+    e1 = a;
+    e2 = b;
+    results = ls;
+    files = f;
+    lr = log_reg;
+    threshold = t;
+}
+
+void lr_retrain_Job::run(){
+    float pred = lr->predict(files, e1, e2);
+    if(pred < threshold || pred > 1.0-threshold){
+        retrain_mutex.lock();
+        results->push(e1, e2, pred);
+        retrain_mutex.unlock();
+    }
 }
 
 //============================================================================================================

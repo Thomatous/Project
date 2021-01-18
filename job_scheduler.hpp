@@ -19,6 +19,7 @@
 #include "logistic_regression.hpp"
 #include "sparse_matrix.hpp"
 #include "queue.hpp"
+#include "double_linked_list.hpp"
 
 class Queue;
 class LR;
@@ -36,6 +37,7 @@ extern std::condition_variable cv_end;
 extern std::mutex print_mutex;
 extern std::mutex queue_mutex;
 extern std::mutex train_mutex;
+extern std::mutex retrain_mutex;
 
 
 
@@ -65,6 +67,18 @@ class lr_train_Job : public Job {
 
 public: 
     lr_train_Job(std::string, HashTable*, SM*, LR*);
+    void run() override;
+};
+
+class lr_retrain_Job : public Job {
+    Entry* e1;
+    Entry* e2;
+    SM* files;
+    DoubleLinkedList* results;
+    LR* lr;
+    float threshold;
+public: 
+    lr_retrain_Job(Entry*, Entry*, SM*, DoubleLinkedList*, LR*, float);
     void run() override;
 };
 
