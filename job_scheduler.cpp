@@ -17,20 +17,26 @@ std::mutex queue_mutex;
 std::mutex train_mutex;
 std::mutex retrain_mutex;
 
-void thread_f(JobScheduler* js){
-    while(js->q->head != NULL){
-        queue_mutex.lock();
-        bool locked = true;
-        if(js->q->head != NULL){
-            Job* cj = js->q->pop();
-            queue_mutex.unlock();
-            locked = false;
 
+void thread_f(JobScheduler* js, unsigned int execution_threads){
+    Queue* temp_Queue = new Queue();
+
+    unsigned int num_jobs = js->q->size/execution_threads;
+
+    if(js->q->head != NULL){
+        
+        queue_mutex.lock();
+        for(unsigned int i = 0 ; i < num_jobs && js->q->size > 0 ; i++){
+            Job* cj = js->q->pop();
+            temp_Queue->push_back(cj);
+        }
+        queue_mutex.unlock();
+
+        while(temp_Queue->size > 0){
+            Job* cj = temp_Queue->pop();
             cj->run();
             delete cj; 
         }
-        if(locked == true)
-            queue_mutex.unlock();
     }
 }
 
@@ -119,7 +125,7 @@ JobScheduler::JobScheduler(int n_execution_threads){
 
 void JobScheduler::execute_all_jobs(){
     for(int i = 0 ; i < execution_threads ; i++){
-        tids[i] = std::thread(thread_f, this);
+        tids[i] = std::thread(thread_f, this, execution_threads);
     }
 
     // start = true;

@@ -102,7 +102,7 @@ public:
 
 //============================================================================================================
 
-void thread_f(JobScheduler*);
+void thread_f(JobScheduler*, unsigned int);
 
 // class best_words_dict_Job : public Job{
 // private:
