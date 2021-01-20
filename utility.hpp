@@ -22,6 +22,7 @@ void shuffle(std::string*, unsigned int);
 void prediction_merge(DoubleLinkedNode**, int, int, int);
 void prediction_mergeSort(DoubleLinkedNode**, int, int);
 void print_output(Clique*, unsigned int*);
+void clear_print(Clique*);
 void create_train_set(std::string*, const unsigned int);
 
 #endif

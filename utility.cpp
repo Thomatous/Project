@@ -178,7 +178,7 @@ void swap(std::string* a, std::string* b) {
 }
 
 void shuffle(std::string* array, unsigned int size) {
-    srand(time(NULL));
+    srand(19);
     // int s1,s2;
     for(unsigned int i=0 ; i < size ; ++i) {
         // s1 = rand()%size;
@@ -296,6 +296,20 @@ void print_output(Clique* list_of_entries, unsigned int *output_lines_counter) {
     }
     // NOTE: run printing tasks
     output.close();
+}
+
+void clear_print(Clique* list_of_entries) {
+    if( remove( "output.csv" ) != 0 )
+        perror( "Error deleting output" );
+    Cliquenode* temp = list_of_entries->head;
+    while(temp != NULL) {
+        temp->data->clique->printed = false;
+        if(temp->data->clique->anti_printed) {
+            delete[] temp->data->clique->anti_printed;
+            temp->data->clique->anti_printed = NULL;
+        }
+        temp = temp->next;
+    }
 }
 
 void create_train_set(std::string* train_set, const unsigned int output_lines_counter) {

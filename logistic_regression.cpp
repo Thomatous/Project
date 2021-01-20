@@ -8,10 +8,10 @@ LR::LR(unsigned int w_size): weights_size(w_size), pred_counter(0) {
     val_threshold_counter = 0;
     weights = new float[w_size];
     thetaJ = new float[w_size];
-    for(unsigned int i=0 ; i < w_size ; ++i) {
-        weights[i] = 0;
-        thetaJ[i] = 0;
-    }
+    // for(unsigned int i=0 ; i < w_size ; ++i) {
+    //     weights[i] = 0;
+    //     thetaJ[i] = 0;
+    // }
 }
 
 LR::~LR() {
@@ -49,6 +49,11 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
 }
 
 void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht, JobScheduler* js) {
+    prevL = INTMAX_MAX;
+    for(unsigned int i=0 ; i < weights_size ; ++i) {
+        weights[i] = 0;
+        thetaJ[i] = 0;
+    }
     std::cout << "Started training..." << std::endl;
     unsigned int iters = train_size/BATCH_SIZE + (train_size%BATCH_SIZE > 0 ? 1 : 0);
     for(int j=0 ; j < EPOCHS ; ++j) {

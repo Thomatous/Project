@@ -245,66 +245,65 @@ int main() {
     float threshold = 0.03;
     Entry *e1, *e2;
     DoubleLinkedList* results = new DoubleLinkedList();
-    for(unsigned int i=0 ; i < 1 ; ++i) {
+    const unsigned int retrain_iters = 2;
+    for(unsigned int i=0 ; i < retrain_iters ; ++i) {
         lr->train(&files, train_set, output_lines_counter, &ht, &js);
-        delete[] train_set;
-        for(unsigned int j=0 ; j < size ; ++j) {
-            e1 = entries_array[i];
-            for(unsigned int k=j+1 ; k < size ; ++k) {
-                e2 = entries_array[k];
-                if( !e1->conn_tree->find(e1->conn_tree->root, e2) ) {
-                    js.submit_job(new lr_retrain_Job(e1, e2, &files, results, lr, threshold));
-                    if( (j*size+k) % 1000000 == 0) {
-                        js.execute_all_jobs();
-                        js.wait_all_tasks_finish();
-                        // std::cout << "Pairs checked " << j << " Results added: " << results->size << std::endl;
+        if( i < retrain_iters-1 ) {
+            for(unsigned int j=0 ; j < size ; ++j) {
+                e1 = entries_array[j];
+                for(unsigned int k=j+1 ; k < size ; ++k) {
+                    e2 = entries_array[k];
+                    if( !e1->conn_tree->find(e1->conn_tree->root, e2) ) {
+                        js.submit_job(new lr_retrain_Job(e1, e2, &files, results, lr, threshold));
+                        if( (j*size+k) % 1000000 == 0) {
+                            js.execute_all_jobs();
+                            js.wait_all_tasks_finish();
+                            // std::cout << "Pairs checked " << j << " Results added: " << results->size << std::endl;
+                        }
                     }
                 }
             }
-        }
-        if( js.q->size > 0 ) {
-            js.execute_all_jobs();
-            js.wait_all_tasks_finish();
-        }
-        std::cout << "Etries to add: " << results->size << std::endl;
-        DoubleLinkedNode** results_array = new DoubleLinkedNode*[results->size];
-        unsigned int results_size = results->size;
-        for(unsigned int j=0 ; j < results_size ; ++j) {
-            results_array[j] = results->pop();
-        }
-        delete results;
-        prediction_mergeSort(results_array, 0, results_size-1);
-        for(unsigned int j=0 ; j < results_size ; ++j) {
-            e1 = results_array[j]->A;
-            e2 = results_array[j]->B;
-            if( results_array[j]->pred > 0.5 ) {
-                if( !(e1->clique->different->find(e2->clique)) ) {
-                    e1->merge(e2);
-                    e1->conn_tree->insert(e1->conn_tree->root, e2);
-                    e2->conn_tree->insert(e2->conn_tree->root, e1);
-                }
-            } else {
-                if( !(e1->clique->find(e2)) ) {
-                    e1->differs_from(e2);
-                    e1->conn_tree->insert(e1->conn_tree->root, e2);
-                    e2->conn_tree->insert(e2->conn_tree->root, e1);
+            if( js.q->size > 0 ) {
+                js.execute_all_jobs();
+                js.wait_all_tasks_finish();
+            }
+            std::cout << "Etries to add: " << results->size << std::endl;
+            DoubleLinkedNode** results_array = new DoubleLinkedNode*[results->size];
+            unsigned int results_size = results->size;
+            for(unsigned int j=0 ; j < results_size ; ++j) {
+                results_array[j] = results->pop();
+            }
+            delete results;
+            prediction_mergeSort(results_array, 0, results_size-1);
+            for(unsigned int j=0 ; j < results_size ; ++j) {
+                e1 = results_array[j]->A;
+                e2 = results_array[j]->B;
+                if( results_array[j]->pred > 0.5 ) {
+                    if( !(e1->clique->different->find(e2->clique)) ) {
+                        e1->merge(e2);
+                        e1->conn_tree->insert(e1->conn_tree->root, e2);
+                        e2->conn_tree->insert(e2->conn_tree->root, e1);
+                    }
+                } else {
+                    if( !(e1->clique->find(e2)) ) {
+                        e1->differs_from(e2);
+                        e1->conn_tree->insert(e1->conn_tree->root, e2);
+                        e2->conn_tree->insert(e2->conn_tree->root, e1);
+                    }
                 }
             }
+            // print output
+            clear_print(&list_of_entries);
+            print_output(&list_of_entries, &output_lines_counter);
+            // create new train set by reading output
+            delete[] train_set;
+            train_set = new std::string[output_lines_counter];
+            create_train_set(train_set, output_lines_counter);
         }
-        // print output
-        print_output(&list_of_entries, &output_lines_counter);
-        // create new train set by reading output
-        std::string* train_set = new std::string[output_lines_counter];
-        create_train_set(train_set, output_lines_counter);
         // increment threshold
-
+        threshold += 0.01;
     }
 
-    
-    
-    
-    
-    
     lr->predict(&files, test_set, test_size, &ht);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht);
