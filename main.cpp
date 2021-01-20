@@ -224,31 +224,12 @@ int main() {
     delete best_words;
     std::cout << "\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
-    // Clique single_entries;
     // output printing
     unsigned int output_lines_counter = 0;
     print_output(&list_of_entries, &output_lines_counter);
-
-    std::ifstream input;
-    input.open("output.csv");
+    // creatin train_set
     std::string* train_set = new std::string[output_lines_counter];
-    if ( input.is_open() ) {
-        std::string empty;
-        getline(input, empty);          // discard header line
-        // fill up array with info lines
-        for(unsigned int i=0 ; i < output_lines_counter ; ++i) {
-            // NOTE: add read_output_Job to queue
-            getline(input, train_set[i]);
-            // pthread_mutex_t* mutex;
-            // pthread_mutex_init(mutex, NULL);
-            // read_output_Job roj(train_set, &input, i, mutex);
-            // roj.run();
-        }
-        // NOTE: run reading output jobs
-    } else {
-        perror("no output file");
-    }
-    input.close();
+    create_train_set(train_set, output_lines_counter);
 
     // Creating array of all entries
     Cliquenode* temp = list_of_entries.head;
@@ -266,6 +247,7 @@ int main() {
     DoubleLinkedList* results = new DoubleLinkedList();
     for(unsigned int i=0 ; i < 1 ; ++i) {
         lr->train(&files, train_set, output_lines_counter, &ht, &js);
+        delete[] train_set;
         for(unsigned int j=0 ; j < size ; ++j) {
             e1 = entries_array[i];
             for(unsigned int k=j+1 ; k < size ; ++k) {
@@ -310,7 +292,10 @@ int main() {
             }
         }
         // print output
+        print_output(&list_of_entries, &output_lines_counter);
         // create new train set by reading output
+        std::string* train_set = new std::string[output_lines_counter];
+        create_train_set(train_set, output_lines_counter);
         // increment threshold
 
     }

@@ -297,3 +297,25 @@ void print_output(Clique* list_of_entries, unsigned int *output_lines_counter) {
     // NOTE: run printing tasks
     output.close();
 }
+
+void create_train_set(std::string* train_set, const unsigned int output_lines_counter) {
+    std::ifstream input;
+    input.open("output.csv");
+    if ( input.is_open() ) {
+        std::string empty;
+        getline(input, empty);          // discard header line
+        // fill up array with info lines
+        for(unsigned int i=0 ; i < output_lines_counter ; ++i) {
+            // NOTE: add read_output_Job to queue
+            getline(input, train_set[i]);
+            // pthread_mutex_t* mutex;
+            // pthread_mutex_init(mutex, NULL);
+            // read_output_Job roj(train_set, &input, i, mutex);
+            // roj.run();
+        }
+        // NOTE: run reading output jobs
+    } else {
+        perror("no output file");
+    }
+    input.close();
+}
