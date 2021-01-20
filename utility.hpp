@@ -8,6 +8,7 @@
 #include <string> 
 #include <ctime>
 #include "double_linked_list.hpp"
+#include <fstream>
 
 class Clique;
 class DoubleLinkedNode;
@@ -20,5 +21,6 @@ void swap(std::string*, std::string*);
 void shuffle(std::string*, unsigned int);
 void prediction_merge(DoubleLinkedNode**, int, int, int);
 void prediction_mergeSort(DoubleLinkedNode**, int, int);
+void print_output(Clique*, unsigned int*);
 
 #endif
