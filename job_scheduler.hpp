@@ -24,21 +24,11 @@
 class Queue;
 class LR;
 
-extern bool running;
-
-extern bool start;
-extern std::mutex m_start;
-extern std::condition_variable cv_start;
-
-extern bool end;
-extern std::mutex m_end;
-extern std::condition_variable cv_end;
-
 extern std::mutex print_mutex;
 extern std::mutex queue_mutex;
 extern std::mutex train_mutex;
 extern std::mutex retrain_mutex;
-
+extern std::mutex test_mutex;
 
 
 //============================================================================================================
@@ -59,6 +49,8 @@ public:
     void run() override;
 };
 
+//============================================================================================================
+
 class lr_train_Job : public Job {
     std::string line;
     HashTable* ht;
@@ -70,6 +62,8 @@ public:
     void run() override;
 };
 
+//============================================================================================================
+
 class lr_retrain_Job : public Job {
     Entry* e1;
     Entry* e2;
@@ -79,6 +73,20 @@ class lr_retrain_Job : public Job {
     float threshold;
 public: 
     lr_retrain_Job(Entry*, Entry*, SM*, DoubleLinkedList*, LR*, float);
+    void run() override;
+};
+
+//============================================================================================================
+
+class lr_test_Job : public Job {
+    unsigned int *pred_counter, *pred_threshold_counter;
+    int e1;
+    int e2;
+    LR *lr;
+    SM *files;
+    short int label;
+public: 
+    lr_test_Job(unsigned int*, unsigned int*, int, int, LR*, SM*, short int);
     void run() override;
 };
 
@@ -102,7 +110,7 @@ public:
 
 //============================================================================================================
 
-void thread_f(JobScheduler*, unsigned int);
+void thread_f(JobScheduler*);
 
 // class best_words_dict_Job : public Job{
 // private:

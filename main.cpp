@@ -304,9 +304,9 @@ int main() {
         threshold += 0.01;
     }
 
-    lr->predict(&files, test_set, test_size, &ht);
+    lr->predict(&files, test_set, test_size, &ht, &js);
     // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
-    lr->validate(&files, validation_set, test_size, &ht);
+    lr->validate(&files, validation_set, test_size, &ht, &js);
     // std::cout << single_entries.size << std::endl;
     // lr->validate_unknown(&files, &single_entries, &list_of_entries);
 

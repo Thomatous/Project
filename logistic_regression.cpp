@@ -127,7 +127,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
 
 }
 
-void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable* ht) {
+void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable* ht, JobScheduler* js) {
     std::cout << "Started testing..." << std::flush;
     int e1, e2;
     std::string url1, url2, label_str;
@@ -159,31 +159,34 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
         }
         e1 = ht->search(hash_value_calculator(site1, id1))->loc;
         e2 = ht->search(hash_value_calculator(site2, id2))->loc;
-    
-    
-        float f = 0;
-        float p;
-        float x[weights_size];
-        float tf_idf1[weights_size/2] = {0};
-        float tf_idf2[weights_size/2] = {0};
-        files->get_tfidf_vector(e1, tf_idf1);
-        files->get_tfidf_vector(e2, tf_idf2);
 
-        for(unsigned int i=0 ; i < weights_size ; ++i) {
-            if(i < weights_size/2) {
-                x[i] = tf_idf1[i];
-                x[i+weights_size/2] = tf_idf2[i];
-            }
-            f += weights[i]*((float)x[i]);
-        }
-        p = 1.0/(1.0+exp(-f));
+        js->submit_job(new lr_test_Job(&pred_counter, &pred_threshold_counter, e1, e2, this, files, label));
+ 
+    //     float f = 0;
+    //     float p;
+    //     float x[weights_size];
+    //     float tf_idf1[weights_size/2] = {0};
+    //     float tf_idf2[weights_size/2] = {0};
+    //     files->get_tfidf_vector(e1, tf_idf1);
+    //     files->get_tfidf_vector(e2, tf_idf2);
 
-        float dif = abs((float)p - (float)label);
-        if(dif < 0.5)
-            pred_counter++;
-        if(dif < THRESHOLD)
-            pred_threshold_counter++;
+    //     for(unsigned int i=0 ; i < weights_size ; ++i) {
+    //         if(i < weights_size/2) {
+    //             x[i] = tf_idf1[i];
+    //             x[i+weights_size/2] = tf_idf2[i];
+    //         }
+    //         f += weights[i]*((float)x[i]);
+    //     }
+    //     p = 1.0/(1.0+exp(-f));
+
+    //     float dif = abs((float)p - (float)label);
+    //     if(dif < 0.5)
+    //         pred_counter++;
+    //     if(dif < THRESHOLD)
+    //         pred_threshold_counter++;
     }
+    js->execute_all_jobs();
+    js->wait_all_tasks_finish();
     
     float pred_perc = 100.0*float(pred_counter)/float(test_size);
     float pred_thre_perc = 100.0*float(pred_threshold_counter)/float(test_size);
@@ -211,7 +214,7 @@ float LR::predict(SM* files, Entry* e1, Entry* e2) {
     return p;
 }
 
-void LR::validate(SM* files, std::string* validation_set, unsigned int validation_size, HashTable* ht) {
+void LR::validate(SM* files, std::string* validation_set, unsigned int validation_size, HashTable* ht, JobScheduler* js) {
     std::cout << "Started validation..." << std::flush;
     int e1, e2;
     std::string url1, url2, label_str;
@@ -244,30 +247,32 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
         e1 = ht->search(hash_value_calculator(site1, id1))->loc;
         e2 = ht->search(hash_value_calculator(site2, id2))->loc;
     
-    
-        float f = 0;
-        float p;
-        float x[weights_size];
-        float tf_idf1[weights_size/2] = {0};
-        float tf_idf2[weights_size/2] = {0};
-        files->get_tfidf_vector(e1, tf_idf1);
-        files->get_tfidf_vector(e2, tf_idf2);
+        js->submit_job(new lr_test_Job(&val_counter, &val_threshold_counter, e1, e2, this, files, label));
+        // float f = 0;
+        // float p;
+        // float x[weights_size];
+        // float tf_idf1[weights_size/2] = {0};
+        // float tf_idf2[weights_size/2] = {0};
+        // files->get_tfidf_vector(e1, tf_idf1);
+        // files->get_tfidf_vector(e2, tf_idf2);
 
-        for(unsigned int i=0 ; i < weights_size ; ++i) {
-            if(i < weights_size/2) {
-                x[i] = tf_idf1[i];
-                x[i+weights_size/2] = tf_idf2[i];
-            }
-            f += weights[i]*((float)x[i]);
-        }
-        p = 1.0/(1.0+exp(-f));
+        // for(unsigned int i=0 ; i < weights_size ; ++i) {
+        //     if(i < weights_size/2) {
+        //         x[i] = tf_idf1[i];
+        //         x[i+weights_size/2] = tf_idf2[i];
+        //     }
+        //     f += weights[i]*((float)x[i]);
+        // }
+        // p = 1.0/(1.0+exp(-f));
 
-        float dif = abs((float)p - (float)label);
-        if( dif < 0.5)
-            val_counter++;
-        if( dif < THRESHOLD)
-            val_threshold_counter++;
+        // float dif = abs((float)p - (float)label);
+        // if( dif < 0.5)
+        //     val_counter++;
+        // if( dif < THRESHOLD)
+        //     val_threshold_counter++;
     }
+    js->execute_all_jobs();
+    js->wait_all_tasks_finish();
     
     float val_perc = 100.0*float(val_counter)/float(validation_size);
     float val_thre_perc = 100.0*float(val_threshold_counter)/float(validation_size);

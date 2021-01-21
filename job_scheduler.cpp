@@ -1,47 +1,30 @@
 #include "job_scheduler.hpp"
 
-bool running = true;
-
-bool start = false;
-std::mutex m_start;
-std::condition_variable cv_start;
-
-bool end = false;
-std::mutex m_end;
-std::condition_variable cv_end;
-
 std::mutex print_mutex;
-std::condition_variable cv;
-std::mutex m;
 std::mutex queue_mutex;
 std::mutex train_mutex;
 std::mutex retrain_mutex;
+std::mutex test_mutex;
 
 
-void thread_f(JobScheduler* js, unsigned int execution_threads){
-    Queue* temp_Queue = new Queue();
-
-    unsigned int num_jobs = js->q->size/execution_threads;
-
-    if(js->q->head != NULL){
-        
+void thread_f(JobScheduler* js){
+    while(js->q->head != NULL){
         queue_mutex.lock();
-        for(unsigned int i = 0 ; i < num_jobs && js->q->size > 0 ; i++){
+        // bool locked = true;
+        if(js->q->head != NULL){
             Job* cj = js->q->pop();
-            temp_Queue->push_back(cj);
-        }
-        queue_mutex.unlock();
+            queue_mutex.unlock();
+            // locked = false;
 
-        while(temp_Queue->size > 0){
-            Job* cj = temp_Queue->pop();
             cj->run();
             delete cj; 
         }
+        // if(locked == true)
+        //     queue_mutex.unlock();
     }
 }
 
 //============================================================================================================
-
 
 TestJob::TestJob(unsigned int i){
     id = i;
@@ -116,6 +99,52 @@ void lr_retrain_Job::run(){
 
 //============================================================================================================
 
+
+lr_test_Job::lr_test_Job(unsigned int* pc, unsigned int* ptc, int e1l, int e2l, LR* l, SM* f, short int lb){
+    pred_counter = pc;
+    pred_threshold_counter = ptc;
+    e1 = e1l;
+    e2 = e2l;
+    lr = l;
+    files = f;
+    label = lb;
+}
+
+void lr_test_Job::run(){
+  
+    float f = 0;
+    float p;
+    // float x[lr->weights_size];
+    float tf_idf1[lr->weights_size/2] = {0};
+    float tf_idf2[lr->weights_size/2] = {0};
+    files->get_tfidf_vector(e1, tf_idf1);
+    files->get_tfidf_vector(e2, tf_idf2);
+
+    for(unsigned int i=0 ; i < lr->weights_size ; ++i) {
+        if(i < lr->weights_size/2) {
+            f += lr->weights[i]*(float)tf_idf1[i];
+        } else {
+            f += lr->weights[i]*((float)tf_idf2[i-lr->weights_size/2]);
+        }
+    }
+    p = 1.0/(1.0+exp(-f));
+
+    float dif = abs((float)p - (float)label);
+    
+    if(dif < 0.5){
+        test_mutex.lock();
+        pred_counter++;
+        test_mutex.unlock();
+    }
+    if(dif < THRESHOLD){
+        test_mutex.lock();
+        pred_threshold_counter++;
+        test_mutex.unlock();
+    }
+}
+
+//============================================================================================================
+
 JobScheduler::JobScheduler(int n_execution_threads){
     execution_threads = n_execution_threads;
     tids = new std::thread[execution_threads];
@@ -125,10 +154,8 @@ JobScheduler::JobScheduler(int n_execution_threads){
 
 void JobScheduler::execute_all_jobs(){
     for(int i = 0 ; i < execution_threads ; i++){
-        tids[i] = std::thread(thread_f, this, execution_threads);
+        tids[i] = std::thread(thread_f, this);
     }
-
-    // start = true;
     // end = false;
     // cv_start.notify_all();
 }
@@ -136,7 +163,6 @@ void JobScheduler::execute_all_jobs(){
 void JobScheduler::wait_all_tasks_finish(){
     for(int i = 0 ; i < execution_threads ; i++) 
         tids[i].join();
-    start = false;
     // end = true;
     // cv_end.notify_all();
  
