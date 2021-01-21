@@ -117,21 +117,22 @@ void mergeSort(float* tfidf, int* words, int l, int r) {
 }
 
 void prediction_merge(DoubleLinkedNode** pairs, int l, int m, int r){
-    int n1 = m - l + 1;
-    int n2 = r - m;
+    unsigned int n1 = m - l + 1;
+    unsigned int n2 = r - m;
  
-    DoubleLinkedNode *L[n1], *R[n2];
+    DoubleLinkedNode **L = new DoubleLinkedNode*[n1];
+    DoubleLinkedNode **R = new DoubleLinkedNode*[n2];
  
-    for (int i = 0; i < n1; i++) {
+    for (unsigned int i = 0; i < n1; i++) {
         L[i] = pairs[l + i];
     }
-    for (int j = 0; j < n2; j++) {
+    for (unsigned int j = 0; j < n2; j++) {
         R[j] = pairs[m + 1 + j];
     }
  
-    int i = 0;
-    int j = 0;
-    int k = l;
+    unsigned int i = 0;
+    unsigned int j = 0;
+    unsigned int k = l;
  
     while (i < n1 && j < n2) {
         if (L[i]->pred <= R[j]->pred) {
@@ -156,6 +157,9 @@ void prediction_merge(DoubleLinkedNode** pairs, int l, int m, int r){
         j++;
         k++;
     }
+
+    delete[] L;
+    delete[] R;
 }
 
 void prediction_mergeSort(DoubleLinkedNode** pairs, int l, int r){
