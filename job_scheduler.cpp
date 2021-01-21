@@ -9,18 +9,18 @@ std::mutex test_mutex;
 
 void thread_f(JobScheduler* js){
     while(js->q->head != NULL){
+        Job* cj = NULL;
+        
         queue_mutex.lock();
-        // bool locked = true;
         if(js->q->head != NULL){
-            Job* cj = js->q->pop();
-            queue_mutex.unlock();
-            // locked = false;
+            cj = js->q->pop();
+        }
+        queue_mutex.unlock();
 
+        if(cj) {
             cj->run();
             delete cj; 
         }
-        // if(locked == true)
-        //     queue_mutex.unlock();
     }
 }
 
@@ -133,12 +133,12 @@ void lr_test_Job::run(){
     
     if(dif < 0.5){
         test_mutex.lock();
-        pred_counter++;
+        (*pred_counter)++;
         test_mutex.unlock();
     }
     if(dif < THRESHOLD){
         test_mutex.lock();
-        pred_threshold_counter++;
+        (*pred_threshold_counter)++;
         test_mutex.unlock();
     }
 }

@@ -93,7 +93,7 @@ int main() {
     } 
 
     // parse csv
-    std::ifstream file("./Datasets/sigmod_medium_labelled_dataset.csv");
+    std::ifstream file("./Datasets/sigmod_large_labelled_dataset.csv");
     std::string line, word = "";
 
     unsigned int lines_counter = 0;
@@ -242,10 +242,10 @@ int main() {
 
     LR* lr = new LR(best_words_number*2);
 
-    float threshold = 0.03;
+    float threshold = 0.02;
     Entry *e1, *e2;
     DoubleLinkedList* results = new DoubleLinkedList();
-    const unsigned int retrain_iters = 2;
+    const unsigned int retrain_iters = 3;
     for(unsigned int i=0 ; i < retrain_iters ; ++i) {
         lr->train(&files, train_set, output_lines_counter, &ht, &js);
         if( i < retrain_iters-1 ) {
@@ -255,7 +255,7 @@ int main() {
                     e2 = entries_array[k];
                     if( !e1->conn_tree->find(e1->conn_tree->root, e2) ) {
                         js.submit_job(new lr_retrain_Job(e1, e2, &files, results, lr, threshold));
-                        if( (j*size+k) % 1000000 == 0) {
+                        if( (j*size+k) % 45000000 == 0) {
                             js.execute_all_jobs();
                             js.wait_all_tasks_finish();
                             // std::cout << "Pairs checked " << j << " Results added: " << results->size << std::endl;

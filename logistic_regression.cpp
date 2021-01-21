@@ -99,7 +99,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             js->wait_all_tasks_finish();
             // counter = 0;
             // NOTE: run lr_train_Job
-            // J = -L/(float)(l);
+            // J = -L/(float)(l+1);
 
             float max=0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
@@ -162,28 +162,28 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
 
         js->submit_job(new lr_test_Job(&pred_counter, &pred_threshold_counter, e1, e2, this, files, label));
  
-    //     float f = 0;
-    //     float p;
-    //     float x[weights_size];
-    //     float tf_idf1[weights_size/2] = {0};
-    //     float tf_idf2[weights_size/2] = {0};
-    //     files->get_tfidf_vector(e1, tf_idf1);
-    //     files->get_tfidf_vector(e2, tf_idf2);
+        // float f = 0;
+        // float p;
+        // float x[weights_size];
+        // float tf_idf1[weights_size/2] = {0};
+        // float tf_idf2[weights_size/2] = {0};
+        // files->get_tfidf_vector(e1, tf_idf1);
+        // files->get_tfidf_vector(e2, tf_idf2);
 
-    //     for(unsigned int i=0 ; i < weights_size ; ++i) {
-    //         if(i < weights_size/2) {
-    //             x[i] = tf_idf1[i];
-    //             x[i+weights_size/2] = tf_idf2[i];
-    //         }
-    //         f += weights[i]*((float)x[i]);
-    //     }
-    //     p = 1.0/(1.0+exp(-f));
+        // for(unsigned int i=0 ; i < weights_size ; ++i) {
+        //     if(i < weights_size/2) {
+        //         x[i] = tf_idf1[i];
+        //         x[i+weights_size/2] = tf_idf2[i];
+        //     }
+        //     f += weights[i]*((float)x[i]);
+        // }
+        // p = 1.0/(1.0+exp(-f));
 
-    //     float dif = abs((float)p - (float)label);
-    //     if(dif < 0.5)
-    //         pred_counter++;
-    //     if(dif < THRESHOLD)
-    //         pred_threshold_counter++;
+        // float dif = abs((float)p - (float)label);
+        // if(dif < 0.5)
+        //     pred_counter++;
+        // if(dif < THRESHOLD)
+        //     pred_threshold_counter++;
     }
     js->execute_all_jobs();
     js->wait_all_tasks_finish();
