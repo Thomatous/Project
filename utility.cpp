@@ -303,8 +303,6 @@ void print_output(Clique* list_of_entries, unsigned int *output_lines_counter) {
 }
 
 void clear_print(Clique* list_of_entries) {
-    if( remove( "output.csv" ) != 0 )
-        perror( "Error deleting output" );
     Cliquenode* temp = list_of_entries->head;
     while(temp != NULL) {
         temp->data->clique->printed = false;
@@ -336,4 +334,43 @@ void create_train_set(std::string* train_set, const unsigned int output_lines_co
         perror("no output file");
     }
     input.close();
+}
+
+void print_cliques(Clique* list_of_entries, unsigned int *output_lines_counter) {
+    *output_lines_counter = 0;
+    std::ofstream output;
+    output.open("cliques.csv");
+    output << "left_spec_id,right_spec_id,label\n";
+    Cliquenode* c_n = list_of_entries->head;
+    Clique* c = NULL;
+    while( c_n != NULL ) {    //parse list of entries
+        c = c_n->data->clique;                  //get entry's clique
+        int size = c->size;
+        // if( c->size == 1) {                     //if not similar to anyone keep it for validation
+        //     single_entries.push(c_n->data);
+        // }
+        if( c->printed == false ) {                         //if not NULL
+            // NOTE: replace till "c->printed = true;" with print_clique_Job add to queue
+            Cliquenode* table[size];            //create table of clique's members
+            Cliquenode* temp_entry = c->head;
+            for(int i=0 ; i < size ; i++) {
+                table[i] = temp_entry;
+                temp_entry = temp_entry->next;
+            }
+
+            // print every possible pair from that clique
+            for(int i=0 ; i<size ; i++) {       
+                std::string url1 = table[i]->data->get_page_title() + "//" + table[i]->data->get_id();
+                for(int j=i+1 ; j<size ; j++) {
+                    std::string url2 = table[j]->data->get_page_title() + "//" + table[j]->data->get_id();
+                    output << url1 << "," << url2 << ",1" <<  "\n";
+                    ++(*output_lines_counter);
+                }
+                // table[i]->data->clique = NULL;  //make clique pointer NULL for all those entries so we don't print any pair more than once
+            }
+            c->printed = true;
+        }
+        c_n = c_n->next;
+    }
+    output.close();
 }

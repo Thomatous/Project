@@ -14,13 +14,13 @@
 // medium: bs 1 lr 0.3 , bs 16 lr 0.3
 // large:  bs 1 lr     , bs 16 lr 8
 #define LEARNING_RATE 5
-#define BATCH_SIZE 1024
+#define BATCH_SIZE 256
 
 class JobScheduler;
 
 class LR{
 public:
-    float prevL, L, J;
+    float L, J;
     const unsigned int weights_size;
     float* weights;
     float* thetaJ;

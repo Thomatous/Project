@@ -15,14 +15,21 @@
 #include "sparse_matrix.hpp"
 #include "job_scheduler.hpp"
 #include "double_linked_list.hpp"
-#include <time.h>
+#include <bits/stdc++.h> 
+#include <sys/time.h> 
+
+#define THREAD_NUM 4
+#define JOB_BATCH_SIZE 30000000
+#define TRAIN_ITERS 1
 
 int main() {
-    std::cout << "learning rate = " << LEARNING_RATE << " batch size = " << BATCH_SIZE << std::endl;
+    std::cout << "learning rate = " << LEARNING_RATE << " | batch size = " << BATCH_SIZE << " | thread num = " 
+        << THREAD_NUM << " | job batch size = " << JOB_BATCH_SIZE << " | train iters = " << TRAIN_ITERS << std::endl;
 
     std::cout << "Starting..." << std::endl;
     
-    JobScheduler js(4);
+    JobScheduler js(THREAD_NUM);
+    struct timeval start, end;
     
     DIR *dir_p;
     DIR *dir_f;
@@ -226,6 +233,7 @@ int main() {
 
     // output printing
     unsigned int output_lines_counter = 0;
+    remove( "output.csv" );
     print_output(&list_of_entries, &output_lines_counter);
     // creatin train_set
     std::string* train_set = new std::string[output_lines_counter];
@@ -246,17 +254,17 @@ int main() {
     Entry *e1, *e2;
     DoubleLinkedList* results = new DoubleLinkedList();
     DoubleLinkedNode** results_array;
-    const unsigned int retrain_iters = 2;
-    for(unsigned int i=0 ; i < retrain_iters ; ++i) {
+    gettimeofday(&start, NULL);
+    for(unsigned int i=0 ; i < TRAIN_ITERS ; ++i) {
         lr->train(&files, train_set, output_lines_counter, &ht, &js);
-        if( i < retrain_iters-1 ) {
+        if( i < TRAIN_ITERS-1 ) {
             for(unsigned int j=0 ; j < size ; ++j) {
                 e1 = entries_array[j];
                 for(unsigned int k=j+1 ; k < size ; ++k) {
                     e2 = entries_array[k];
                     if( !e1->conn_tree->find(e1->conn_tree->root, e2) ) {
                         js.submit_job(new lr_retrain_Job(e1, e2, &files, results, lr, threshold));
-                        if( (j*size+k) % 30000000 == 0) {
+                        if( (j*size+k) % JOB_BATCH_SIZE == 0) {
                             js.execute_all_jobs();
                             js.wait_all_tasks_finish();
                             // std::cout << "Pairs checked " << j << " Results added: " << results->size << std::endl;
@@ -293,6 +301,7 @@ int main() {
             }
             delete[] results_array;
             // print output
+            remove( "output.csv" );
             clear_print(&list_of_entries);
             print_output(&list_of_entries, &output_lines_counter);
             // create new train set by reading output
@@ -303,12 +312,21 @@ int main() {
         // increment threshold
         // threshold += 0.01;
     }
+    gettimeofday(&end, NULL);
 
     lr->predict(&files, test_set, test_size, &ht, &js);
-    // lr->train(dict_matrix, train_set, train_size, 0.001, &ht);
     lr->validate(&files, validation_set, test_size, &ht, &js);
-    // std::cout << single_entries.size << std::endl;
-    // lr->validate_unknown(&files, &single_entries, &list_of_entries);
+
+    remove( "cliques.csv" );
+    clear_print(&list_of_entries);
+    print_cliques(&list_of_entries, &output_lines_counter);
+
+    std::cout << "learning rate = " << LEARNING_RATE << " | batch size = " << BATCH_SIZE << " | thread num = " 
+        << THREAD_NUM << " | job batch size = " << JOB_BATCH_SIZE << " | train iters = " << TRAIN_ITERS << std::endl;
+
+    double time_taken = (end.tv_sec - start.tv_sec) * 1e6; 
+    time_taken = (time_taken + (end.tv_usec - start.tv_usec)) * 1e-6; 
+    std::cout << "Time taken by training : " << std::fixed << time_taken << std::setprecision(6) << " sec " << std::endl; 
 
     // empty heap
     delete results;

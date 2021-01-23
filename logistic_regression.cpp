@@ -1,7 +1,6 @@
 #include "logistic_regression.hpp"
 
 LR::LR(unsigned int w_size): weights_size(w_size), pred_counter(0) {
-    prevL = INTMAX_MAX;
     pred_counter = 0;
     pred_threshold_counter = 0;
     val_counter = 0;
@@ -49,7 +48,6 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
 }
 
 void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht, JobScheduler* js) {
-    prevL = INTMAX_MAX;
     for(unsigned int i=0 ; i < weights_size ; ++i) {
         weights[i] = 0;
         thetaJ[i] = 0;
@@ -57,11 +55,10 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
     std::cout << "Started training..." << std::endl;
     unsigned int iters = train_size/BATCH_SIZE + (train_size%BATCH_SIZE > 0 ? 1 : 0);
     for(int j=0 ; j < EPOCHS ; ++j) {
-        std::cout << "Epoch: " << j+1 << std::flush;
+        std::cout << "Epoch " << j+1 << ":" << std::flush;
         unsigned int l = 0;
+        L = 0;
         for(unsigned int i=0 ; i < iters ; ++i) {
-            prevL = J;
-            L = 0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 thetaJ[k] = 0;
             }
@@ -99,7 +96,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             js->wait_all_tasks_finish();
             // counter = 0;
             // NOTE: run lr_train_Job
-            // J = -L/(float)(l+1);
+            J -= L;
 
             float max=0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
@@ -114,14 +111,10 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             //     break;
             // }
 
-            // if( abs(prevL) < abs(J) ) {
-            //     std::cout << "Stoped training at " << j << " iterations (J went up)" << std::endl;
-            //     break;
-            // }
-
         }
-        std::cout << "\t\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;;
-        // std::cout << "lines trained = " << lines_trained << std::endl;
+        L = -J;
+        J = J/(float)train_size;
+        std::cout << " total L = " << L << " | J = " << J << "\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;;
 
     }
 
@@ -136,9 +129,9 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
     size_t first_slash;
     for(unsigned int k=0 ; k < test_size ; ++k) {
         std::stringstream line_stringstream(test[k]);
-        for(unsigned int i=0 ; i < weights_size ; ++i) {
-            thetaJ[i] = 0;
-        }
+        // for(unsigned int i=0 ; i < weights_size ; ++i) {
+        //     thetaJ[i] = 0;
+        // }
         for(int j=0 ; j < 3 ; ++j  ) {
             if(j == 0) {
                 getline(line_stringstream, url1 , ',');
@@ -223,9 +216,9 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
     size_t first_slash;
     for(unsigned int k=0 ; k < validation_size ; ++k) {
         std::stringstream line_stringstream(validation_set[k]);
-        for(unsigned int i=0 ; i < weights_size ; ++i) {
-            thetaJ[i] = 0;
-        }
+        // for(unsigned int i=0 ; i < weights_size ; ++i) {
+        //     thetaJ[i] = 0;
+        // }
         for(int j=0 ; j < 3 ; ++j  ) {
             if(j == 0) {
                 getline(line_stringstream, url1 , ',');
