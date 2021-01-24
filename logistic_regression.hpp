@@ -9,12 +9,8 @@
 #include "job_scheduler.hpp"
 #include "thread"
 
-#define EPOCHS 5
-#define THRESHOLD 0.1
 // medium: bs 1 lr 0.3 , bs 16 lr 0.3
 // large:  bs 1 lr     , bs 16 lr 8
-#define LEARNING_RATE 5
-#define BATCH_SIZE 256
 
 class JobScheduler;
 
@@ -31,11 +27,11 @@ public:
 
     // void gradient_descent(int*, int*, short int);
     void gradient_descent(int, int, short int, SM*);
-    void train(SM*, std::string*, unsigned int, HashTable*, JobScheduler*);
+    void train(SM*, std::string*, unsigned int, HashTable*, JobScheduler*, unsigned int, unsigned int, float);
     // void train(SM*, std::string*, unsigned int, float, HashTable*);
-    void predict(SM*, std::string*, unsigned int, HashTable*, JobScheduler*);
+    void predict(SM*, std::string*, unsigned int, HashTable*, JobScheduler*, float);
     float predict(SM* files, Entry* e1, Entry* e2);
-    void validate(SM*, std::string*, unsigned int , HashTable*, JobScheduler*);
+    void validate(SM*, std::string*, unsigned int , HashTable*, JobScheduler*, float);
     void validate_unknown(SM*, Clique*, Clique*);
 };
 

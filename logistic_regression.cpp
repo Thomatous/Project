@@ -47,14 +47,14 @@ void LR::gradient_descent(int e1, int e2, short int y, SM* files) {
     train_mutex.unlock();
 }
 
-void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht, JobScheduler* js) {
+void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable* ht, JobScheduler* js, unsigned int batch_size, unsigned int epochs, float learning_rate) {
     for(unsigned int i=0 ; i < weights_size ; ++i) {
         weights[i] = 0;
         thetaJ[i] = 0;
     }
     std::cout << "Started training..." << std::endl;
-    unsigned int iters = train_size/BATCH_SIZE + (train_size%BATCH_SIZE > 0 ? 1 : 0);
-    for(int j=0 ; j < EPOCHS ; ++j) {
+    unsigned int iters = train_size/batch_size + (train_size%batch_size > 0 ? 1 : 0);
+    for(unsigned int j=0 ; j < epochs ; ++j) {
         std::cout << "Epoch " << j+1 << ":" << std::flush;
         unsigned int l = 0;
         L = 0;
@@ -62,8 +62,8 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 thetaJ[k] = 0;
             }
-            for(l=0 ; l < BATCH_SIZE && i*BATCH_SIZE+l < train_size ; ++l) {
-                std::stringstream line_stringstream(train[i*BATCH_SIZE+l]);
+            for(l=0 ; l < batch_size && i*batch_size+l < train_size ; ++l) {
+                std::stringstream line_stringstream(train[i*batch_size+l]);
                 // for(int k=0 ; k < 3 ; ++k  ) {
                 //     if(k == 0) {
                 //         getline(line_stringstream, url1 , ',');
@@ -87,8 +87,8 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
 
                 // gradient_descent(e1->loc, e2->loc, label, files);
                 // NOTE: add to job scheduler queue
-                js->submit_job( new lr_train_Job(train[i*BATCH_SIZE+l], ht, files, this) );
-                // lr_train_Job ltj(train[i*BATCH_SIZE+l], ht, files, this);
+                js->submit_job( new lr_train_Job(train[i*batch_size+l], ht, files, this) );
+                // lr_train_Job ltj(train[i*batch_size+l], ht, files, this);
                 // ltj.run();
 
             }
@@ -101,7 +101,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
             float max=0;
             for(unsigned int k=0 ; k < weights_size ; ++k) {
                 float temp = weights[k];
-                weights[k] = weights[k] - ((float)LEARNING_RATE*thetaJ[k]/(float)(l+1));
+                weights[k] = weights[k] - ((float)learning_rate*thetaJ[k]/(float)(l+1));
                 float dif = abs((float)temp - (float)weights[k]);
                 if( max < dif)
                     max = dif; 
@@ -120,7 +120,7 @@ void LR::train(SM* files, std::string* train, unsigned int train_size, HashTable
 
 }
 
-void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable* ht, JobScheduler* js) {
+void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable* ht, JobScheduler* js, float threshold) {
     std::cout << "Started testing..." << std::flush;
     int e1, e2;
     std::string url1, url2, label_str;
@@ -153,7 +153,7 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
         e1 = ht->search(hash_value_calculator(site1, id1))->loc;
         e2 = ht->search(hash_value_calculator(site2, id2))->loc;
 
-        js->submit_job(new lr_test_Job(&pred_counter, &pred_threshold_counter, e1, e2, this, files, label));
+        js->submit_job(new lr_test_Job(&pred_counter, &pred_threshold_counter, e1, e2, this, files, label, threshold));
  
         // float f = 0;
         // float p;
@@ -175,7 +175,7 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
         // float dif = abs((float)p - (float)label);
         // if(dif < 0.5)
         //     pred_counter++;
-        // if(dif < THRESHOLD)
+        // if(dif < threshold)
         //     pred_threshold_counter++;
     }
     js->execute_all_jobs();
@@ -185,7 +185,7 @@ void LR::predict(SM* files, std::string* test, unsigned int test_size, HashTable
     float pred_thre_perc = 100.0*float(pred_threshold_counter)/float(test_size);
     std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
     std::cout << pred_counter << " correct predictions out of a total of " << test_size << " (" << pred_perc << "%)" << std::endl ;
-    std::cout << pred_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << pred_thre_perc << "%)" << std::endl;
+    std::cout << pred_threshold_counter << " of which are within " << threshold << " threshold" << " (" << pred_thre_perc << "%)" << std::endl;
 }
 
 float LR::predict(SM* files, Entry* e1, Entry* e2) {
@@ -207,7 +207,7 @@ float LR::predict(SM* files, Entry* e1, Entry* e2) {
     return p;
 }
 
-void LR::validate(SM* files, std::string* validation_set, unsigned int validation_size, HashTable* ht, JobScheduler* js) {
+void LR::validate(SM* files, std::string* validation_set, unsigned int validation_size, HashTable* ht, JobScheduler* js, float threshold) {
     std::cout << "Started validation..." << std::flush;
     int e1, e2;
     std::string url1, url2, label_str;
@@ -240,7 +240,7 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
         e1 = ht->search(hash_value_calculator(site1, id1))->loc;
         e2 = ht->search(hash_value_calculator(site2, id2))->loc;
     
-        js->submit_job(new lr_test_Job(&val_counter, &val_threshold_counter, e1, e2, this, files, label));
+        js->submit_job(new lr_test_Job(&val_counter, &val_threshold_counter, e1, e2, this, files, label, threshold));
         // float f = 0;
         // float p;
         // float x[weights_size];
@@ -261,7 +261,7 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
         // float dif = abs((float)p - (float)label);
         // if( dif < 0.5)
         //     val_counter++;
-        // if( dif < THRESHOLD)
+        // if( dif < threshold)
         //     val_threshold_counter++;
     }
     js->execute_all_jobs();
@@ -271,7 +271,7 @@ void LR::validate(SM* files, std::string* validation_set, unsigned int validatio
     float val_thre_perc = 100.0*float(val_threshold_counter)/float(validation_size);
     std::cout << "\t\t\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
     std::cout << val_counter << " correct predictions out of a total of " << validation_size << " (" << val_perc << "%)" << std::endl ;
-    std::cout << val_threshold_counter << " of which are within " << THRESHOLD << " threshold" << " (" << val_thre_perc << "%)" << std::endl;
+    std::cout << val_threshold_counter << " of which are within " << threshold << " threshold" << " (" << val_thre_perc << "%)" << std::endl;
 }
 
 void LR::validate_unknown(SM* files, Clique* single_entries, Clique* list_of_entries) {

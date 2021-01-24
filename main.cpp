@@ -18,17 +18,80 @@
 #include <bits/stdc++.h> 
 #include <sys/time.h> 
 
-#define THREAD_NUM 4
-#define JOB_BATCH_SIZE 30000000
-#define TRAIN_ITERS 1
+// #define epochs 5
+// #define threshold 0.1
+// #define learning_rate 5
+// #define batch_size 256
+
 
 int main() {
-    std::cout << "learning rate = " << LEARNING_RATE << " | batch size = " << BATCH_SIZE << " | thread num = " 
-        << THREAD_NUM << " | job batch size = " << JOB_BATCH_SIZE << " | train iters = " << TRAIN_ITERS << std::endl;
+    unsigned int thread_num = 4;
+    unsigned int job_batch_size = 30000000;
+    unsigned int train_iters = 3;
+    unsigned int epochs = 5;
+    float threshold = 0.1;
+    float learning_rate = 5;
+    unsigned int batch_size = 4096;
+    float job_threshold = 0.025;
+    float job_threshold_step = 0.005;
+    
+    
+    std::ifstream config;
+    config.open ("config.ini");
+
+    std::string config_line;
+    while(getline(config, config_line)){
+        std::stringstream config_iss(config_line);
+        std::string word;
+        getline(config_iss, word, ' ');
+        if(word == "thread_num"){
+            getline(config_iss, word, ' ');
+            thread_num = std::stoi(word);
+        }
+        else if(word == "job_batch_size"){
+            getline(config_iss, word, ' ');
+            job_batch_size = std::stoi(word);
+        }
+        else if(word == "train_iters"){
+            getline(config_iss, word, ' ');
+            train_iters = std::stoi(word);
+        }
+        else if(word == "epochs"){
+            getline(config_iss, word, ' ');
+            epochs = std::stoi(word);
+        }
+        else if(word == "threshold"){
+            getline(config_iss, word, ' ');
+            std::string::size_type sz = strlen(word.c_str());
+            threshold = std::stof(word, &sz);
+        }
+        else if(word == "learning_rate"){
+            getline(config_iss, word, ' ');
+            std::string::size_type sz = strlen(word.c_str());
+            learning_rate = std::stof(word, &sz);
+        }
+        else if(word == "batch_size"){
+            getline(config_iss, word, ' ');
+            batch_size = std::stoi(word);
+        }
+        else if(word == "job_threshold"){
+            getline(config_iss, word, ' ');
+            std::string::size_type sz = strlen(word.c_str());
+            job_threshold = std::stof(word, &sz);
+        }
+        else if(word == "job_threshold_step"){
+            getline(config_iss, word, ' ');
+            std::string::size_type sz = strlen(word.c_str());
+            job_threshold_step = std::stof(word, &sz);
+        }
+    }
+
+    std::cout << "learning rate = " << learning_rate << " | batch size = " << batch_size << " | thread num = " 
+        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters << std::endl;
 
     std::cout << "Starting..." << std::endl;
     
-    JobScheduler js(THREAD_NUM);
+    JobScheduler js(thread_num);
     struct timeval start, end;
     
     DIR *dir_p;
@@ -250,21 +313,20 @@ int main() {
 
     LR* lr = new LR(best_words_number*2);
 
-    float threshold = 0.02;
     Entry *e1, *e2;
     DoubleLinkedList* results = new DoubleLinkedList();
     DoubleLinkedNode** results_array;
     gettimeofday(&start, NULL);
-    for(unsigned int i=0 ; i < TRAIN_ITERS ; ++i) {
-        lr->train(&files, train_set, output_lines_counter, &ht, &js);
-        if( i < TRAIN_ITERS-1 ) {
+    for(unsigned int i=0 ; i < train_iters ; ++i) {
+        lr->train(&files, train_set, output_lines_counter, &ht, &js, batch_size, epochs, learning_rate);
+        if( i < train_iters-1 ) {
             for(unsigned int j=0 ; j < size ; ++j) {
                 e1 = entries_array[j];
                 for(unsigned int k=j+1 ; k < size ; ++k) {
                     e2 = entries_array[k];
                     if( !e1->conn_tree->find(e1->conn_tree->root, e2) ) {
-                        js.submit_job(new lr_retrain_Job(e1, e2, &files, results, lr, threshold));
-                        if( (j*size+k) % JOB_BATCH_SIZE == 0) {
+                        js.submit_job(new lr_retrain_Job(e1, e2, &files, results, lr, job_threshold));
+                        if( (j*size+k) % job_batch_size == 0) {
                             js.execute_all_jobs();
                             js.wait_all_tasks_finish();
                             // std::cout << "Pairs checked " << j << " Results added: " << results->size << std::endl;
@@ -310,19 +372,19 @@ int main() {
             create_train_set(train_set, output_lines_counter);
         }
         // increment threshold
-        // threshold += 0.01;
+        job_threshold += job_threshold_step;
     }
     gettimeofday(&end, NULL);
 
-    lr->predict(&files, test_set, test_size, &ht, &js);
-    lr->validate(&files, validation_set, test_size, &ht, &js);
+    lr->predict(&files, test_set, test_size, &ht, &js, threshold);
+    lr->validate(&files, validation_set, test_size, &ht, &js, threshold);
 
     remove( "cliques.csv" );
     clear_print(&list_of_entries);
     print_cliques(&list_of_entries, &output_lines_counter);
 
-    std::cout << "learning rate = " << LEARNING_RATE << " | batch size = " << BATCH_SIZE << " | thread num = " 
-        << THREAD_NUM << " | job batch size = " << JOB_BATCH_SIZE << " | train iters = " << TRAIN_ITERS << std::endl;
+    std::cout << "learning rate = " << learning_rate << " | batch size = " << batch_size << " | thread num = " 
+        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters << std::endl;
 
     double time_taken = (end.tv_sec - start.tv_sec) * 1e6; 
     time_taken = (time_taken + (end.tv_usec - start.tv_usec)) * 1e-6; 

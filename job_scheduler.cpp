@@ -100,7 +100,7 @@ void lr_retrain_Job::run(){
 //============================================================================================================
 
 
-lr_test_Job::lr_test_Job(unsigned int* pc, unsigned int* ptc, int e1l, int e2l, LR* l, SM* f, short int lb){
+lr_test_Job::lr_test_Job(unsigned int* pc, unsigned int* ptc, int e1l, int e2l, LR* l, SM* f, short int lb, float th){
     pred_counter = pc;
     pred_threshold_counter = ptc;
     e1 = e1l;
@@ -108,6 +108,7 @@ lr_test_Job::lr_test_Job(unsigned int* pc, unsigned int* ptc, int e1l, int e2l, 
     lr = l;
     files = f;
     label = lb;
+    threshold = th;
 }
 
 void lr_test_Job::run(){
@@ -136,7 +137,7 @@ void lr_test_Job::run(){
         (*pred_counter)++;
         test_mutex.unlock();
     }
-    if(dif < THRESHOLD){
+    if(dif < threshold){
         test_mutex.lock();
         (*pred_threshold_counter)++;
         test_mutex.unlock();

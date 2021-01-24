@@ -85,8 +85,9 @@ class lr_test_Job : public Job {
     LR *lr;
     SM *files;
     short int label;
+    float threshold;
 public: 
-    lr_test_Job(unsigned int*, unsigned int*, int, int, LR*, SM*, short int);
+    lr_test_Job(unsigned int*, unsigned int*, int, int, LR*, SM*, short int, float);
     void run() override;
 };
 
