@@ -18,12 +18,6 @@
 #include <bits/stdc++.h> 
 #include <sys/time.h> 
 
-// #define epochs 5
-// #define threshold 0.1
-// #define learning_rate 5
-// #define batch_size 256
-
-
 int main() {
     unsigned int thread_num = 4;
     unsigned int job_batch_size = 30000000;
@@ -87,7 +81,8 @@ int main() {
     }
 
     std::cout << "learning rate = " << learning_rate << " | batch size = " << batch_size << " | thread num = " 
-        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters << std::endl;
+        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters <<
+        " | initial retrain threshold = " << job_threshold << " | step = " << job_threshold_step << std::endl;
 
     std::cout << "Starting..." << std::endl;
     
@@ -384,7 +379,8 @@ int main() {
     print_cliques(&list_of_entries, &output_lines_counter);
 
     std::cout << "learning rate = " << learning_rate << " | batch size = " << batch_size << " | thread num = " 
-        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters << std::endl;
+        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters <<
+        " | initial retrain threshold = " << job_threshold << " | step = " << job_threshold_step << std::endl;
 
     double time_taken = (end.tv_sec - start.tv_sec) * 1e6; 
     time_taken = (time_taken + (end.tv_usec - start.tv_usec)) * 1e-6; 
