@@ -18,12 +18,6 @@
 #include <bits/stdc++.h> 
 #include <sys/time.h> 
 
-// #define epochs 5
-// #define threshold 0.1
-// #define learning_rate 5
-// #define batch_size 256
-
-
 int main() {
     unsigned int thread_num = 4;
     unsigned int job_batch_size = 30000000;
@@ -34,6 +28,7 @@ int main() {
     unsigned int batch_size = 4096;
     float job_threshold = 0.025;
     float job_threshold_step = 0.005;
+    unsigned int best_words_number = 500;
     
     
     std::ifstream config;
@@ -84,10 +79,15 @@ int main() {
             std::string::size_type sz = strlen(word.c_str());
             job_threshold_step = std::stof(word, &sz);
         }
+        else if(word == "best_words_number"){
+            getline(config_iss, word, ' ');
+            best_words_number = std::stoi(word);
+        }
     }
 
-    std::cout << "learning rate = " << learning_rate << " | batch size = " << batch_size << " | thread num = " 
-        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters << std::endl;
+    std::cout << "learning rate = " << learning_rate << " | words number = " << best_words_number << " | batch size = " << batch_size << 
+        " | thread num = " << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters <<
+        " | initial retrain threshold = " << job_threshold << " | step = " << job_threshold_step << std::endl;
 
     std::cout << "Starting..." << std::endl;
     
@@ -281,7 +281,7 @@ int main() {
     std::cout << "\t\t\t\t\t\033[1;32mFINISHED\033[0m" << std::endl;
 
     std::cout << "Inserting best words in a dictionary..." << std::flush;
-    unsigned int best_words_number = 500;
+
     Dict* best_words = new Dict();
     for(unsigned int i = 0 ; i < best_words_number ; i++){
         int j = best_words_pos_vector[num_words-1-i]; 
@@ -383,8 +383,9 @@ int main() {
     clear_print(&list_of_entries);
     print_cliques(&list_of_entries, &output_lines_counter);
 
-    std::cout << "learning rate = " << learning_rate << " | batch size = " << batch_size << " | thread num = " 
-        << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters << std::endl;
+    std::cout << "learning rate = " << learning_rate << " | words number = " << best_words_number << " | batch size = " << batch_size << 
+        " | thread num = " << thread_num << " | job batch size = " << job_batch_size << " | train iters = " << train_iters <<
+        " | initial retrain threshold = " << job_threshold << " | step = " << job_threshold_step << std::endl;
 
     double time_taken = (end.tv_sec - start.tv_sec) * 1e6; 
     time_taken = (time_taken + (end.tv_usec - start.tv_usec)) * 1e-6; 
